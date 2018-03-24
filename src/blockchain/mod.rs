@@ -6,9 +6,23 @@ pub struct Blockchain {
 }
 
 impl Blockchain {
+
+    pub fn new() -> Blockchain {
+        let block = block::Block::new_genesis();
+        let mut chain = Blockchain{blocks: [].to_vec()};
+        chain.blocks.push(block);
+        chain
+    }
+
     pub fn add_block(&mut self, data: String) {
-        let prev_block = &self.blocks[self.blocks.len() - 1];
-        let new_block = block::Block::new(data, prev_block.prev_hash.clone());
-        // self.blocks.push(new_block);
+        let prev_block = self.blocks[self.blocks.len() - 1].clone();
+        match block::Block::new(data, prev_block.hash.clone()) {
+            Ok(v) => {
+                self.blocks.push(v);
+                },
+            Err(_err) => {
+                "error block".to_string();
+            },
+        };
     }
 }

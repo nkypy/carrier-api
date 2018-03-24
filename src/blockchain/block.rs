@@ -1,7 +1,7 @@
 use chrono::prelude::Utc;
 use sha2::{Sha256, Digest};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Block {
     pub prev_hash: Vec<u8>,
     pub hash: Vec<u8>,
@@ -14,11 +14,11 @@ impl Block {
         let data = self.data.clone();
         let timestamp = self.timestamp.clone();
         let mut headers = self.prev_hash.clone();
-        headers.extend(timestamp.to_string().into_bytes().iter().cloned());
         headers.extend(data.iter().cloned());
-        let mut sha = Sha256::default();
+        headers.extend(timestamp.to_string().into_bytes().iter().cloned());
+        let mut sha = Sha256::new();
         sha.input(&headers);
-        self.hash = sha.result().to_vec();
+        self.hash = sha.result()[..].to_vec();
     }
     pub fn new(data: String, prev_hash: Vec<u8>) -> Result<Block, &'static str> {
         let mut block = Block {
@@ -29,7 +29,6 @@ impl Block {
         };
         block.hash();
         Ok(block)
-        // Err("测试错误")
     }
     pub fn new_genesis() -> Block {
         let mut block = Block {
