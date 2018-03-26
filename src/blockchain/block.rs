@@ -9,6 +9,12 @@ pub struct Block {
     pub data: Vec<u8>,
 }
 
+#[derive(Debug, Clone)]
+pub struct ProofOfWork {
+    pub block: Block,
+    pub target: i64,
+}
+
 impl Block {
     pub fn hash(&mut self) {
         let data = self.data.clone();

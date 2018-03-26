@@ -6,4 +6,4 @@ authors = ["Jack Shih <jac@kshih.com>"]
 [dependencies]
 chrono = "0.4"
 sha2 = "0.7"
-byteorder = "1.2"
+rustc-serialize = "0.3"
