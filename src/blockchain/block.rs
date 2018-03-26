@@ -1,5 +1,5 @@
 use chrono::prelude::Utc;
-use sha2::{Sha256, Digest};
+use sha2::{Digest, Sha256};
 
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -7,12 +7,23 @@ pub struct Block {
     pub hash: Vec<u8>,
     pub timestamp: i64,
     pub data: Vec<u8>,
+    pub nonce: i64,
 }
 
 #[derive(Debug, Clone)]
 pub struct ProofOfWork {
     pub block: Block,
     pub target: i64,
+}
+
+impl ProofOfWork {
+    pub fn new(b: Block) -> ProofOfWork {
+        let t = 0;
+        ProofOfWork {
+            block: b,
+            target: t,
+        }
+    }
 }
 
 impl Block {
@@ -32,6 +43,7 @@ impl Block {
             hash: [].to_vec(),
             timestamp: Utc::now().timestamp(),
             data: data.into_bytes(),
+            nonce: 0,
         };
         block.hash();
         Ok(block)
@@ -42,6 +54,7 @@ impl Block {
             hash: [].to_vec(),
             timestamp: Utc::now().timestamp(),
             data: "Genesis Block".to_string().into_bytes(),
+            nonce: 0,
         };
         block.hash();
         block
