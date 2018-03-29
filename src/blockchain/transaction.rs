@@ -1,19 +1,19 @@
 #[derive(Debug, Clone)]
 pub struct Transaction {
-    id: Vec<u8>,
-    tx_in: Vec<TxInput>,
-    tx_out: Vec<TxOutput>,
+    pub id: Vec<u8>,
+    pub tx_in: Vec<TxInput>,
+    pub tx_out: Vec<TxOutput>,
 }
 
 #[derive(Debug, Clone)]
 pub struct TxInput{
-    tx_id: Vec<u8>,
-    from: String,
-    out: String,
+    pub tx_id: Vec<u8>,
+    pub out: i32,
+    pub signature: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct TxOutput{
-    value: i32,
-    pub_key: String,
+    pub value: i32,
+    pub pub_key: String,
 }

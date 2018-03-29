@@ -13,7 +13,7 @@ fn main() {
     let mut bc = blockchain::Blockchain::new();
     bc.add_block("Send 1 BTC to Ivan".to_string());
     bc.add_block("Pay 0.1 BTC for a cup of coffee".to_string());
-    bc.add_block("赠送 1 比特币给爱的她".to_string());
+    bc.add_block("赠送 1 比特币给 Ivan".to_string());
     println!("Blockchain: {:?}\n", bc);
     for v in bc.blocks {
         let block = v.clone();
