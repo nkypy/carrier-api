@@ -1,5 +1,6 @@
 pub mod block;
 pub mod transaction;
+pub mod wallet;
 
 #[derive(Debug)]
 pub struct Blockchain {
