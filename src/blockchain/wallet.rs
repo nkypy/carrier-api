@@ -8,3 +8,12 @@ pub struct Wallet {
 pub struct Wallets {
     pub wallets: Vec<Wallet>,
 }
+
+impl Wallet {
+    pub fn new() -> Wallet {
+        Wallet {
+            private_key: "priv".to_string(),
+            public_key: "pub".to_string(),
+        }
+    }
+}

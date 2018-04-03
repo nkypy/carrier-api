@@ -2,6 +2,8 @@ pub mod block;
 pub mod transaction;
 pub mod wallet;
 
+use self::transaction::Transaction;
+
 #[derive(Debug)]
 pub struct Blockchain {
     pub blocks: Vec<block::Block>,
@@ -27,5 +29,9 @@ impl Blockchain {
                 "error block".to_string();
             }
         };
+    }
+
+    pub fn find_transaction(id: String) -> Result<Transaction, &'static str> {
+        Err("测试")
     }
 }

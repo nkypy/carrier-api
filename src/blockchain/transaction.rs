@@ -6,14 +6,14 @@ pub struct Transaction {
 }
 
 #[derive(Debug, Clone)]
-pub struct TxInput{
+pub struct TxInput {
     pub tx_id: Vec<u8>,
     pub out: i32,
     pub signature: String,
 }
 
 #[derive(Debug, Clone)]
-pub struct TxOutput{
+pub struct TxOutput {
     pub value: i32,
     pub pub_key: String,
 }
