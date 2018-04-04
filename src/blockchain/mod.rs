@@ -4,7 +4,7 @@ pub mod wallet;
 
 use self::transaction::Transaction;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Blockchain {
     pub blocks: Vec<block::Block>,
 }
@@ -32,6 +32,6 @@ impl Blockchain {
     }
 
     pub fn find_transaction(id: String) -> Result<Transaction, &'static str> {
-        Err("测试")
+        Err("Cannot find transaction by this id.")
     }
 }

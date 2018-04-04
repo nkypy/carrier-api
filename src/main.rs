@@ -24,4 +24,6 @@ fn main() {
             block.hash.clone().to_hex()
         );
     }
+    let tx = blockchain::Blockchain::find_transaction("12".to_string());
+    println!("Transaction {:?}", tx);
 }
