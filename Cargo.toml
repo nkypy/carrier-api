@@ -7,3 +7,5 @@ authors = ["Jack Shih <jac@kshih.com>"]
 chrono = "0.4"
 sha2 = "0.7"
 rustc-serialize = "0.3"
+actix = "0.5"
+actix-web = "0.5"

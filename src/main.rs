@@ -1,11 +1,15 @@
 extern crate chrono;
 extern crate rustc_serialize;
 extern crate sha2;
+extern crate actix_web;
 
 mod blockchain;
+mod api;
 
 use rustc_serialize::hex::ToHex;
 use std::env;
+use actix_web::{App, server};
+use api::index;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -26,4 +30,9 @@ fn main() {
     }
     let tx = blockchain::Blockchain::find_transaction("12".to_string());
     println!("Transaction {:?}", tx);
+    server::new(
+        || App::new()
+            .resource("/", |r| r.f(index)))
+        .bind("127.0.0.1:8088").expect("Can not bind to 127.0.0.1:8088")
+        .run();
 }
