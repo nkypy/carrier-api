@@ -17,3 +17,9 @@ pub struct TxOutput {
     pub value: i32,
     pub pub_key: String,
 }
+
+impl Transaction {
+    pub fn verify() -> Result<&'static str, &'static str> {
+        Ok("成功")
+    }
+}

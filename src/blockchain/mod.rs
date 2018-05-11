@@ -3,10 +3,18 @@ pub mod transaction;
 pub mod wallet;
 
 use self::transaction::Transaction;
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub struct Blockchain {
     pub blocks: Vec<block::Block>,
+}
+
+impl fmt::Display for Blockchain {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Customize so only `x` and `y` are denoted.
+        write!(f, "blocks: {:?}", self.blocks)
+    }
 }
 
 impl Blockchain {

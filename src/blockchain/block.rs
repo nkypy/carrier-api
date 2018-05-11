@@ -1,5 +1,6 @@
 use chrono::prelude::Utc;
 use sha2::{Digest, Sha256};
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -14,6 +15,16 @@ pub struct Block {
 pub struct ProofOfWork {
     pub block: Block,
     pub target: i64,
+}
+
+impl fmt::Display for Block {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "prev_hash: {:?}, hash: {:?}, timestamp: {:?}, data: {:?}, nonce: {:?}",
+            self.prev_hash, self.hash, self.timestamp, self.data, self.nonce
+        )
+    }
 }
 
 impl ProofOfWork {
@@ -37,6 +48,7 @@ impl Block {
         sha.input(&headers);
         self.hash = sha.result()[..].to_vec();
     }
+
     pub fn new(data: String, prev_hash: Vec<u8>) -> Result<Block, &'static str> {
         let mut block = Block {
             prev_hash: prev_hash,
@@ -48,6 +60,7 @@ impl Block {
         block.hash();
         Ok(block)
     }
+
     pub fn new_genesis() -> Block {
         let mut block = Block {
             prev_hash: [].to_vec(),
@@ -58,5 +71,9 @@ impl Block {
         };
         block.hash();
         block
+    }
+
+    pub fn verify() -> Result<&'static str, &'static str> {
+        Ok("成功")
     }
 }
