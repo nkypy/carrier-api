@@ -11,8 +11,11 @@ extern crate sha2;
 extern crate serde_derive;
 #[macro_use]
 extern crate failure;
+#[macro_use]
+extern crate lazy_static;
 
 mod blockchain;
+mod rpc;
 
 use rustc_serialize::hex::ToHex;
 use std::env;
@@ -35,7 +38,12 @@ fn main() {
         );
     }
     let tx = blockchain::Blockchain::find_transaction("12".to_string());
-    println!("Transaction {:?}", tx);
+    println!("Transaction {:?}\n", tx);
     let x = 5 + /* 90 + */ 5;
-    println!("Is `x` 10 or 100? x = {}", x);
+    let y = format!("Is `x` 10 or 100? x = {}", x);
+    println!("{y}\n", y = y);
+    let rpc_data = rpc::error::Error::new(100001, "测试 new");
+    let serialized = serde_json::to_string(&rpc_data).unwrap();
+    let serialized2 = serde_json::to_string(&rpc::error::ERROR_TOKEN_VERIFY_FAILED).unwrap();
+    println!("Serialized {}, Serialized2 {}\n", serialized, serialized2);
 }
