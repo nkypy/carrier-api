@@ -46,4 +46,7 @@ fn main() {
     let serialized = serde_json::to_string(&rpc_data).unwrap();
     let serialized2 = serde_json::to_string(&rpc::error::ERROR_TOKEN_VERIFY_FAILED).unwrap();
     println!("Serialized {}, Serialized2 {}\n", serialized, serialized2);
+    let dat = "{\"error_code\":100009,\"error_message\":\"测试正确解析\"}";
+    let ha: rpc::error::Error = serde_json::from_str(dat).unwrap();
+    println!("json struct {:?}", ha);
 }
