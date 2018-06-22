@@ -42,11 +42,10 @@ fn main() {
     let x = 5 + /* 90 + */ 5;
     let y = format!("Is `x` 10 or 100? x = {}", x);
     println!("{y}\n", y = y);
-    let rpc_data = rpc::error::Error::new(100001, "测试 new");
-    let serialized = serde_json::to_string(&rpc_data).unwrap();
-    let serialized2 = serde_json::to_string(&rpc::error::ERROR_TOKEN_VERIFY_FAILED).unwrap();
+    let serialized = rpc::model::error::Error::new(100001, "测试 new").to_string();
+    let serialized2 = rpc::model::error::TOKEN_VERIFY_FAILED.to_string();
     println!("Serialized {}, Serialized2 {}\n", serialized, serialized2);
     let dat = "{\"error_code\":100009,\"error_message\":\"测试正确解析\"}";
-    let ha: rpc::error::Error = serde_json::from_str(dat).unwrap();
+    let ha = rpc::model::error::Error::from_str(dat);
     println!("json struct {:?}", ha);
 }
