@@ -1,51 +1,78 @@
-#![feature(extern_prelude)]
-
-extern crate actix;
-extern crate actix_web;
-extern crate chrono;
-extern crate rustc_serialize;
-extern crate serde;
-extern crate serde_json;
-extern crate sha2;
+#[macro_use]
+extern crate log;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
-extern crate failure;
-#[macro_use]
-extern crate lazy_static;
+extern crate diesel;
 
-mod blockchain;
-mod rpc;
+extern crate actix;
+extern crate actix_web;
+extern crate dotenv;
+extern crate env_logger;
+extern crate futures;
+extern crate snowflake;
 
-use rustc_serialize::hex::ToHex;
+mod api;
+mod models;
+mod schema;
+
+use actix_web::http::Method;
+use actix_web::{server, App, HttpRequest, HttpResponse};
+use diesel::prelude::*;
+use dotenv::dotenv;
 use std::env;
 
+use api::v1::auth;
+
+pub fn establish_connection() -> PgConnection {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+}
+
+fn index(_req: &HttpRequest) -> HttpResponse {
+    let reply = models::AuthReply {
+        error_code: Some(111),
+        error_message: Some("测试错误111".to_string()),
+        token: None,
+        data: Some(vec![
+            models::InfoReply {
+                error_code: Some(222),
+                error_message: Some("测试错误333".to_string()),
+            },
+            models::InfoReply {
+                error_code: Some(333),
+                error_message: Some("测试错误333".to_string()),
+            },
+        ]),
+    };
+    HttpResponse::Ok().json(reply)
+}
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    println!("Args: {:?}\n", args);
-    let mut bc = blockchain::Blockchain::new();
-    bc.add_block("Send 1 BTC to Ivan".to_string());
-    bc.add_block("Pay 0.1 BTC for a cup of coffee".to_string());
-    bc.add_block("赠送 1 比特币给 Ivan".to_string());
-    println!("Blockchain: {:?}\n", bc);
-    for v in bc.blocks {
-        let block = v.clone();
-        println!(
-            "PrevHash: {}\nData: {:?}\nHash: {}\n",
-            block.prev_hash.clone().to_hex(),
-            String::from_utf8(block.data.clone()),
-            block.hash.clone().to_hex()
-        );
-    }
-    let tx = blockchain::Blockchain::find_transaction("12".to_string());
-    println!("Transaction {:?}\n", tx);
-    let x = 5 + /* 90 + */ 5;
-    let y = format!("Is `x` 10 or 100? x = {}", x);
-    println!("{y}\n", y = y);
-    let serialized = rpc::model::error::Error::new(100001, "测试 new").to_string();
-    let serialized2 = rpc::model::error::TOKEN_VERIFY_FAILED.to_string();
-    println!("Serialized {}, Serialized2 {}\n", serialized, serialized2);
-    let dat = "{\"error_code\":100009,\"error_message\":\"测试正确解析\"}";
-    let ha = rpc::model::error::Error::from_str(dat);
-    println!("json struct {:?}", ha);
+    env_logger::init();
+    info!("hello world up!");
+    // let uid = snowflake::ProcessUniqueId::new();
+    // let next_uid = snowflake::ProcessUniqueId::new();
+    // println!("uid is {:?}, next is {:?}", uid, next_uid);
+    let conn = establish_connection();
+    let u: Vec<models::User> = schema::users::table
+        .load(&conn)
+        .expect("Error loading users");
+    println!("users are {:?}", u);
+    let sys = actix::System::new("hello-world");
+    server::new(|| {
+        App::new()
+            .prefix("/v1/auth")
+            .resource("/index", |r| r.method(Method::GET).f(index))
+            .resource("/signin", |r| r.method(Method::POST).f(auth::signin))
+            .resource("/signup", |r| r.method(Method::POST).with(auth::signup))
+            .resource("/signout", |r| r.method(Method::POST).f(auth::signin))
+            .resource("/recover", |r| r.method(Method::POST).f(auth::signin))
+    }).bind("127.0.0.1:8989")
+        .unwrap()
+        .shutdown_timeout(1)
+        .start();
+    let _ = sys.run();
 }
