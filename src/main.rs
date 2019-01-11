@@ -17,6 +17,7 @@ mod error;
 mod models;
 mod schema;
 
+use actix::prelude::*;
 use actix_web::http::Method;
 use actix_web::{pred, server, App, HttpRequest, HttpResponse, Path, State};
 use diesel::prelude::*;
@@ -46,21 +47,8 @@ fn main() {
     env_logger::init();
     info!("hello world up!");
     let sys = actix::System::new("hello-world");
-    server::new(|| {
-        vec![
-            app_state().boxed(),
-            // 所有异常
-            // App::new()
-            //     .default_resource(|r| {
-            //         // 404 for GET request
-            //         r.method(Method::GET).f(error::http_not_found);
-            //         r.route()
-            //             .filter(pred::Not(pred::Get()))
-            //             .f(|req| HttpResponse::MethodNotAllowed());
-            //     })
-            //     .boxed(),
-        ]
-    }).bind("127.0.0.1:8989")
+    server::new(|| vec![app_state().boxed()])
+        .bind("127.0.0.1:8989")
         .unwrap()
         .shutdown_timeout(1)
         .start();
@@ -70,22 +58,31 @@ fn main() {
 fn app_state() -> App<models::Store> {
     let pool = models::establish_connection();
     App::with_state(models::Store { db: pool.clone() })
-        // .prefix("/v1/auth")
-        .resource("/v1/auth/index", |r| r.method(Method::GET).f(index))
-        .resource("/v1/auth/{username}/{password}", |r| {
-            r.method(Method::GET).with(auth::user_info)
-        })
-        .resource("/v1/auth/users", |r| r.method(Method::GET).f(auth::get_users))
-        .resource("/v1/auth/signin", |r| r.method(Method::POST).with(auth::signup))
-        .resource("/v1/auth/signup", |r| r.method(Method::POST).with(auth::signup))
-        .resource("/v1/auth/signout", |r| r.method(Method::POST).with(auth::signup))
-        .resource("/v1/auth/recover", |r| r.method(Method::POST).with(auth::signup))
-        .default_resource(|r| {
-                    // 404
-                    r.method(Method::GET).f(error::http_not_found);
-                    // 405
-                    r.route()
-                        .filter(pred::Not(pred::Get()))
-                        .f(error::http_method_not_allowed);
+        // .prefix("/v1/auth") // prefix 后面 default_resource 只对下面的子路由生效，而scope则和group一样
+        .scope("/v1", |v1| {
+            v1
+                .nested("/auth", |v1auth| { // nested 在 scope 下一级
+                    v1auth
+                        .resource("/index", |r| r.method(Method::GET).f(index))
+                        .resource("/signin", |r| r.method(Method::POST).with(auth::signup))
+                        .resource("/signup", |r| r.method(Method::POST).with(auth::signup))
+                        .resource("/signout", |r| r.method(Method::POST).with(auth::signup))
+                        .resource("/recover", |r| r.method(Method::POST).with(auth::signup))
                 })
+                .nested("/user", |v1user| {
+                    v1user
+                        .resource("/", |r| r.method(Method::GET).f(auth::get_users))
+                        .resource("/{username}/{password}", |r| {
+                            r.method(Method::GET).with(auth::user_info)
+                        })
+                })
+        })
+        .default_resource(|r| {
+            // 404
+            r.method(Method::GET).f(error::http_not_found);
+            // 405
+            r.route()
+                .filter(pred::Not(pred::Get()))
+                .f(error::http_method_not_allowed);
+        })
 }
