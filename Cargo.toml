@@ -6,7 +6,7 @@ authors = ["Jack Shih <i@kshih.com>"]
 [dependencies]
 log = "*"
 env_logger = "*"
-diesel = { version = "*", features = ["postgres"] }
+diesel = { version = "*", features = ["postgres", "chrono", "serde_json", "r2d2"] }
 dotenv = "*"
 snowflake = { version = "*", features = ["serde_support"] }
 serde = "*"
