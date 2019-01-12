@@ -4,6 +4,12 @@ use dotenv::dotenv;
 use std::env;
 use std::time::SystemTime;
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ErrorReply {
+    pub error_code: i32,
+    pub error_message: String,
+}
+
 pub struct Store {
     pub db: Pool<ConnectionManager<PgConnection>>,
 }

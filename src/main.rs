@@ -4,6 +4,8 @@ extern crate log;
 extern crate serde_derive;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate failure;
 
 extern crate actix;
 extern crate actix_web;
@@ -14,11 +16,13 @@ extern crate snowflake;
 
 mod api;
 mod error;
+mod middleware;
 mod models;
 mod schema;
 
 use actix::prelude::*;
 use actix_web::http::Method;
+use actix_web::middleware::Logger;
 use actix_web::{pred, server, App, HttpRequest, HttpResponse, Path, State};
 use diesel::prelude::*;
 
@@ -58,6 +62,8 @@ fn main() {
 fn app_state() -> App<models::Store> {
     let pool = models::establish_connection();
     App::with_state(models::Store { db: pool.clone() })
+        .middleware(Logger::default())
+        .middleware(middleware::validator::TokenValidator)
         // .prefix("/v1/auth") // prefix 后面 default_resource 只对下面的子路由生效，而scope则和group一样
         .scope("/v1", |v1| {
             v1
