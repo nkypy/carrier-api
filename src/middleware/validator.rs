@@ -2,7 +2,7 @@ use actix_web::{
     http::{header, HttpTryFrom}, middleware::{Middleware, Response, Started}, HttpRequest,
     HttpResponse, Result,
 };
-use error::AppError;
+use error::{AppError, ERR_TOKEN_IS_NOT_VALID};
 use jwt::{decode, encode, errors::ErrorKind, Header, Validation};
 use models::{Claims, ErrorReply};
 
@@ -69,10 +69,9 @@ impl<S> Middleware<S> for TokenValidator {
                 }
             }
         }
-        return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-            error_code: 10000405,
-            error_message: "TOKEN IS NOT VALID".to_string(),
-        })));
+        return Ok(Started::Response(
+            HttpResponse::Ok().json(ERR_TOKEN_IS_NOT_VALID),
+        ));
     }
     //
     fn response(&self, req: &HttpRequest<S>, mut resp: HttpResponse) -> Result<Response> {
