@@ -12,6 +12,8 @@ pub enum AppError {
     TokenNotFound,
     #[fail(display = "token validate failed")]
     TokenValidateFailed,
+    #[fail(display = "server unknown error")]
+    ServerUnknownError,
 }
 
 impl ResponseError for AppError {
@@ -32,6 +34,10 @@ impl ResponseError for AppError {
             AppError::TokenValidateFailed => HttpResponse::Ok().json(ErrorReply {
                 error_code: 10000405,
                 error_message: "TOKEN VALIDATE FAILED".to_string(),
+            }),
+            _ => HttpResponse::Ok().json(ErrorReply {
+                error_code: 19999999,
+                error_message: "SERVER UNKNOWN ERROR".to_string(),
             }),
         }
     }

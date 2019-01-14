@@ -10,6 +10,12 @@ pub struct ErrorReply {
     pub error_message: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub uid: usize,
+    pub exp: usize,
+}
+
 pub struct Store {
     pub db: Pool<ConnectionManager<PgConnection>>,
 }

@@ -12,6 +12,7 @@ extern crate actix_web;
 extern crate dotenv;
 extern crate env_logger;
 extern crate futures;
+extern crate jsonwebtoken as jwt;
 extern crate snowflake;
 
 mod api;
@@ -25,6 +26,7 @@ use actix_web::http::Method;
 use actix_web::middleware::Logger;
 use actix_web::{pred, server, App, HttpRequest, HttpResponse, Path, State};
 use diesel::prelude::*;
+use jwt::{decode, encode, Header, Validation};
 
 use api::v1::auth;
 
@@ -50,6 +52,16 @@ fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
 fn main() {
     env_logger::init();
     info!("hello world up!");
+    let my_claims = models::Claims {
+        uid: 123456,
+        exp: 10000000000,
+    };
+    let key = "secret";
+    let token = match encode(&Header::default(), &my_claims, key.as_ref()) {
+        Ok(t) => t,
+        Err(_) => panic!(), // in practice you would return the error
+    };
+    println!("token is {:?}.", token);
     let sys = actix::System::new("hello-world");
     server::new(|| vec![app_state().boxed()])
         .bind("127.0.0.1:8989")
@@ -63,7 +75,6 @@ fn app_state() -> App<models::Store> {
     let pool = models::establish_connection();
     App::with_state(models::Store { db: pool.clone() })
         .middleware(Logger::default())
-        .middleware(middleware::validator::TokenValidator)
         // .prefix("/v1/auth") // prefix 后面 default_resource 只对下面的子路由生效，而scope则和group一样
         .scope("/v1", |v1| {
             v1
@@ -77,6 +88,7 @@ fn app_state() -> App<models::Store> {
                 })
                 .nested("/user", |v1user| {
                     v1user
+                        .middleware(middleware::validator::TokenValidator)
                         .resource("/", |r| r.method(Method::GET).f(auth::get_users))
                         .resource("/{username}/{password}", |r| {
                             r.method(Method::GET).with(auth::user_info)
