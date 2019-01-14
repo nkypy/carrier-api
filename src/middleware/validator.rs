@@ -12,13 +12,22 @@ impl<S> Middleware<S> for TokenValidator {
     fn start(&self, req: &HttpRequest<S>) -> Result<Started> {
         let token = match req.headers().get("Authorization") {
             Some(h) => match h.to_str() {
-                Ok(t) => match decode::<Claims>(&t[7..], "secret".as_ref(), &Validation::default())
-                {
-                    Ok(c) => c,
-                    Err(_) => {
+                Ok(t) => match t.len() > 7 {
+                    true => {
+                        match decode::<Claims>(&t[7..], "secret".as_ref(), &Validation::default()) {
+                            Ok(c) => c,
+                            Err(_) => {
+                                return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
+                                    error_code: 10000404,
+                                    error_message: "TOKEN NOT VALID".to_string(),
+                                })))
+                            }
+                        }
+                    }
+                    false => {
                         return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
                             error_code: 10000404,
-                            error_message: "TOKEN NOT VALID".to_string(),
+                            error_message: "TOKEN NOT FOUND".to_string(),
                         })))
                     }
                 },
