@@ -20,15 +20,21 @@ mod error;
 mod middleware;
 mod models;
 mod schema;
+mod client;
+
+use error::Error;
 
 use actix::prelude::*;
 use actix_web::http::Method;
 use actix_web::middleware::Logger;
-use actix_web::{pred, server, App, HttpRequest, HttpResponse, Path, State};
+use actix_web::{pred, server, App, HttpRequest, HttpResponse, Path, Json, State};
 use diesel::prelude::*;
 use jwt::{decode, encode, Header, Validation};
+use std::env;
+use dotenv::dotenv;
 
-use api::v1::auth;
+use crate::api::v1::auth;
+use crate::client::CarrierClient;
 
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
@@ -52,16 +58,23 @@ fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
 fn main() {
     env_logger::init();
     info!("hello world up!");
+    dotenv().ok();
     let my_claims = models::Claims {
         uid: 123456,
         exp: 10000000000,
     };
-    let key = "secret";
+    let key = env::var("JWT_KEY").expect("JWT_KEY must be set");
     let token = match encode(&Header::default(), &my_claims, key.as_ref()) {
         Ok(t) => t,
         Err(_) => panic!(), // in practice you would return the error
     };
     println!("token is {:?}.", token);
+
+    let carrier = client::new_carrier("china_telecom,123,456,789789789");
+    if let Ok(c) = carrier {
+        println!("carrier status is {:?}", c.card_status("1234"));
+    }
+
     let sys = actix::System::new("hello-world");
     server::new(|| vec![app_state().boxed()])
         .bind("127.0.0.1:8989")
@@ -97,10 +110,10 @@ fn app_state() -> App<models::Store> {
         })
         .default_resource(|r| {
             // 404
-            r.method(Method::GET).f(error::http_not_found);
+            r.method(Method::GET).f(|_| -> Result<&'static str, Error> {Err(Error::HttpNotFound)});
             // 405
             r.route()
                 .filter(pred::Not(pred::Get()))
-                .f(error::http_method_not_allowed);
+                .f(|_| -> Result<&'static str, Error> {Err(Error::HttpMethodNotAllowed)});
         })
 }

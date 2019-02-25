@@ -1,14 +1,8 @@
 use diesel::prelude::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
-use dotenv::dotenv;
 use std::env;
 use std::time::SystemTime;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ErrorReply<'a> {
-    pub error_code: usize,
-    pub error_message: &'a str,
-}
+use error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -18,6 +12,12 @@ pub struct Claims {
 
 pub struct Store {
     pub db: Pool<ConnectionManager<PgConnection>>,
+}
+
+#[derive(Serialize, Deserialize)]
+// #[serde(untagged)]
+pub struct AppReply {
+    pub data: Vec<Result<InfoReply, Error>>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -54,13 +54,11 @@ pub struct User {
     pub password: String,
     pub is_banned: bool,
     pub is_deleted: bool,
-    pub create_at: SystemTime,
-    pub updated_at: SystemTime,
+    // pub create_at: SystemTime,
+    // pub updated_at: SystemTime,
 }
 
 pub fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
-    dotenv().ok();
-
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let conn = Pool::builder()

@@ -1,60 +1,16 @@
 use actix_web::{
-    http::{header, HttpTryFrom}, middleware::{Middleware, Response, Started}, HttpRequest,
-    HttpResponse, Result,
+    http::{header, HttpTryFrom},
+    middleware::{Middleware, Response, Started},
+    HttpRequest, HttpResponse, Result,
 };
-use error::{AppError, ERR_TOKEN_IS_NOT_VALID};
-use jwt::{decode, encode, errors::ErrorKind, Header, Validation};
-use models::{Claims, ErrorReply};
+use jwt::{decode, encode, Header, Validation};
+
+use models::Claims;
+use error::ERR_TOKEN_IS_NOT_VALID;
 
 pub struct TokenValidator;
 
 impl<S> Middleware<S> for TokenValidator {
-    // 首版
-    // fn start(&self, req: &HttpRequest<S>) -> Result<Started> {
-    //     let token = match req.headers().get("Authorization") {
-    //         Some(h) => match h.to_str() {
-    //             Ok(t) => match t.len() > 7 {
-    //                 true => {
-    //                     match  {
-    //                         Ok(c) => c,
-    //                         Err(_) => {
-    //                             return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-    //                                 error_code: 10000404,
-    //                                 error_message: "TOKEN NOT VALID".to_string(),
-    //                             })))
-    //                         }
-    //                     }
-    //                 }
-    //                 false => {
-    //                     return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-    //                         error_code: 10000404,
-    //                         error_message: "TOKEN NOT FOUND".to_string(),
-    //                     })))
-    //                 }
-    //             },
-    //             Err(_) => {
-    //                 return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-    //                     error_code: 10000404,
-    //                     error_message: "TOKEN NOT FOUND".to_string(),
-    //                 })))
-    //             }
-    //         },
-    //         None => {
-    //             return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-    //                 error_code: 10000404,
-    //                 error_message: "TOKEN NOT FOUND".to_string(),
-    //             })))
-    //         }
-    //     };
-    //     if token.claims.uid == 123456 {
-    //         return Ok(Started::Done);
-    //     }
-    //     return Ok(Started::Response(HttpResponse::Ok().json(ErrorReply {
-    //         error_code: 10000404,
-    //         error_message: "TOKEN NOT FOUND".to_string(),
-    //     })));
-    // }
-    // 简化版本
     fn start(&self, req: &HttpRequest<S>) -> Result<Started> {
         if let Some(h) = req.headers().get("Authorization") {
             if let Ok(t) = h.to_str() {
