@@ -70,7 +70,7 @@ fn main() {
     };
     println!("token is {:?}.", token);
 
-    let carrier = client::new_carrier("china_telecom,123,456,789789789");
+    let carrier = CarrierClient::new("china_telecom,123,456,789789789");
     if let Ok(c) = carrier {
         println!("carrier status is {:?}", c.card_status("1234"));
     }
@@ -106,6 +106,10 @@ fn app_state() -> App<models::Store> {
                         .resource("/{username}/{password}", |r| {
                             r.method(Method::GET).with(auth::user_info)
                         })
+                })
+                .nested("/card/{iccid}", |v1card| {
+                    v1card
+                        .resource("/status", |r| r.method(Method::GET).f(index))
                 })
         })
         .default_resource(|r| {
