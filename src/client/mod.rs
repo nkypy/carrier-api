@@ -7,6 +7,8 @@ mod jiangsu_mobile_client;
 use crate::client::china_telecom_client::ChinaTelecomClient;
 use crate::client::china_unicom_client::ChinaUnicomClient;
 use crate::client::china_mobile_client::ChinaMobileClient;
+use crate::client::guangdong_mobile_client::GuangdongMobileClient;
+use crate::client::jiangsu_mobile_client::JiangsuMobileClient;
 
 pub trait CarrierClient {
     fn card_status(&self, &'static str) -> String;
@@ -27,8 +29,8 @@ pub fn new_carrier(account: &'static str) -> Result<Box<CarrierClient>, &'static
         },
         ("china_unicom", 5) => Ok(Box::new(ChinaUnicomClient{username: v[1], password: v[2], soap_license: v[3], rest_license: v[4]})),
         ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient{app_id: v[1], password: v[2]})),
-        // ("guangdong_mobile", 4) => Ok(CarrierClient::GuangdongMobile(v[1], v[2], v[3])),
-        // ("jiangsu_mobile", 5) => Ok(CarrierClient::JiangsuMobile(v[1], v[2], v[3], v[4])),
+        ("guangdong_mobile", 4) => Ok(Box::new(GuangdongMobileClient{app_id: v[1], password: v[2], group_code: v[3]})),
+        ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient{app_id: v[1], password: v[2], group_code: v[3], city_code: v[4]})),
         _ => Err("不正确的运营商账号"),
     }
 }
