@@ -6,3 +6,4 @@ mod guangdong_mobile_client;
 mod jiangsu_mobile_client;
 
 pub use crate::client::carrier_client::CarrierClient;
+pub use crate::client::china_telecom_client::ChinaTelecomClient;

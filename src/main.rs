@@ -14,6 +14,8 @@ extern crate env_logger;
 extern crate futures;
 extern crate jsonwebtoken as jwt;
 extern crate snowflake;
+extern crate base64;
+extern crate serde_xml_rs;
 
 mod api;
 mod error;
@@ -74,6 +76,10 @@ fn main() {
     if let Ok(c) = carrier {
         println!("carrier status is {:?}", c.card_status("1234"));
     }
+
+    let ct = crate::client::ChinaTelecomClient{username: "1", password: "2", license: "3"};
+    let ct_result = ct.hash(vec!["234", "123", "345"]);
+    println!("result is {}", ct_result);
 
     let sys = actix::System::new("hello-world");
     server::new(|| vec![app_state().boxed()])
