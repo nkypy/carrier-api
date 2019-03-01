@@ -1,3 +1,6 @@
+const CHINA_TELECOM_GET_API_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
+const CHINA_TELECOM_SET_API_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.do";
+
 #[derive(Debug)]
 pub struct ChinaTelecomClient<'a> {
     pub username: &'a str,

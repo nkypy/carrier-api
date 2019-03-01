@@ -11,7 +11,8 @@ pub struct Claims {
 }
 
 pub struct Store {
-    pub db: Pool<ConnectionManager<PgConnection>>,
+    // pub db: Pool<ConnectionManager<PgConnection>>,
+    pub db: i64,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -58,11 +59,13 @@ pub struct User {
     // pub updated_at: SystemTime,
 }
 
-pub fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let conn = Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool.");
-    conn.clone()
-}
+// pub fn establish_connection() -> Pool<ConnectionManager<PgConnection>> {
+//     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+//     let manager = ConnectionManager::<PgConnection>::new(database_url).unwrap();
+//     let pool = Pool::builder()
+//         .build(manager)
+//         .expect("Failed to create pool.");
+//     let conn = pool.get().expect("cannot get conn");
+//     let pool = pool.clone();
+//     pool
+// }

@@ -6,7 +6,7 @@ use diesel::prelude::*;
 use futures::future::Future;
 
 use error::{Error,ERR_UNKNOWN_ERROR, ErrorReply};
-use models::{establish_connection, AuthReply, AuthRequest, Store, User, AppReply, InfoReply};
+use models::{AuthReply, AuthRequest, Store, User, AppReply, InfoReply};
 use schema::users;
 
 pub fn signin(state: State<Store>,json: Json<AuthRequest>) -> Result<Json<AuthReply>, Error> {
@@ -30,7 +30,7 @@ pub fn signup(
 // }
 
 pub fn get_users(req: &HttpRequest<Store>) -> Result<Json<AppReply>, Error> {
-    let conn = &req.state().db.get().expect("数据库连接失败");
+    // let conn = &req.state().db.get().expect("数据库连接失败");
     // let u: Vec<User> = users::table.load(conn).expect("Error loading users");
     let reply = AppReply{
         data: vec![Ok(InfoReply{error_code: Some(1), error_message: None}), Err(Error::TokenIsNotValid)],

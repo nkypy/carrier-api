@@ -1,3 +1,5 @@
+const CHINA_MOBILE_API_URL: &str = "https://api.iot.10086.cn/v2/";
+
 #[derive(Debug)]
 pub struct ChinaMobileClient<'a> {
     pub app_id: &'a str,

@@ -8,7 +8,7 @@ pub trait CarrierClient {
     fn card_status(&self, &'static str) -> String;
     fn card_online_state(&self, &'static str) -> String;
     fn card_info(&self, &'static str) -> String;
-    fn card_traffic(&self, &'static str) -> String;
+    fn card_traffic(&self, &'static str) -> String; // 后期改成 card_usage
     fn card_plan(&self, &'static str) -> String;
 }
 

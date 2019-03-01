@@ -77,10 +77,6 @@ fn main() {
         println!("carrier status is {:?}", c.card_status("1234"));
     }
 
-    let ct = crate::client::ChinaTelecomClient{username: "1", password: "2", license: "3"};
-    let ct_result = ct.hash(vec!["234", "123", "345"]);
-    println!("result is {}", ct_result);
-
     let sys = actix::System::new("hello-world");
     server::new(|| vec![app_state().boxed()])
         .bind("127.0.0.1:8989")
@@ -91,8 +87,9 @@ fn main() {
 }
 
 fn app_state() -> App<models::Store> {
-    let pool = models::establish_connection();
-    App::with_state(models::Store { db: pool.clone() })
+    // let pool = models::establish_connection();
+    // App::with_state(models::Store { db: pool.clone() })
+    App::with_state(models::Store{db: 1})
         .middleware(Logger::default())
         // .prefix("/v1/auth") // prefix 后面 default_resource 只对下面的子路由生效，而scope则和group一样
         .scope("/v1", |v1| {
