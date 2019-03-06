@@ -16,6 +16,7 @@ extern crate jsonwebtoken as jwt;
 extern crate snowflake;
 extern crate base64;
 extern crate serde_xml_rs;
+extern crate reqwest;
 
 mod api;
 mod error;

@@ -1,7 +1,7 @@
 use std::time::Duration;
 use actix_web::http::Method;
-use actix_web::client::ClientRequest;
 use futures::Future;
+use reqwest::{ClientBuilder, Request, Url};
 
 const CHINA_UNICOM_REST_API_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
@@ -88,24 +88,27 @@ pub struct ChinaUnicomReply<'a> {
 }
 
 impl<'a> ChinaUnicomClient<'a> {
-    pub fn rest_request(&self, url: &'a str, method: Method) -> String {
-        let mut builder = ClientRequest::build();
-        builder
-            .uri(format!("{}{}", CHINA_UNICOM_REST_API_URL, url))
-            .method(method)
-            .header("Authorization", format!("Basic {}", base64::encode(format!("{}:{}", self.username, self.rest_license).as_bytes())))
-            .header("Content-Type", "application/json")
-            .header("User-Agent", "actix_web client")
-            .finish()
-            .unwrap()
-            .send()
-            .timeout(Duration::from_secs(10))                               // <- Send http request
-            .map_err(|_| ())
-            .and_then(|response| {                // <- server http response
-                println!("Response: {:?}", response);
-                Ok(())
-            });
-        "结束".to_string()
+    pub fn rest_request(&self, method: Method, url: &'a str) -> Result<String, &'a str> {
+        let client = match ClientBuilder::new()
+            .gzip(true)
+            .timeout(Duration::from_secs(10))
+            .build() {
+                Ok(c) => c,
+                Err(_) => return Err("failed to build client"),
+            };
+        let url = Url::parse(&format!("{}{}", CHINA_UNICOM_REST_API_URL, url)).unwrap();
+        let mut req = Request::new(method, url);
+        let token = &format!("Basic {}", base64::encode(format!("{}:{}", self.username, self.rest_license).as_bytes()));
+        req.headers_mut().insert("Authorization", token.parse().unwrap());
+        req.headers_mut().insert("Content-Type", "application/json".parse().unwrap());
+        req.headers_mut().insert("User-Agent", "rust client by kshih.com".parse().unwrap());
+        let mut resp = client.execute(req).expect("failed to send request");
+        // if let Ok(reply) = resp.json::<ChinaUnicomReply<'a>>() {
+        //     println!("{:#?}", reply);
+        // };
+        // let reply: ChinaUnicomReply = resp.json().expect("not right");
+        println!("{:?}, {:?}", resp, resp);
+        Ok("结束".to_string())
     }
 }
 
