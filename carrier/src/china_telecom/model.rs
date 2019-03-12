@@ -39,11 +39,17 @@ impl<'a> CardStatusReply<'a> {
         match self.result_code {
             "0" => match self.infos.len() {
                 0 => Err("长度不对"),
-                1 => Ok(CardStatus{status_code: self.infos[0].status_code, status_name: self.infos[0].status_name, date_created: self.date_created}),
+                1 => Ok(CardStatus{
+                    status_code: self.infos[0].status_code,
+                    status_name: self.infos[0].status_name,
+                    date_created: self.date_created}),
                 _ => {
                     for v in self.infos.iter() {
                         if v.status_code != "6" {
-                            return Ok(CardStatus{status_code: v.status_code, status_name: v.status_name, date_created: self.date_created});
+                            return Ok(CardStatus{
+                                status_code: v.status_code,
+                                status_name: v.status_name,
+                                date_created: self.date_created});
                         }
                     }
                     Err("没有数据")
