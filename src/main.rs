@@ -7,6 +7,8 @@ extern crate diesel;
 #[macro_use]
 extern crate failure;
 
+extern crate base64;
+extern crate des;
 extern crate actix;
 extern crate actix_web;
 extern crate dotenv;
@@ -14,16 +16,16 @@ extern crate env_logger;
 extern crate futures;
 extern crate jsonwebtoken as jwt;
 extern crate snowflake;
-extern crate base64;
 extern crate serde_xml_rs;
 extern crate reqwest;
+extern crate carrier;
 
 mod api;
 mod error;
 mod middleware;
 mod models;
 mod schema;
-mod client;
+// mod client;
 
 use error::Error;
 
@@ -37,7 +39,8 @@ use std::env;
 use dotenv::dotenv;
 
 use crate::api::v1::auth;
-use crate::client::CarrierClient;
+
+use carrier::CarrierClient;
 
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
@@ -78,9 +81,14 @@ fn main() {
         println!("carrier status is {:?}", c.card_status("1234"));
     }
 
+    // let s = crate::client::decrypt("MTIzCg==");
+    // println!("base64 is {:?}", s);
+
     let sys = actix::System::new("hello-world");
+    let server_name: &str = "127.0.0.1:8989";
+    info!("server is running at {}", server_name);
     server::new(|| vec![app_state().boxed()])
-        .bind("127.0.0.1:8989")
+        .bind(server_name)
         .unwrap()
         .shutdown_timeout(1)
         .start();
