@@ -1,4 +1,4 @@
-use crate::model::{CardStatus, CardInfo};
+use crate::{CardStatus, CardInfo};
 
 // 卡号查询返回
 #[derive(Debug, Serialize, Deserialize)]
