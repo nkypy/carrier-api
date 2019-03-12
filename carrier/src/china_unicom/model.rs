@@ -3,7 +3,7 @@ use crate::{CardStatus, CardInfo};
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ChinaUnicomSmsRequest<'a> {
+pub struct SmsRequest<'a> {
 	pub message_text: &'a str,
 	pub message_encoding: &'a str,
 }
@@ -11,7 +11,7 @@ pub struct ChinaUnicomSmsRequest<'a> {
 // 返回数据格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ChinaUnicomReply<'a> {
+pub struct CardReply<'a> {
     // 错误
     pub error_code: &'a str,
     pub error_message: &'a str,
@@ -73,7 +73,7 @@ pub struct ChinaUnicomReply<'a> {
     pub sms_message_id: i64,
 }
 
-impl<'a> ChinaUnicomReply<'a> {
+impl<'a> CardReply<'a> {
     fn to_card_status(&self) -> Result<CardInfo, &'a str> {
         Err("to_card_status")
     }
