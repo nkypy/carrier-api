@@ -74,7 +74,7 @@ pub struct CardReply<'a> {
 }
 
 impl<'a> CardReply<'a> {
-    fn to_card_status(&self) -> Result<CardInfo, &'a str> {
+    fn to_card_status(&self) -> Result<CardStatus, &'a str> {
         Err("to_card_status")
     }
     fn to_card_info(&self) -> Result<CardInfo, &'a str> {

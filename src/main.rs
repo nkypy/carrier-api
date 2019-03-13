@@ -85,7 +85,7 @@ fn main() {
     // println!("base64 is {:?}", s);
 
     let sys = actix::System::new("hello-world");
-    let server_name: &str = "127.0.0.1:8989";
+    let server_name: &str = "0.0.0.0:8989";
     info!("server is running at {}", server_name);
     server::new(|| vec![app_state().boxed()])
         .bind(server_name)
