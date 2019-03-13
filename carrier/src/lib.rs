@@ -11,10 +11,10 @@ extern crate serde_xml_rs;
 extern crate reqwest;
 
 pub use crate::model::{CardStatus, CardInfo};
-
 use crate::{
-    china_telecom::ChinaTelecomClient,
-    china_unicom::ChinaUnicomClient,
+    china_telecom::ChinaTelecomClient, china_unicom::ChinaUnicomClient,
+    china_mobile::{
+        ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
 };
 
 pub trait CarrierClient<'a> {
@@ -38,9 +38,12 @@ impl<'a> CarrierClient<'a> {
             },
             ("china_unicom", 5) => Ok(Box::new(ChinaUnicomClient{
                 username: v[1], password: v[2], soap_license: v[3], rest_license: v[4]})),
-            // ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient{app_id: v[1].to_string(), password: v[2].to_string()})),
-            // ("guangdong_mobile", 4) => Ok(Box::new(GuangdongMobileClient{app_id: v[1].to_string(), password: v[2].to_string(), group_code: v[3].to_string()})),
-            // ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient{app_id: v[1].to_string(), password: v[2].to_string(), group_code: v[3].to_string(), city_code: v[4].to_string()})),
+            ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient{
+                app_id: v[1], password: v[2]})),
+            ("guangdong_mobile", 4) => Ok(Box::new(GuangdongMobileClient{
+                app_id: v[1], password: v[2], group_code: v[3]})),
+            ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient{
+                app_id: v[1], password: v[2], group_code: v[3], city_code: v[4]})),
             _ => Err("不正确的运营商账号"),
         }
     }
