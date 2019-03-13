@@ -12,11 +12,15 @@ const API_URL: &str = "http://221.178.251.182:80/internet_surfing";
 pub struct JiangsuMobileClient<'a> {
     pub app_id: &'a str,
     pub password: &'a str,
-    pub group_code: &'a str,
-    pub city_code: &'a str,
+    pub group_id: &'a str,
+    pub city_id: &'a str,
 }
 
 impl<'a> JiangsuMobileClient<'a> {
+    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str, city_id: &'a str) -> JiangsuMobileClient<'a> {
+        JiangsuMobileClient{
+            app_id: app_id, password: password, group_id: group_id, city_id: city_id}
+    }
     fn request(&self) -> () {
         let dt = Utc::now().format("%Y%m%d%H%M%S").to_string();
         let item = CardRequest::new(
