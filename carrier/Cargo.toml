@@ -9,4 +9,7 @@ serde = "*"
 serde_derive = "*"
 serde_json = "*"
 serde-xml-rs = "*"
+chrono = { version = "*", features = ["serde"] }
+sha1 = "*"
+des = "*"
 reqwest = "*"

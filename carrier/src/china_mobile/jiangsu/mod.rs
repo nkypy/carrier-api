@@ -1,6 +1,6 @@
 mod model;
 
-use {reqwest, serde_xml_rs::to_string};
+use {chrono::prelude::Utc, reqwest::Client, serde_xml_rs::to_string};
 use crate::{
     CarrierClient, CardStatus, CardInfo,
     china_mobile::jiangsu::model::CardRequest};
@@ -17,17 +17,17 @@ pub struct JiangsuMobileClient<'a> {
 }
 
 impl<'a> JiangsuMobileClient<'a> {
-    fn request(&self) -> String {
+    fn request(&self) -> () {
+        let dt = Utc::now().format("%Y%m%d%H%M%S").to_string();
         let item = CardRequest::new(
-            "","","","","","","","","","","","","","","","","","","","","");
+            "","","",&dt,"","","","","","","","","","","","","","","","","");
         let data = to_string(&item).unwrap();
-        let client = reqwest::Client::new();
+        let client = Client::new();
         let resp = client.post(API_URL)
             .body(data)
             .send()
             .unwrap();
         println!("江苏返回 {:?}", resp);
-        "江苏返回".to_string()
     }
 }
 
