@@ -18,16 +18,20 @@ impl<'a> GuangdongMobileClient<'a> {
         GuangdongMobileClient{
             app_id: app_id, password: password, group_id: group_id}
     }
-    // 签名
-    fn sign(&self, mut params: Vec<(&'a str, &'a str)>) -> String {
-        let default_params = vec![("format", "json"), ("v", "3.0"), ("appKey", self.app_id)];
-        params.extend(default_params);
+    // 签名, 完成
+    pub fn sign(&self, mut params: Vec<(&'a str, &'a str)>) -> String {
+        let params_init: Vec<(&'a str, &'a str)> = vec![("format", "json"), ("v", "3.0"), ("appKey", self.app_id)];
+        params.extend(params_init);
         // 排序
         params.sort_by(|a, b| a.0.cmp(&b.0));
+        // 拼接 params
+        let params_vec: Vec<String> = dbg!(params.iter().map(|x| { format!("{}{}", x.0, x.1) }).collect());
+        // 首尾加上 password
+        let params_str: String = dbg!(format!("{0}{1}{0}", self.password, params_vec.join("")));
         // Sha1 加密成大写十六进制
-        Sha1::from("Hello World!").digest().to_string().to_uppercase()
+        dbg!(Sha1::from(&params_str).digest().to_string().to_uppercase())
     }
-    // 3DES 解密
+    // 3DES 解密, TODO
     fn decrypt(&self) -> () {
         let key = &self.password[..24];
     }

@@ -14,7 +14,7 @@ extern crate des;
 extern crate reqwest;
 
 pub use crate::model::{CardStatus, CardInfo};
-use crate::{
+pub use crate::{
     china_telecom::ChinaTelecomClient, china_unicom::ChinaUnicomClient,
     china_mobile::{
         ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},

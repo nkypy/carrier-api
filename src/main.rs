@@ -40,7 +40,7 @@ use dotenv::dotenv;
 
 use crate::api::v1::auth;
 
-use carrier::CarrierClient;
+use carrier::{CarrierClient, GuangdongMobileClient};
 
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
@@ -76,11 +76,13 @@ fn main() {
     };
     println!("token is {:?}.", token);
 
-    let carrier = CarrierClient::new("china_telecom,123,456,789789789");
+    // let carrier = CarrierClient::new("china_telecom,123,456,789789789");
+    let carrier = CarrierClient::new("guangdong_mobile,123,456,789");
     if let Ok(c) = carrier {
         println!("carrier status is {:?}", c.card_status("1234"));
     }
-
+    let carrier = GuangdongMobileClient::new("123","456","789");
+    carrier.sign(vec![("haha", "hoho")]);
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
 
