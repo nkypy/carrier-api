@@ -40,7 +40,7 @@ use dotenv::dotenv;
 
 use crate::api::v1::auth;
 
-use carrier::{CarrierClient, GuangdongMobileClient};
+use carrier::{CarrierClient, ChinaTelecomClient, GuangdongMobileClient};
 
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
@@ -83,6 +83,8 @@ fn main() {
     }
     let carrier = GuangdongMobileClient::new("123","456","789");
     carrier.sign(vec![("haha", "hoho")]);
+    let carrier = ChinaTelecomClient::new("123", "456", "789");
+    carrier.request("localhost", "test", "signValue", vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
 

@@ -34,8 +34,7 @@ impl<'a> CarrierClient<'a> {
         match (v[0], v.len()) {
             ("china_telecom", 4) => {
                 match v[3].len() {
-                    9 => Ok(Box::new(ChinaTelecomClient{
-                        username: v[1], password: v[2], license: v[3]})),
+                    9 => Ok(Box::new(ChinaTelecomClient::new(v[1], v[2], v[3]))),
                     _ => Err("不正确的运营商账号"),
                 }
             },

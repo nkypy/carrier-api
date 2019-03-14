@@ -14,9 +14,24 @@ pub struct ChinaTelecomClient<'a> {
 }
 
 impl<'a> ChinaTelecomClient<'a> {
+    pub fn new(username: &'a str, password: &'a str, license: &'a str) -> ChinaTelecomClient<'a> {
+        ChinaTelecomClient{
+            username: username, password: password, license: license}
+    }
     pub fn hash(&self, mut data: Vec<&str>) -> String {
         data.sort();
         data.join(",")
+    }
+    pub fn get(&self, method: &'a str, iccid: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
+        "haha".to_string()
+    }
+    pub fn set(&self, method: &'a str, iccid: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
+        "setup".to_string()
+    }
+    pub fn request(&self, url: &'a str, method: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> () {
+        let url = dbg!(format!("{}?method={}&user_id={}&passWord={}&sign={}",url,method, self.username, self.password,sign));
+        let others: Vec<String> = dbg!(params.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
+        let url = dbg!(format!("{}&{}",url,others.join("&")));
     }
 }
 
