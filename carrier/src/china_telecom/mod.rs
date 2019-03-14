@@ -18,20 +18,28 @@ impl<'a> ChinaTelecomClient<'a> {
         ChinaTelecomClient{
             username: username, password: password, license: license}
     }
-    pub fn hash(&self, mut data: Vec<&str>) -> String {
+    pub fn get(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+        dbg!(self.request(API_GET_URL, method, iccid, sign, params))
+    }
+    pub fn set(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+        dbg!(self.request(API_SET_URL, method, iccid, sign, params))
+    }
+    fn sign(&self, params: Vec<&'a str>) -> String {
+        let mut data = vec![self.username, self.password];
+        data.extend(params);
         data.sort();
-        data.join(",")
+        dbg!(data.join(","))
     }
-    pub fn get(&self, method: &'a str, iccid: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
-        "haha".to_string()
-    }
-    pub fn set(&self, method: &'a str, iccid: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
-        "setup".to_string()
-    }
-    pub fn request(&self, url: &'a str, method: &'a str, sign: &'a str, params: Vec<(&'a str, &'a str)>) -> () {
-        let url = dbg!(format!("{}?method={}&user_id={}&passWord={}&sign={}",url,method, self.username, self.password,sign));
-        let others: Vec<String> = dbg!(params.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
-        let url = dbg!(format!("{}&{}",url,others.join("&")));
+    fn request(&self, url: &'a str, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+        let mut key = "access_number";
+        if iccid.len() == 20 || iccid.len() == 19 {
+            key = "iccid";
+        };
+        let sign_str = self.sign(sign);
+        let mut data = vec![("method", method), ("user_id", self.username), ("passWord", self.password), ("sign", &sign_str), (key, iccid)];
+        data.extend(params);
+        let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
+        format!("{}?{}",url,others.join("&"))
     }
 }
 

@@ -84,7 +84,7 @@ fn main() {
     let carrier = GuangdongMobileClient::new("123","456","789");
     carrier.sign(vec![("haha", "hoho")]);
     let carrier = ChinaTelecomClient::new("123", "456", "789");
-    carrier.request("localhost", "test", "signValue", vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
+    carrier.set("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
 
