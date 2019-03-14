@@ -16,7 +16,8 @@ pub struct GuangdongMobileClient<'a> {
 impl<'a> GuangdongMobileClient<'a> {
     pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str) -> GuangdongMobileClient<'a> {
         GuangdongMobileClient{
-            app_id: app_id, password: password, group_id: group_id}
+            app_id: app_id, password: password, group_id: group_id,
+        }
     }
     // 签名, 完成
     pub fn sign(&self, mut params: Vec<(&'a str, &'a str)>) -> String {

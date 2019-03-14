@@ -17,6 +17,14 @@ pub struct ChinaMobileClient<'a> {
     pub password: &'a str,
 }
 
+impl<'a> ChinaMobileClient<'a> {
+    pub fn new(app_id: &'a str, password: &'a str) -> ChinaMobileClient<'a> {
+        ChinaMobileClient{
+            app_id: app_id, password: password,
+        }
+    }
+}
+
 impl<'a> CarrierClient<'a> for ChinaMobileClient<'a> {
     fn card_status(&self, iccid: &str) -> Result<CardStatus, &'a str> {
         Err("card_status")

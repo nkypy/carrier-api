@@ -13,6 +13,16 @@ pub struct ChinaUnicomClient<'a> {
     pub rest_license: &'a str,
 }
 
+impl<'a> ChinaUnicomClient<'a> {
+    pub fn new(username: &'a str, password: &'a str, soap_license: &'a str,
+        rest_license: &'a str) -> ChinaUnicomClient<'a> {
+        ChinaUnicomClient{
+            username: username, password: password, soap_license: soap_license,
+            rest_license: rest_license,
+        }
+    }
+}
+
 impl<'a> CarrierClient<'a> for ChinaUnicomClient<'a> {
     fn card_status(&self, iccid: &str) -> Result<CardStatus, &'a str> {
         Err("card_status")
