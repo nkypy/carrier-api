@@ -27,3 +27,4 @@ base64 = "*"
 serde-xml-rs = "*"
 reqwest = "*"
 des = "0.3.0"
+chrono = { version = "*", features = ["serde"] }

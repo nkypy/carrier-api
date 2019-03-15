@@ -10,7 +10,9 @@ extern crate serde_json;
 extern crate serde_xml_rs;
 extern crate chrono;
 extern crate sha1;
+extern crate sha2;
 extern crate des;
+extern crate base64;
 extern crate reqwest;
 
 pub use crate::model::{CardStatus, CardInfo};

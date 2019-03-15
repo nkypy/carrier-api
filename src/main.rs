@@ -19,6 +19,7 @@ extern crate snowflake;
 extern crate serde_xml_rs;
 extern crate reqwest;
 extern crate carrier;
+extern crate chrono;
 
 mod api;
 mod error;
@@ -40,7 +41,7 @@ use dotenv::dotenv;
 
 use crate::api::v1::auth;
 
-use carrier::{CarrierClient, ChinaTelecomClient, GuangdongMobileClient};
+use carrier::{CarrierClient, ChinaTelecomClient, ChinaUnicomClient, ChinaMobileClient, GuangdongMobileClient};
 
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
@@ -85,9 +86,12 @@ fn main() {
     carrier.sign(vec![("haha", "hoho")]);
     let carrier = ChinaTelecomClient::new("123", "456", "789");
     carrier.get("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
+    let carrier = ChinaMobileClient::new("123", "456");
+    carrier.get("gprsrealsingle", "0001000000000", vec![("iccid", "898602D9981700140197")]);
+    let carrier = ChinaUnicomClient::new("123", "456", "789", "012");
+    carrier.get("devices/898602D9981700140197");
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
-
     let sys = actix::System::new("hello-world");
     let server_name: &str = "0.0.0.0:8989";
     info!("server is running at {}", server_name);
