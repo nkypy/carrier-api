@@ -21,25 +21,10 @@ impl<'a> ChinaTelecomClient<'a> {
         }
     }
     pub fn get(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
-        let url = dbg!(self.gen_url(API_GET_URL, method, iccid, sign, params));
-        let client = Client::new();
-        let mut resp = dbg!(client.get(&url)
-            .send()
-            .unwrap());
-        let mut buf = String::new();
-        resp.read_to_string(&mut buf).expect("Failed to read response");
-        dbg!(buf)
+        dbg!(self.request(API_GET_URL, method, iccid, sign, params))
     }
     pub fn set(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
-        let url = dbg!(self.gen_url(API_SET_URL, method, iccid, sign, params));
-        let client = Client::new();
-        let mut resp = dbg!(client.post(&url)
-            .body("123")
-            .send()
-            .unwrap());
-        let mut buf = String::new();
-        resp.read_to_string(&mut buf).expect("Failed to read response");
-        dbg!(buf)
+        dbg!(self.request(API_SET_URL, method, iccid, sign, params))
     }
     fn sign(&self, params: Vec<&'a str>) -> String {
         let mut data = vec![self.username, self.password];
@@ -47,7 +32,7 @@ impl<'a> ChinaTelecomClient<'a> {
         data.sort();
         dbg!(data.join(","))
     }
-    fn gen_url(&self, url: &'a str, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+    fn request(&self, url: &'a str, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
         let mut key = "access_number";
         if iccid.len() == 20 || iccid.len() == 19 {
             key = "iccid";
@@ -56,7 +41,12 @@ impl<'a> ChinaTelecomClient<'a> {
         let mut data = vec![("method", method), ("user_id", self.username), ("passWord", self.password), ("sign", &sign_str), (key, iccid)];
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
-        format!("{}?{}",url,others.join("&"))
+        let url = dbg!(format!("{}?{}",url,others.join("&")));
+        let client = Client::new();
+        let mut resp = dbg!(client.get(&url).send().unwrap());
+        let mut buf = String::new();
+        resp.read_to_string(&mut buf).expect("Failed to read response");
+        buf
     }
 }
 
