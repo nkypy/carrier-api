@@ -1,83 +1,84 @@
-use crate::{CardStatus, CardInfo};
+use serde_json;
+use crate::{Result, CardStatus, CardInfo};
 
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SmsRequest<'a> {
-	pub message_text: &'a str,
-	pub message_encoding: &'a str,
+pub struct SmsRequest {
+	pub message_text: String,
+	pub message_encoding: String,
 }
 
 // 返回数据格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CardReply<'a> {
+pub struct CardReply {
     // 错误
-    pub error_code: &'a str,
-    pub error_message: &'a str,
+    pub error_code: Option<String>,
+    pub error_message: Option<String>,
     // 基本信息
-    pub iccid: &'a str,
-    pub imsi: &'a str,
-    pub msisdn: &'a str,
-    pub imei: &'a str,
-    pub status: &'a str,
-    pub rate_plan: &'a str,
-    pub communication_plan: &'a str,
+    pub iccid: Option<String>,
+    pub imsi: Option<String>,
+    pub msisdn: Option<String>,
+    pub imei: Option<String>,
+    pub status: Option<String>,
+    pub rate_plan: Option<String>,
+    pub communication_plan: Option<String>,
     // info 接口
-    pub effective_date: &'a str,
-    pub customer: &'a str,
-    pub end_cusumer_id: &'a str,
-    pub date_activated: &'a str,
-    pub date_updated: &'a str,
-    pub date_shipped: &'a str,
-    pub account_id: &'a str,
+    pub effective_date: Option<String>,
+    pub customer: Option<String>,
+    pub end_cusumer_id: Option<String>,
+    pub date_activated: Option<String>,
+    pub date_updated: Option<String>,
+    pub date_shipped: Option<String>,
+    pub account_id: Option<String>,
     #[serde(rename = "fixedIPAddress")]
-    pub fixed_ip_address: &'a str,
-    pub sim_notes: &'a str,
+    pub fixed_ip_address: Option<String>,
+    pub sim_notes: Option<String>,
     #[serde(rename = "deviceID")]
-    pub device_id: &'a str,
+    pub device_id: Option<String>,
     #[serde(rename = "modemID")]
-    pub modem_id: &'a str,
+    pub modem_id: Option<String>,
     #[serde(rename = "globalSIMType")]
-    pub global_sim_type: &'a str,
+    pub global_sim_type: Option<String>,
     // flow 接口
-    pub timestamp: &'a str,
-    pub cycle_start_date: &'a str,
-    pub cycle_end_date: &'a str,
-    pub device_cycle_usage_in_zones: &'a str,
-    pub data_usage_unit: &'a str,
-    pub ctd_data_usage: f64,
+    pub timestamp: Option<String>,
+    pub cycle_start_date: Option<String>,
+    pub cycle_end_date: Option<String>,
+    pub device_cycle_usage_in_zones: Option<String>,
+    pub data_usage_unit: Option<String>,
+    pub ctd_data_usage: Option<f64>,
     #[serde(rename = "ctdSMSUsage")]
-    pub ctd_sms_usage: f64,
-    pub ctd_voice_usage: f64,
-    pub ctd_session_count: f64,
-    pub overage_limit_reached: bool,
-    pub overage_limit_override: &'a str,
+    pub ctd_sms_usage: Option<f64>,
+    pub ctd_voice_usage: Option<f64>,
+    pub ctd_session_count: Option<f64>,
+    pub overage_limit_reached: Option<bool>,
+    pub overage_limit_override: Option<String>,
     // flowUsage 接口
-    pub zone: &'a str,
-    pub rate_plan_version: &'a str,
-    pub data_usage: f64,
+    pub zone: Option<String>,
+    pub rate_plan_version: Option<String>,
+    pub data_usage: Option<f64>,
     #[serde(rename = "smsmousage")]
-    pub sms_mo_usage: f64,
+    pub sms_mo_usage: Option<f64>,
     #[serde(rename = "smsmtusage")]
-    pub sms_mt_usage: f64,
+    pub sms_mt_usage: Option<f64>,
     #[serde(rename = "voiceMOUsage")]
-    pub voice_mo_usage: f64,
+    pub voice_mo_usage: Option<f64>,
     #[serde(rename = "voiceMOUsageUnit")]
-    pub voice_mo_usage_unit: &'a str,
+    pub voice_mo_usage_unit: Option<String>,
     #[serde(rename = "voiceMTUsage")]
-    pub voice_mt_usage: f64,
+    pub voice_mt_usage: Option<f64>,
     #[serde(rename = "voiceMTUsageUnit")]
-    pub voice_mt_usage_unit: &'a str,
+    pub voice_mt_usage_unit: Option<String>,
     // 短信
-    pub sms_message_id: i64,
+    pub sms_message_id: Option<i64>,
 }
 
-impl<'a> CardReply<'a> {
-    fn to_card_status(&self) -> Result<CardStatus, &'a str> {
-        Err("to_card_status")
+impl CardReply {
+    pub fn to_card_status(&self) -> Result<CardStatus> {
+        Err("to_card_status".to_string())
     }
-    fn to_card_info(&self) -> Result<CardInfo, &'a str> {
-        Err("to_card_info")
+    pub fn to_card_info(&self) -> Result<CardInfo> {
+        Err("to_card_info".to_string())
     }
 }

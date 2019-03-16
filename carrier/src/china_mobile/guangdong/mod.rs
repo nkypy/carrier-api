@@ -22,7 +22,7 @@ pub struct GuangdongMobileClient {
 
 impl GuangdongMobileClient {
     pub fn new(app_id: &str, password: &str, group_id: &str) -> Self {
-        GuangdongMobileClient{
+        GuangdongMobileClient {
             app_id: app_id.to_owned(),
             password: password.to_owned(),
             group_id: group_id.to_owned()

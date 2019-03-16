@@ -16,16 +16,16 @@ pub struct ChinaTelecomClient {
 
 impl ChinaTelecomClient {
     pub fn new(username: &str, password: &str, license: &str) -> Self {
-        ChinaTelecomClient{
+        ChinaTelecomClient {
             username: username.to_owned(),
             password: password.to_owned(),
             license: license.to_owned()
         }
     }
-    pub fn get(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
+    pub fn get(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
         dbg!(self.request(API_GET_URL, method, iccid, sign, params))
     }
-    pub fn set(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
+    pub fn set(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
         dbg!(self.request(API_SET_URL, method, iccid, sign, params))
     }
     fn sign(&self, params: Vec<&str>) -> String {
@@ -42,21 +42,26 @@ impl ChinaTelecomClient {
         };
         data
     }
-    fn request(&self, url: &str, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
-        let mut key = "access_number";
+    fn request(&self, url: &str, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
+        let mut key: &str = "access_number";
         if iccid.len() == 20 || iccid.len() == 19 {
             key = "iccid";
         };
-        let sign_str = self.sign(sign);
-        let mut data = vec![("method", method), ("user_id", &self.username), ("passWord", &self.password), ("sign", &sign_str), (key, iccid)];
+        let password_str: String = self.sign(vec![&self.password]);
+        let sign_str: String = self.sign(sign);
+        let mut data: Vec<(&str, &str)> = vec![
+            ("method", method),
+            ("user_id", &self.username),
+            ("passWord", &password_str),
+            ("sign", &sign_str),
+            (key, iccid)];
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
-        let url = dbg!(format!("{}?{}",url,others.join("&")));
-        let client = Client::new();
-        let mut resp = dbg!(client.get(&url).send().unwrap());
-        let mut buf = String::new();
-        resp.read_to_string(&mut buf).expect("Failed to read response");
-        buf
+        let url: String = dbg!(format!("{}?{}",url,others.join("&")));
+        Ok(Client::new()
+            .get(&url)
+            .send().map_err(|_| "超时".to_string())?
+            .text().map_err(|_| "读取错误".to_string())?)
     }
 }
 

@@ -1,5 +1,7 @@
 mod model;
 
+
+use crate::china_unicom::model::CardReply;
 use {std::io::Read, base64::encode, reqwest::Client};
 use crate::{Result, CarrierClient, CardStatus, CardInfo};
 
@@ -17,8 +19,8 @@ pub struct ChinaUnicomClient {
 
 impl ChinaUnicomClient {
     pub fn new(username: &str, password: &str, soap_license: &str, rest_license: &str) -> Self {
-        let rest_auth = dbg!(encode(format!("{}:{}", username, rest_license).as_bytes()));
-        ChinaUnicomClient{
+        let rest_auth: String = dbg!(encode(format!("{}:{}", username, rest_license).as_bytes()));
+        ChinaUnicomClient {
             username: username.to_owned(),
             password: password.to_owned(),
             soap_license: soap_license.to_owned(),
@@ -26,16 +28,14 @@ impl ChinaUnicomClient {
             rest_auth: rest_auth
         }
     }
-    pub fn get(&self, url: &str) -> String {
+    pub fn get(&self, url: &str) -> Result<String> {
         let url = dbg!(format!("{}{}", API_REST_URL, url));
-        let client = Client::new();
-        let mut resp = dbg!(client.get(&url)
+        dbg!(Ok(Client::new()
+            .get(&url)
             .header("Authorization", format!("Basic {}", self.rest_auth))
             .header("Content-Type", "application/json")
-            .send().unwrap());
-        let mut buf = String::new();
-        resp.read_to_string(&mut buf).expect("Failed to read response");
-        dbg!(buf)
+            .send().map_err(|_| "超时".to_string())?
+            .text().map_err(|_| "读取错误".to_string())?))
     }
     pub fn put(&self, url: &str, data: &str) -> String {
         "put".to_string()
@@ -44,7 +44,12 @@ impl ChinaUnicomClient {
 
 impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        Err("card_status".to_string())
+        let url = dbg!(format!("devices/{}", iccid));
+        let resp = self.get(&url)?;
+        let v: CardReply = dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
+        // let x = v.to_card_status();
+        // dbg!(x)
+        Err("CardStatus".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
