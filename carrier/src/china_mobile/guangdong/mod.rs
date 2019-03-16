@@ -8,7 +8,7 @@ use {
         TdesEde3,
     },
 };
-use crate::{CarrierClient, CardStatus, CardInfo};
+use crate::{Result, CarrierClient, CardStatus, CardInfo};
 
 const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 
@@ -53,14 +53,14 @@ impl<'a> GuangdongMobileClient<'a> {
 }
 
 impl<'a> CarrierClient<'a> for GuangdongMobileClient<'a> {
-    fn card_status(&self, iccid: &str) -> Result<CardStatus, &'a str> {
-        Err("card_status")
+    fn card_status(&self, iccid: &str) -> Result<CardStatus> {
+        Err("card_status".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
-    fn card_info(&self, iccid: &str) -> Result<CardInfo, &'a str> {
-        Err("card_info")
+    fn card_info(&self, iccid: &str) -> Result<CardInfo> {
+        Err("card_info".to_string())
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

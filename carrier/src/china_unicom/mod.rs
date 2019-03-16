@@ -1,7 +1,7 @@
 mod model;
 
 use {std::io::Read, base64::encode, reqwest::Client};
-use crate::{CarrierClient, CardStatus, CardInfo};
+use crate::{Result, CarrierClient, CardStatus, CardInfo};
 
 const API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
@@ -40,14 +40,14 @@ impl<'a> ChinaUnicomClient<'a> {
 }
 
 impl<'a> CarrierClient<'a> for ChinaUnicomClient<'a> {
-    fn card_status(&self, iccid: &str) -> Result<CardStatus, &'a str> {
-        Err("card_status")
+    fn card_status(&self, iccid: &str) -> Result<CardStatus> {
+        Err("card_status".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
-    fn card_info(&self, iccid: &str) -> Result<CardInfo, &'a str> {
-        Err("card_info")
+    fn card_info(&self, iccid: &str) -> Result<CardInfo> {
+        Err("card_info".to_string())
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

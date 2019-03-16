@@ -2,7 +2,7 @@ mod model;
 
 use {chrono::prelude::Utc, reqwest::Client, serde_xml_rs::to_string};
 use crate::{
-    CarrierClient, CardStatus, CardInfo,
+    Result, CarrierClient, CardStatus, CardInfo,
     china_mobile::jiangsu::model::CardRequest};
 
 const API_URL: &str = "http://221.178.251.182:80/internet_surfing";
@@ -35,14 +35,14 @@ impl<'a> JiangsuMobileClient<'a> {
 }
 
 impl<'a> CarrierClient<'a> for JiangsuMobileClient<'a> {
-    fn card_status(&self, iccid: &str) -> Result<CardStatus, &'a str> {
-        Err("card_status")
+    fn card_status(&self, iccid: &str) -> Result<CardStatus> {
+        Err("card_status".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
-    fn card_info(&self, iccid: &str) -> Result<CardInfo, &'a str> {
-        Err("card_info")
+    fn card_info(&self, iccid: &str) -> Result<CardInfo> {
+        Err("card_info".to_string())
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

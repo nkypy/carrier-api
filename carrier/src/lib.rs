@@ -25,34 +25,36 @@ pub use crate::{
         ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
 };
 
+pub type Result<T> = std::result::Result<T, String>;
+
 pub trait CarrierClient<'a> {
-    fn card_status(&self, iccid: &'a str) -> Result<CardStatus, &'a str>;
+    fn card_status(&self, iccid: &'a str) -> Result<CardStatus>;
     fn card_online(&self, iccid: &'a str) -> String;
-    fn card_info(&self, iccid: &'a str) -> Result<CardInfo, &'a str>;
+    fn card_info(&self, iccid: &'a str) -> Result<CardInfo>;
     fn card_usage(&self, iccid: &'a str) -> String;
     fn card_plan(&self, iccid: &'a str) -> String;
 }
 
 impl<'a> CarrierClient<'a> {
-    pub fn new(account: &'static str) -> Result<Box<CarrierClient>, &'a str> {
+    pub fn new(account: &'static str) -> Result<Box<CarrierClient>> {
         let v: Vec<&str> = account.split(",").collect();
         match (v[0], v.len()) {
             ("china_telecom", 4) => {
                 match v[3].len() {
                     9 => Ok(Box::new(ChinaTelecomClient::new(v[1], v[2], v[3]))),
-                    _ => Err("不正确的运营商账号")
+                    _ => Err("不正确的运营商账号".to_string())
                 }
             },
             ("china_unicom", 5) => Ok(Box::new(ChinaUnicomClient::new(v[1], v[2], v[3], v[4]))),
             ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient::new(v[1], v[2]))),
             ("guangdong_mobile", 4) => {
                 match v[2].len() {
-                    0...23 => Err("不正确的运营商账号"),
+                    0...23 => Err("不正确的运营商账号".to_string()),
                     _ => Ok(Box::new(GuangdongMobileClient::new(v[1], v[2], v[3])))
                 }
             },
             ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient::new(v[1], v[2], v[3], v[4]))),
-            _ => Err("不正确的运营商账号")
+            _ => Err("不正确的运营商账号".to_string())
         }
     }
 }
