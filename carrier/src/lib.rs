@@ -27,16 +27,16 @@ pub use crate::{
 
 pub type Result<T> = std::result::Result<T, String>;
 
-pub trait CarrierClient<'a> {
-    fn card_status(&self, iccid: &'a str) -> Result<CardStatus>;
-    fn card_online(&self, iccid: &'a str) -> String;
-    fn card_info(&self, iccid: &'a str) -> Result<CardInfo>;
-    fn card_usage(&self, iccid: &'a str) -> String;
-    fn card_plan(&self, iccid: &'a str) -> String;
+pub trait CarrierClient {
+    fn card_status(&self, iccid: &str) -> Result<CardStatus>;
+    fn card_online(&self, iccid: &str) -> String;
+    fn card_info(&self, iccid: &str) -> Result<CardInfo>;
+    fn card_usage(&self, iccid: &str) -> String;
+    fn card_plan(&self, iccid: &str) -> String;
 }
 
-impl<'a> CarrierClient<'a> {
-    pub fn new(account: &'static str) -> Result<Box<CarrierClient>> {
+impl CarrierClient {
+    pub fn new(account: &str) -> Result<Box<CarrierClient>> {
         let v: Vec<&str> = account.split(",").collect();
         match (v[0], v.len()) {
             ("china_telecom", 4) => {

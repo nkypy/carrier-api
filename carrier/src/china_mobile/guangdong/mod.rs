@@ -14,24 +14,28 @@ const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 
 // 广东电信帐号信息
 #[derive(Debug)]
-pub struct GuangdongMobileClient<'a> {
-    pub app_id: &'a str,
-    pub password: &'a str,
-    pub group_id: &'a str,
+pub struct GuangdongMobileClient {
+    pub app_id: String,
+    pub password: String,
+    pub group_id: String,
 }
 
-impl<'a> GuangdongMobileClient<'a> {
-    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str) -> Self {
-        GuangdongMobileClient{app_id: app_id, password: password, group_id: group_id}
+impl GuangdongMobileClient {
+    pub fn new(app_id: &str, password: &str, group_id: &str) -> Self {
+        GuangdongMobileClient{
+            app_id: app_id.to_owned(),
+            password: password.to_owned(),
+            group_id: group_id.to_owned()
+        }
     }
     // 签名, 完成
-    pub fn sign(&self, mut params: Vec<(&'a str, &'a str)>) -> String {
-        let params_init: Vec<(&'a str, &'a str)> = vec![("format", "json"), ("v", "3.0"), ("appKey", self.app_id)];
-        params.extend(params_init);
+    pub fn sign(&self, params: Vec<(&str, &str)>) -> String {
+        let mut data: Vec<(&str, &str)> = vec![("format", "json"), ("v", "3.0"), ("appKey", &self.app_id)];
+        data.extend(params);
         // 排序
-        params.sort_by(|a, b| a.0.cmp(&b.0));
+        data.sort_by(|a, b| a.0.cmp(&b.0));
         // 拼接 params
-        let params_vec: Vec<String> = dbg!(params.iter().map(|x| { format!("{}{}", x.0, x.1) }).collect());
+        let params_vec: Vec<String> = dbg!(data.iter().map(|x| { format!("{}{}", x.0, x.1) }).collect());
         // 首尾加上 password
         let params_str: String = dbg!(format!("{0}{1}{0}", self.password, params_vec.join("")));
         // Sha1 加密成大写十六进制
@@ -52,7 +56,7 @@ impl<'a> GuangdongMobileClient<'a> {
     }
 }
 
-impl<'a> CarrierClient<'a> for GuangdongMobileClient<'a> {
+impl CarrierClient for GuangdongMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         Err("card_status".to_string())
     }

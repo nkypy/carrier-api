@@ -13,22 +13,25 @@ const API_URL: &str = "https://api.iot.10086.cn/v2/";
 
 // 中国移动帐号信息
 #[derive(Debug)]
-pub struct ChinaMobileClient<'a> {
-    pub app_id: &'a str,
-    pub password: &'a str,
+pub struct ChinaMobileClient {
+    pub app_id: String,
+    pub password: String,
 }
 
-impl<'a> ChinaMobileClient<'a> {
-    pub fn new(app_id: &'a str, password: &'a str) -> Self {
-        ChinaMobileClient{app_id: app_id, password: password}
+impl ChinaMobileClient {
+    pub fn new(app_id: &str, password: &str) -> Self {
+        ChinaMobileClient{
+            app_id: app_id.to_owned(),
+            password: password.to_owned()
+        }
     }
-    pub fn get(&self, method: &'a str, ebid: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
+    pub fn get(&self, method: &str, ebid: &str, params: Vec<(&str, &str)>) -> String {
         let now = Utc::now();
         let trans_id = format!("{}{}{:08}", self.app_id, now.format("%Y%m%d%H%M%S").to_string(), now.timestamp_subsec_nanos());
         let mut hasher = Sha256::new();
         hasher.input(format!("{}{}{}", self.app_id, self.password, trans_id).as_bytes());
         let token = dbg!(format!("{:x}", hasher.result()));
-        let mut data = vec![("appid", self.app_id), ("ebid", ebid), ("transid", &trans_id), ("token", &token)];
+        let mut data: Vec<(&str, &str)> = vec![("appid", &self.app_id), ("ebid", ebid), ("transid", &trans_id), ("token", &token)];
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}{}?{}", API_URL, method, others.join("&")));
@@ -40,7 +43,7 @@ impl<'a> ChinaMobileClient<'a> {
     }
 }
 
-impl<'a> CarrierClient<'a> for ChinaMobileClient<'a> {
+impl CarrierClient for ChinaMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         Err("card_status".to_string())
     }

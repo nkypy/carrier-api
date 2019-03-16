@@ -8,35 +8,47 @@ const API_SET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.
 
 // 电信帐号信息
 #[derive(Debug)]
-pub struct ChinaTelecomClient<'a> {
-    pub username: &'a str,
-    pub password: &'a str,
-    pub license: &'a str,
+pub struct ChinaTelecomClient {
+    pub username: String,
+    pub password: String,
+    pub license: String,
 }
 
-impl<'a> ChinaTelecomClient<'a> {
-    pub fn new(username: &'a str, password: &'a str, license: &'a str) -> Self {
-        ChinaTelecomClient{username: username, password: password, license: license}
+impl ChinaTelecomClient {
+    pub fn new(username: &str, password: &str, license: &str) -> Self {
+        ChinaTelecomClient{
+            username: username.to_owned(),
+            password: password.to_owned(),
+            license: license.to_owned()
+        }
     }
-    pub fn get(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+    pub fn get(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
         dbg!(self.request(API_GET_URL, method, iccid, sign, params))
     }
-    pub fn set(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+    pub fn set(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
         dbg!(self.request(API_SET_URL, method, iccid, sign, params))
     }
-    fn sign(&self, params: Vec<&'a str>) -> String {
-        let mut data = vec![self.username, self.password];
+    fn sign(&self, params: Vec<&str>) -> String {
+        let mut data: Vec<&str> = vec![&self.username, &self.password];
         data.extend(params);
         data.sort();
-        dbg!(data.join(","))
+        let data = dbg!(data.join(","));
+        let mut iterator = 1;
+        let mut remainder = 0;
+        let length = data.len();
+        if length >= 4 {
+            iterator = dbg!(length / 4);
+            remainder = dbg!(length % 4);
+        };
+        data
     }
-    fn request(&self, url: &'a str, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
+    fn request(&self, url: &str, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> String {
         let mut key = "access_number";
         if iccid.len() == 20 || iccid.len() == 19 {
             key = "iccid";
         };
         let sign_str = self.sign(sign);
-        let mut data = vec![("method", method), ("user_id", self.username), ("passWord", self.password), ("sign", &sign_str), (key, iccid)];
+        let mut data = vec![("method", method), ("user_id", &self.username), ("passWord", &self.password), ("sign", &sign_str), (key, iccid)];
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}?{}",url,others.join("&")));
@@ -48,7 +60,7 @@ impl<'a> ChinaTelecomClient<'a> {
     }
 }
 
-impl<'a> CarrierClient<'a> for ChinaTelecomClient<'a> {
+impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         Err("card_status".to_string())
     }

@@ -86,15 +86,15 @@ fn main() {
         Ok(c) => println!("carrier status is {:?}", c.card_status("1234")),
         Err(e) => println!("error is {:?}", e)
     };
-    // let carrier = ChinaTelecomClient::new("123", "456", "789");
-    // carrier.get("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
+    let carrier = ChinaTelecomClient::new("123", "456", "789");
+    carrier.get("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
     // let carrier = ChinaMobileClient::new("123", "456");
     // carrier.get("gprsrealsingle", "0001000000000", vec![("iccid", "898602D9981700140197")]);
     // let carrier = ChinaUnicomClient::new("123", "456", "789", "012");
     // carrier.get("devices/89860117750006390067");
-    let carrier = GuangdongMobileClient::new("123","8493fed21155dddd67c2aaa95aaebd11","789");
+    // let carrier = GuangdongMobileClient::new("123","8493fed21155dddd67c2aaa95aaebd11","789");
     // carrier.sign(vec![("haha", "hoho")]);
-    carrier.decrypt();
+    // carrier.decrypt();
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
     let sys = actix::System::new("hello-world");
