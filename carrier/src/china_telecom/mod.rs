@@ -15,10 +15,8 @@ pub struct ChinaTelecomClient<'a> {
 }
 
 impl<'a> ChinaTelecomClient<'a> {
-    pub fn new(username: &'a str, password: &'a str, license: &'a str) -> ChinaTelecomClient<'a> {
-        ChinaTelecomClient{
-            username: username, password: password, license: license,
-        }
+    pub fn new(username: &'a str, password: &'a str, license: &'a str) -> Self {
+        ChinaTelecomClient{username: username, password: password, license: license}
     }
     pub fn get(&self, method: &'a str, iccid: &'a str, sign: Vec<&'a str>, params: Vec<(&'a str, &'a str)>) -> String {
         dbg!(self.request(API_GET_URL, method, iccid, sign, params))

@@ -19,10 +19,8 @@ pub struct ChinaMobileClient<'a> {
 }
 
 impl<'a> ChinaMobileClient<'a> {
-    pub fn new(app_id: &'a str, password: &'a str) -> ChinaMobileClient<'a> {
-        ChinaMobileClient{
-            app_id: app_id, password: password,
-        }
+    pub fn new(app_id: &'a str, password: &'a str) -> Self {
+        ChinaMobileClient{app_id: app_id, password: password}
     }
     pub fn get(&self, method: &'a str, ebid: &'a str, params: Vec<(&'a str, &'a str)>) -> String {
         let now = Utc::now();

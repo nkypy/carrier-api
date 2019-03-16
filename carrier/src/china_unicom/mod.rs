@@ -16,8 +16,7 @@ pub struct ChinaUnicomClient<'a> {
 }
 
 impl<'a> ChinaUnicomClient<'a> {
-    pub fn new(username: &'a str, password: &'a str, soap_license: &'a str,
-        rest_license: &'a str) -> ChinaUnicomClient<'a> {
+    pub fn new(username: &'a str, password: &'a str, soap_license: &'a str, rest_license: &'a str) -> Self {
         let rest_auth = dbg!(encode(format!("{}:{}", username, rest_license).as_bytes()));
         ChinaUnicomClient{
             username: username, password: password, soap_license: soap_license,

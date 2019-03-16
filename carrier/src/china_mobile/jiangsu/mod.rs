@@ -17,10 +17,8 @@ pub struct JiangsuMobileClient<'a> {
 }
 
 impl<'a> JiangsuMobileClient<'a> {
-    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str, city_id: &'a str) -> JiangsuMobileClient<'a> {
-        JiangsuMobileClient{
-            app_id: app_id, password: password, group_id: group_id, city_id: city_id,
-        }
+    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str, city_id: &'a str) -> Self {
+        JiangsuMobileClient{app_id: app_id, password: password, group_id: group_id, city_id: city_id}
     }
     fn request(&self) -> () {
         let dt = Utc::now().format("%Y%m%d%H%M%S").to_string();

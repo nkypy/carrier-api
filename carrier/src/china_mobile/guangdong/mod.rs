@@ -1,6 +1,13 @@
 mod model;
 
-use {sha1::Sha1, des::TdesEde3};
+use {
+    sha1::Sha1,
+    generic_array::{GenericArray, typenum::U8},
+    des::{
+        block_cipher_trait::BlockCipher,
+        TdesEde3,
+    },
+};
 use crate::{CarrierClient, CardStatus, CardInfo};
 
 const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
@@ -14,10 +21,8 @@ pub struct GuangdongMobileClient<'a> {
 }
 
 impl<'a> GuangdongMobileClient<'a> {
-    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str) -> GuangdongMobileClient<'a> {
-        GuangdongMobileClient{
-            app_id: app_id, password: password, group_id: group_id,
-        }
+    pub fn new(app_id: &'a str, password: &'a str, group_id: &'a str) -> Self {
+        GuangdongMobileClient{app_id: app_id, password: password, group_id: group_id}
     }
     // 签名, 完成
     pub fn sign(&self, mut params: Vec<(&'a str, &'a str)>) -> String {
@@ -33,8 +38,17 @@ impl<'a> GuangdongMobileClient<'a> {
         dbg!(Sha1::from(&params_str).digest().to_string().to_uppercase())
     }
     // 3DES 解密, TODO
-    fn decrypt(&self) -> () {
-        let key = &self.password[..24];
+    pub fn decrypt(&self) -> () {
+        let a = dbg!(self.password[..24].as_bytes());
+        let x = GenericArray::from_slice(&a);
+        let t = dbg!(TdesEde3::new(&x));
+        let mut c = GenericArray::<u8, U8>::default();
+        let mut data = GenericArray::from_mut_slice(&mut c);
+        t.encrypt_block(data);
+        dbg!(data.as_slice());
+    }
+    pub fn get(&self) -> String {
+        "get".to_string()
     }
 }
 
