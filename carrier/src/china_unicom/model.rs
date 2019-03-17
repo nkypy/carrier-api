@@ -1,12 +1,12 @@
+use crate::{CardInfo, CardStatus, Result};
 use serde_json;
-use crate::{Result, CardStatus, CardInfo};
 
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SmsRequest {
-	pub message_text: String,
-	pub message_encoding: String,
+    pub message_text: String,
+    pub message_encoding: String,
 }
 
 // 返回数据格式

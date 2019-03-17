@@ -5,8 +5,8 @@ use actix_web::{
 };
 use jwt::{decode, encode, Header, Validation};
 
-use models::Claims;
 use error::ERR_TOKEN_IS_NOT_VALID;
+use models::Claims;
 
 pub struct TokenValidator;
 

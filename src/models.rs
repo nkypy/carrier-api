@@ -1,8 +1,8 @@
 use diesel::prelude::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
+use error::Error;
 use std::env;
 use std::time::SystemTime;
-use error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -18,7 +18,7 @@ pub struct Store {
 #[derive(Serialize, Deserialize)]
 // #[serde(untagged)]
 pub struct AppReply {
-    pub data: Vec<Result<InfoReply, Error>>
+    pub data: Vec<Result<InfoReply, Error>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -1,7 +1,7 @@
 mod model;
 
-use {std::io::Read, reqwest::Client};
-use crate::{Result, CarrierClient, CardStatus, CardInfo};
+use crate::{CardInfo, CardStatus, CarrierClient, Result};
+use {reqwest::Client, std::io::Read};
 
 const API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
 const API_SET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.do";
@@ -19,13 +19,25 @@ impl ChinaTelecomClient {
         ChinaTelecomClient {
             username: username.to_owned(),
             password: password.to_owned(),
-            license: license.to_owned()
+            license: license.to_owned(),
         }
     }
-    pub fn get(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
+    pub fn get(
+        &self,
+        method: &str,
+        iccid: &str,
+        sign: Vec<&str>,
+        params: Vec<(&str, &str)>,
+    ) -> Result<String> {
         dbg!(self.request(API_GET_URL, method, iccid, sign, params))
     }
-    pub fn set(&self, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
+    pub fn set(
+        &self,
+        method: &str,
+        iccid: &str,
+        sign: Vec<&str>,
+        params: Vec<(&str, &str)>,
+    ) -> Result<String> {
         dbg!(self.request(API_SET_URL, method, iccid, sign, params))
     }
     fn sign(&self, params: Vec<&str>) -> String {
@@ -42,7 +54,14 @@ impl ChinaTelecomClient {
         };
         data
     }
-    fn request(&self, url: &str, method: &str, iccid: &str, sign: Vec<&str>, params: Vec<(&str, &str)>) -> Result<String> {
+    fn request(
+        &self,
+        url: &str,
+        method: &str,
+        iccid: &str,
+        sign: Vec<&str>,
+        params: Vec<(&str, &str)>,
+    ) -> Result<String> {
         let mut key: &str = "access_number";
         if iccid.len() == 20 || iccid.len() == 19 {
             key = "iccid";
@@ -54,14 +73,17 @@ impl ChinaTelecomClient {
             ("user_id", &self.username),
             ("passWord", &password_str),
             ("sign", &sign_str),
-            (key, iccid)];
+            (key, iccid),
+        ];
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
-        let url: String = dbg!(format!("{}?{}",url,others.join("&")));
+        let url: String = dbg!(format!("{}?{}", url, others.join("&")));
         Ok(Client::new()
             .get(&url)
-            .send().map_err(|_| "超时".to_string())?
-            .text().map_err(|_| "读取错误".to_string())?)
+            .send()
+            .map_err(|_| "超时".to_string())?
+            .text()
+            .map_err(|_| "读取错误".to_string())?)
     }
 }
 

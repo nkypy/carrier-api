@@ -47,4 +47,3 @@ impl ResponseError for Error {
         }
     }
 }
-

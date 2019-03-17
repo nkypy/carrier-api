@@ -1,9 +1,8 @@
 mod model;
 
-
 use crate::china_unicom::model::CardReply;
-use {std::io::Read, base64::encode, reqwest::Client};
-use crate::{Result, CarrierClient, CardStatus, CardInfo};
+use crate::{CardInfo, CardStatus, CarrierClient, Result};
+use {base64::encode, reqwest::Client, std::io::Read};
 
 const API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
@@ -25,7 +24,7 @@ impl ChinaUnicomClient {
             password: password.to_owned(),
             soap_license: soap_license.to_owned(),
             rest_license: rest_license.to_owned(),
-            rest_auth: rest_auth
+            rest_auth: rest_auth,
         }
     }
     pub fn get(&self, url: &str) -> Result<String> {
@@ -34,8 +33,10 @@ impl ChinaUnicomClient {
             .get(&url)
             .header("Authorization", format!("Basic {}", self.rest_auth))
             .header("Content-Type", "application/json")
-            .send().map_err(|_| "超时".to_string())?
-            .text().map_err(|_| "读取错误".to_string())?))
+            .send()
+            .map_err(|_| "超时".to_string())?
+            .text()
+            .map_err(|_| "读取错误".to_string())?))
     }
     pub fn put(&self, url: &str, data: &str) -> String {
         "put".to_string()
@@ -46,7 +47,8 @@ impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let url = dbg!(format!("devices/{}", iccid));
         let resp = self.get(&url)?;
-        let v: CardReply = dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
+        let v: CardReply =
+            dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
         // let x = v.to_card_status();
         // dbg!(x)
         Err("CardStatus".to_string())

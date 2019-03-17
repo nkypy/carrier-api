@@ -1,28 +1,27 @@
+mod china_mobile;
 mod china_telecom;
 mod china_unicom;
-mod china_mobile;
 mod model;
 
 #[macro_use]
 extern crate serde_derive;
+extern crate base64;
+extern crate chrono;
+extern crate des;
+extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
 extern crate serde_xml_rs;
-extern crate chrono;
 extern crate sha1;
 extern crate sha2;
-extern crate des;
-extern crate base64;
-extern crate reqwest;
 #[macro_use]
 extern crate generic_array;
 
-pub use crate::model::{CardStatus, CardInfo};
+pub use crate::model::{CardInfo, CardStatus};
 pub use crate::{
+    china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
     china_telecom::ChinaTelecomClient,
     china_unicom::ChinaUnicomClient,
-    china_mobile::{
-        ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
 };
 
 pub type Result<T> = std::result::Result<T, String>;
@@ -39,22 +38,18 @@ impl CarrierClient {
     pub fn new(account: &str) -> Result<Box<CarrierClient>> {
         let v: Vec<&str> = account.split(",").collect();
         match (v[0], v.len()) {
-            ("china_telecom", 4) => {
-                match v[3].len() {
-                    9 => Ok(Box::new(ChinaTelecomClient::new(v[1], v[2], v[3]))),
-                    _ => Err("不正确的运营商账号".to_string())
-                }
+            ("china_telecom", 4) => match v[3].len() {
+                9 => Ok(Box::new(ChinaTelecomClient::new(v[1], v[2], v[3]))),
+                _ => Err("不正确的运营商账号".to_string()),
             },
             ("china_unicom", 5) => Ok(Box::new(ChinaUnicomClient::new(v[1], v[2], v[3], v[4]))),
             ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient::new(v[1], v[2]))),
-            ("guangdong_mobile", 4) => {
-                match v[2].len() {
-                    0...23 => Err("不正确的运营商账号".to_string()),
-                    _ => Ok(Box::new(GuangdongMobileClient::new(v[1], v[2], v[3])))
-                }
+            ("guangdong_mobile", 4) => match v[2].len() {
+                0..=23 => Err("不正确的运营商账号".to_string()),
+                _ => Ok(Box::new(GuangdongMobileClient::new(v[1], v[2], v[3]))),
             },
             ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient::new(v[1], v[2], v[3], v[4]))),
-            _ => Err("不正确的运营商账号".to_string())
+            _ => Err("不正确的运营商账号".to_string()),
         }
     }
 }

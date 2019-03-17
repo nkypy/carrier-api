@@ -1,9 +1,9 @@
 mod model;
 
-use {chrono::prelude::Utc, reqwest::Client, serde_xml_rs::to_string};
 use crate::{
-    Result, CarrierClient, CardStatus, CardInfo,
-    china_mobile::jiangsu::model::CardRequest};
+    china_mobile::jiangsu::model::CardRequest, CardInfo, CardStatus, CarrierClient, Result,
+};
+use {chrono::prelude::Utc, reqwest::Client, serde_xml_rs::to_string};
 
 const API_URL: &str = "http://221.178.251.182:80/internet_surfing";
 
@@ -22,19 +22,17 @@ impl JiangsuMobileClient {
             app_id: app_id.to_owned(),
             password: password.to_owned(),
             group_id: group_id.to_owned(),
-            city_id: city_id.to_owned()
+            city_id: city_id.to_owned(),
         }
     }
     fn request(&self) -> () {
         let dt = Utc::now().format("%Y%m%d%H%M%S").to_string();
         let item = CardRequest::new(
-            "","","",&dt,"","","","","","","","","","","","","","","","","");
+            "", "", "", &dt, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+        );
         let data = to_string(&item).unwrap();
         let client = Client::new();
-        let resp = client.post(API_URL)
-            .body(data)
-            .send()
-            .unwrap();
+        let resp = client.post(API_URL).body(data).send().unwrap();
         println!("江苏返回 {:?}", resp);
     }
 }
