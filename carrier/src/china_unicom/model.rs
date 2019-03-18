@@ -1,5 +1,6 @@
-use crate::{CardInfo, CardStatus, Result};
 use serde_json;
+
+use crate::{CardInfo, CardStatus, Result};
 
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]

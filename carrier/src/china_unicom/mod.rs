@@ -1,8 +1,12 @@
 mod model;
 
+use std::io::Read;
+
+use base64::encode;
+use reqwest::Client;
+
 use crate::china_unicom::model::CardReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
-use {base64::encode, reqwest::Client, std::io::Read};
 
 const API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
 

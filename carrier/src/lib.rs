@@ -4,7 +4,10 @@ mod china_unicom;
 mod model;
 
 #[macro_use]
+extern crate generic_array;
+#[macro_use]
 extern crate serde_derive;
+
 extern crate base64;
 extern crate chrono;
 extern crate des;
@@ -14,15 +17,11 @@ extern crate serde_json;
 extern crate serde_xml_rs;
 extern crate sha1;
 extern crate sha2;
-#[macro_use]
-extern crate generic_array;
 
+pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient};
+pub use crate::china_telecom::ChinaTelecomClient;
+pub use crate::china_unicom::ChinaUnicomClient;
 pub use crate::model::{CardInfo, CardStatus};
-pub use crate::{
-    china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
-    china_telecom::ChinaTelecomClient,
-    china_unicom::ChinaUnicomClient,
-};
 
 pub type Result<T> = std::result::Result<T, String>;
 

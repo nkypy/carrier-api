@@ -1,11 +1,10 @@
 mod model;
 
+use des::{block_cipher_trait::BlockCipher, TdesEde3};
+use generic_array::{typenum::U8, GenericArray};
+use sha1::Sha1;
+
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
-use {
-    des::{block_cipher_trait::BlockCipher, TdesEde3},
-    generic_array::{typenum::U8, GenericArray},
-    sha1::Sha1,
-};
 
 const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 

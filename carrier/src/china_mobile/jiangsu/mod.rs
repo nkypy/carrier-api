@@ -1,9 +1,11 @@
 mod model;
 
-use crate::{
-    china_mobile::jiangsu::model::CardRequest, CardInfo, CardStatus, CarrierClient, Result,
-};
-use {chrono::prelude::Utc, reqwest::Client, serde_xml_rs::to_string};
+use chrono::prelude::Utc;
+use reqwest::Client;
+use serde_xml_rs::to_string;
+
+use crate::china_mobile::jiangsu::model::CardRequest;
+use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 const API_URL: &str = "http://221.178.251.182:80/internet_surfing";
 

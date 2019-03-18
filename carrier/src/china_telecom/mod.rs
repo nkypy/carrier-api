@@ -1,7 +1,10 @@
 mod model;
 
+use std::io::Read;
+
+use reqwest::Client;
+
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
-use {reqwest::Client, std::io::Read};
 
 const API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
 const API_SET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.do";

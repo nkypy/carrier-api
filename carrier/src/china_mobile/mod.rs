@@ -2,14 +2,15 @@ mod guangdong;
 mod jiangsu;
 mod model;
 
-pub use crate::china_mobile::{guangdong::GuangdongMobileClient, jiangsu::JiangsuMobileClient};
+use std::io::Read;
+
+use chrono::Utc;
+use reqwest::Client;
+use sha2::{Digest, Sha256};
+
+pub use crate::china_mobile::guangdong::GuangdongMobileClient;
+pub use crate::china_mobile::jiangsu::JiangsuMobileClient;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
-use {
-    chrono::Utc,
-    reqwest::Client,
-    sha2::{Digest, Sha256},
-    std::io::Read,
-};
 
 const API_URL: &str = "https://api.iot.10086.cn/v2/";
 
