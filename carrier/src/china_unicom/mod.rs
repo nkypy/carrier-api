@@ -11,7 +11,7 @@ use crate::{CardInfo, CardStatus, CarrierClient, Result};
 const API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
 // 联通帐号密码信息
-#[derive(Debug)]
+#[derive(Debug, New)]
 pub struct ChinaUnicomClient {
     pub username: String,
     pub password: String,

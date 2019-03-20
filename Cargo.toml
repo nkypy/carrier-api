@@ -5,7 +5,8 @@ authors = ["Jack Shih <i@kshih.com>"]
 
 [workspace]
 members = [
-    "carrier"
+    "carrier",
+    "iotship-derive"
 ]
 
 [dependencies]

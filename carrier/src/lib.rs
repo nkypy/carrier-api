@@ -7,6 +7,8 @@ mod model;
 extern crate generic_array;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate iotship_derive;
 
 extern crate base64;
 extern crate chrono;
@@ -50,13 +52,5 @@ impl CarrierClient {
             ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient::new(v[1], v[2], v[3], v[4]))),
             _ => Err("不正确的运营商账号".to_string()),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }

@@ -3,6 +3,7 @@ mod model;
 use chrono::prelude::Utc;
 use reqwest::Client;
 use serde_xml_rs::to_string;
+// use serde_json::to_string;
 
 use crate::china_mobile::jiangsu::model::CardRequest;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
@@ -27,15 +28,57 @@ impl JiangsuMobileClient {
             city_id: city_id.to_owned(),
         }
     }
-    fn request(&self) -> () {
+    pub fn request(
+        &self,
+        process_code: &str,
+        sign: &str,
+        verify_code: &str,
+        req_type: &str,
+        terminal_id: &str,
+        accept_seq: &str,
+        req_seq: &str,
+        iccid: &str,
+        msisdn: &str,
+        telnum: &str,
+        service_number: &str,
+        cycle: &str,
+        oprtype: &str,
+        reason: &str,
+        service: &str,
+        sub_service_status: &str,
+    ) -> Result<String> {
         let dt = Utc::now().format("%Y%m%d%H%M%S").to_string();
-        let item = CardRequest::new(
-            "", "", "", &dt, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        );
-        let data = to_string(&item).unwrap();
-        let client = Client::new();
-        let resp = client.post(API_URL).body(data).send().unwrap();
-        println!("江苏返回 {:?}", resp);
+        let item = dbg!(CardRequest::new(
+            process_code,
+            &self.app_id,
+            &self.password,
+            sign,
+            verify_code,
+            req_type,
+            terminal_id,
+            accept_seq,
+            req_seq,
+            &dt,
+            &self.group_id,
+            &self.city_id,
+            iccid,
+            msisdn,
+            telnum,
+            service_number,
+            cycle,
+            oprtype,
+            reason,
+            service,
+            sub_service_status,
+        ));
+        let data = dbg!(to_string(&item).unwrap());
+        dbg!(Ok(Client::new()
+            .post(API_URL)
+            .body(data)
+            .send()
+            .map_err(|_| "超时".to_string())?
+            .text()
+            .map_err(|_| "读取错误".to_string())?))
     }
 }
 
