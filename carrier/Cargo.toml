@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 iotship-derive = { version = "*", path="../iotship-derive"}
+lazy_static = "*"
 serde = "*"
 serde_derive = "*"
 serde_json = "*"

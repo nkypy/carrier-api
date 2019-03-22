@@ -46,7 +46,6 @@ use carrier::{
     JiangsuMobileClient,
 };
 
-
 fn index(_req: &HttpRequest<models::Store>) -> HttpResponse {
     let reply = models::AuthReply {
         error_code: Some(111),

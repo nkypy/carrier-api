@@ -13,6 +13,7 @@ extern crate iotship_derive;
 extern crate base64;
 extern crate chrono;
 extern crate des;
+extern crate lazy_static;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
