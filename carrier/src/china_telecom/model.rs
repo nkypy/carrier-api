@@ -1,4 +1,4 @@
-use crate::{CardInfo, CardStatus};
+use crate::{CardInfo, CardStatus, Result};
 
 // 卡号查询返回
 #[derive(Debug, Serialize, Deserialize)]
@@ -35,29 +35,29 @@ struct CardStatusReply<'a> {
 }
 
 impl<'a> CardStatusReply<'a> {
-    fn to_card_status(&self) -> Result<CardStatus, &'a str> {
+    fn to_card_status(&self) -> Result<CardStatus> {
         match self.result_code {
             "0" => match self.infos.len() {
-                0 => Err("长度不对"),
+                0 => Err("长度不对".to_owned()),
                 1 => Ok(CardStatus {
-                    status_code: self.infos[0].status_code,
-                    status_name: self.infos[0].status_name,
-                    date_created: self.date_created,
+                    status_code: self.infos[0].status_code.to_owned(),
+                    status_name: self.infos[0].status_name.to_owned(),
+                    date_activated: self.date_created.to_owned(),
                 }),
                 _ => {
                     for v in self.infos.iter() {
                         if v.status_code != "6" {
                             return Ok(CardStatus {
-                                status_code: v.status_code,
-                                status_name: v.status_name,
-                                date_created: self.date_created,
+                                status_code: v.status_code.to_owned(),
+                                status_name: v.status_name.to_owned(),
+                                date_activated: self.date_created.to_owned(),
                             });
                         }
                     }
-                    Err("没有数据")
+                    Err("没有数据".to_owned())
                 }
             },
-            _ => Err("错误"),
+            _ => Err("错误".to_owned()),
         }
     }
 }
@@ -99,18 +99,18 @@ struct CardInfoReply<'a> {
 }
 
 impl<'a> CardInfoReply<'a> {
-    fn to_card_info(&self) -> Result<CardInfo, &'a str> {
+    fn to_card_info(&self) -> Result<CardInfo> {
         match self.result_code {
             "0" => Ok(CardInfo {
-                iccid: "",
-                imsi: "",
-                msisdn: self.result.infos.msisdn,
-                imei: "",
-                region_name: self.result.infos.region_name,
-                customer_name: self.result.infos.customer_name,
-                brand: "",
+                iccid: "".to_owned(),
+                imsi: "".to_owned(),
+                msisdn: self.result.infos.msisdn.to_owned(),
+                imei: "".to_owned(),
+                region_name: self.result.infos.region_name.to_owned(),
+                customer_name: self.result.infos.customer_name.to_owned(),
+                brand: "".to_owned(),
             }),
-            _ => Err("错误"),
+            _ => Err("错误".to_owned()),
         }
     }
 }

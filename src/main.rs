@@ -99,41 +99,41 @@ fn main() {
     //     &env::var("CHINA_MOBILE_APP_ID").unwrap(),
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap());
     // dbg!(carrier.get("gprsrealsingle", "0001000000000", vec![("iccid", "898602D9981700140197")]));
-    // let carrier = ChinaUnicomClient::new(
-    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-    //     "soap_license",
-    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    // );
-    // dbg!(carrier.card_status("89860117750006390067"));
+    let carrier = ChinaUnicomClient::new(
+        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+        "soap_license",
+        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    );
+    dbg!(carrier.card_status("89860117750006390067"));
     // dbg!(ChinaUnicomClient::new_test());
     // let carrier = GuangdongMobileClient::new("123","8493fed21155dddd67c2aaa95aaebd11","789");
     // carrier.sign(vec![("haha", "hoho")]);
     // carrier.decrypt();
-    let carrier = JiangsuMobileClient::new(
-        &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
-        &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),
-        &env::var("JIANGSU_MOBILE_GROUP_ID").unwrap(),
-        &env::var("JIANGSU_MOBILE_CITY_ID").unwrap(),
-    );
-    carrier.request(
-        "cc_qryuserinfo",
-        "",
-        "",
-        "01",
-        "",
-        "",
-        "",
-        "",
-        "17892100103",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-    );
+    // let carrier = JiangsuMobileClient::new(
+    //     &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
+    //     &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),
+    //     &env::var("JIANGSU_MOBILE_GROUP_ID").unwrap(),
+    //     &env::var("JIANGSU_MOBILE_CITY_ID").unwrap(),
+    // );
+    // carrier.request(
+    //     "cc_qryuserinfo",
+    //     "",
+    //     "",
+    //     "01",
+    //     "",
+    //     "",
+    //     "",
+    //     "",
+    //     "17892100103",
+    //     "",
+    //     "",
+    //     "",
+    //     "",
+    //     "",
+    //     "",
+    //     "",
+    // );
     // let s = crate::client::decrypt("MTIzCg==");
     // println!("base64 is {:?}", s);
     let sys = actix::System::new("hello-world");

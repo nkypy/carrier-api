@@ -77,8 +77,19 @@ pub struct CardReply {
 
 impl CardReply {
     pub fn to_card_status(&self) -> Result<CardStatus> {
-        Err("to_card_status".to_string())
+        if let (Some(_code), Some(msg)) = (&self.error_code, &self.error_message) {
+            return Err(msg.to_owned());
+        }
+        if let (Some(code), Some(date)) = (&self.status, &self.date_activated) {
+            return Ok(CardStatus{
+                status_code: code.to_owned(),
+                status_name: "".to_owned(),
+                date_activated: date.to_owned(),
+            });
+        }
+        Err("数据解析问题".to_owned())
     }
+
     pub fn to_card_info(&self) -> Result<CardInfo> {
         Err("to_card_info".to_string())
     }

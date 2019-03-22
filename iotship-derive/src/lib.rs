@@ -11,7 +11,6 @@ use syn::DeriveInput;
 pub fn new(input: TokenStream) -> TokenStream {
     let ast: DeriveInput = syn::parse(input).unwrap();
     let name = dbg!(&ast.ident);
-    let attrs = dbg!(&ast.attrs);
     let output = quote! {
         impl #name {
             pub fn new_test() -> () {
