@@ -2,55 +2,60 @@ use {lazy_static::lazy_static, std::collections::HashMap};
 
 lazy_static! {
     pub static ref STATUS_NAME_HASHMAP: HashMap<&'static str, HashMap<&'static str, &'static str>> = {
-        let mut sm = HashMap::new();
         // 中国电信
-        let mut m = HashMap::new();
-        m.insert("1", "在用");
-        m.insert("2", "用户报停");
-        m.insert("3", "用户拆机");
-        m.insert("5", "欠停(双向)");
-        m.insert("6", "欠停(单向)");
-        m.insert("7", "违章停机");
-        m.insert("8", "挂失");
-        m.insert("19", "活卡待激活");
-        m.insert("120000", "停机");
-        m.insert("100001", "已激活");
-        m.insert("140003", "未激活");
-        m.insert("150001", "未实名制违规停机");
-        m.insert("99999", "销户");
-        sm.insert("china_telecom", m);
+        let ctm: HashMap<&'static str, &'static str> = [
+            ("1", "在用"),
+            ("2", "用户报停"),
+            ("3", "用户拆机"),
+            ("5", "欠停(双向)"),
+            ("6", "欠停(单向)"),
+            ("7", "违章停机"),
+            ("8", "挂失"),
+            ("19", "活卡待激活"),
+            ("120000", "停机"),
+            ("100001", "已激活"),
+            ("140003", "未激活"),
+            ("150001", "未实名制违规停机"),
+            ("99999", "销户"),
+        ].iter().cloned().collect();
         // 中国联通
-        let mut m = HashMap::new();
-        m.insert("INVENTORY", "库存");
-        m.insert("ACTIVATION_READY", "可激活");
-        m.insert("ACTIVATED", "已激活");
-        m.insert("DEACTIVATED", "已停用");
-        m.insert("RETIRED", "已失效");
-        sm.insert("china_unicom", m);
+        let cum: HashMap<&'static str, &'static str> = [
+            ("INVENTORY", "库存"),
+            ("ACTIVATION_READY", "可激活"),
+            ("ACTIVATED", "已激活"),
+            ("DEACTIVATED", "已停用"),
+            ("RETIRED", "已失效"),
+        ].iter().cloned().collect();
         // 中国移动
-        let mut m = HashMap::new();
-        m.insert("1", "正常");
-        m.insert("2", "待激活");
-        m.insert("3", "停机");
-        m.insert("4", "销户");
-        m.insert("8", "全停");
-        m.insert("9", "全停");
-        let jsm = m.clone();
-        sm.insert("china_mobile", m);
+        let cmm: HashMap<&'static str, &'static str> = [
+            ("1", "正常"),
+            ("2", "待激活"),
+            ("3", "停机"),
+            ("4", "销户"),
+            ("8", "全停"),
+            ("9", "全停"),
+        ].iter().cloned().collect();
         // 江苏移动 和中国移动一样
-        sm.insert("jiangsu_mobile", jsm);
+        let jsmm = cmm.clone();
         // 广东移动
-        let mut m = HashMap::new();
-        m.insert("test", "测试期");
-        m.insert("silent", "沉默期");
-        m.insert("inventory", "库存期");
-        m.insert("normal", "正使用");
-        m.insert("stop", "停机");
-        m.insert("preclose", "销户");
-        m.insert("bespeakClose", "预约销户");
-        m.insert("others", "其他");
-        sm.insert("guangdong_mobile", m);
-        sm
+        let gdmm: HashMap<&'static str, &'static str> = [
+            ("test", "测试期"),
+            ("silent", "沉默期"),
+            ("inventory", "库存期"),
+            ("normal", "正使用"),
+            ("stop", "停机"),
+            ("preclose", "销户"),
+            ("bespeakClose", "预约销户"),
+            ("others", "其他"),
+        ].iter().cloned().collect();
+        let m: HashMap<&'static str, HashMap<&'static str, &'static str>> = [
+            ("china_telecom", ctm),
+            ("china_unicom", cum),
+            ("china_mobile", cmm),
+            ("jiangsu_mobile", jsmm),
+            ("guangdong_mobile", gdmm),
+        ].iter().cloned().collect();
+        m
     };
 }
 

@@ -1,5 +1,3 @@
-
-
 use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
 // 发送短信请求格式
