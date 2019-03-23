@@ -24,7 +24,7 @@ extern crate sha2;
 pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient};
 pub use crate::china_telecom::ChinaTelecomClient;
 pub use crate::china_unicom::ChinaUnicomClient;
-pub use crate::model::{CardInfo, CardStatus};
+pub use crate::model::{CardInfo, CardStatus, STATUS_NAME_HASHMAP};
 
 pub type Result<T> = std::result::Result<T, String>;
 

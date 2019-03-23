@@ -1,3 +1,5 @@
+use crate::{CardInfo, CardStatus, Result};
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename = "operation_in")]
 pub struct CardRequest {

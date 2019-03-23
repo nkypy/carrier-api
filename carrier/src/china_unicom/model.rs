@@ -1,17 +1,6 @@
-use {lazy_static::lazy_static, std::collections::HashMap};
 
-use crate::{CardInfo, CardStatus, Result};
 
-lazy_static! {
-    static ref STATUS_HASHMAP: HashMap<&'static str, &'static str> = {
-        let mut m = HashMap::new();
-        m.insert("ACTIVATION_READY", "可激活");
-        m.insert("ACTIVATED", "已激活");
-        m.insert("DEACTIVATED", "已停用");
-        m.insert("RETIRED", "已失效");
-        m
-    };
-}
+use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]
@@ -93,13 +82,17 @@ impl CardReply {
         }
         if let (Some(code), Some(date)) = (&self.status, &self.date_activated) {
             let status_code: &str = &code.to_string();
-            let status_name = match STATUS_HASHMAP.get(status_code) {
+            let status_name = match STATUS_NAME_HASHMAP
+                .get("china_unicom")
+                .unwrap()
+                .get(status_code)
+            {
                 Some(name) => name,
                 None => "未知状态",
             };
             return Ok(CardStatus {
                 status_code: code.to_owned(),
-                status_name: status_name.to_string(),
+                status_name: status_name.to_owned(),
                 date_activated: date.to_owned(),
             });
         }

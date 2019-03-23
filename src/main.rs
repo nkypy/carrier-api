@@ -94,10 +94,11 @@ fn main() {
     // };
     // let carrier = ChinaTelecomClient::new("123", "456", "789");
     // carrier.get("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
-    // let carrier = ChinaMobileClient::new(
-    //     &env::var("CHINA_MOBILE_APP_ID").unwrap(),
-    //     &env::var("CHINA_MOBILE_PASSWORD").unwrap());
-    // dbg!(carrier.get("gprsrealsingle", "0001000000000", vec![("iccid", "898602D9981700140197")]));
+    let carrier = ChinaMobileClient::new(
+        &env::var("CHINA_MOBILE_APP_ID").unwrap(),
+        &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
+    );
+    dbg!(carrier.card_status("898602D9981700140197"));
     let carrier = ChinaUnicomClient::new(
         &env::var("CHINA_UNICOM_USERNAME").unwrap(),
         &env::var("CHINA_UNICOM_PASSWORD").unwrap(),

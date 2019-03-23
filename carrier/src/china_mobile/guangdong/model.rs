@@ -1,3 +1,5 @@
+use crate::{CardInfo, CardStatus, Result};
+
 // 广东移动返回
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

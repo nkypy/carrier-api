@@ -10,6 +10,7 @@ use sha2::{Digest, Sha256};
 
 pub use crate::china_mobile::guangdong::GuangdongMobileClient;
 pub use crate::china_mobile::jiangsu::JiangsuMobileClient;
+use crate::china_mobile::model::CardReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 const API_URL: &str = "https://api.iot.10086.cn/v2/";
@@ -28,7 +29,7 @@ impl ChinaMobileClient {
             password: password.to_owned(),
         }
     }
-    pub fn get(&self, method: &str, ebid: &str, params: Vec<(&str, &str)>) -> Result<String> {
+    pub fn get(&self, method: &str, ebid: &str, params: Vec<(&str, &str)>) -> Result<CardReply> {
         let now = Utc::now();
         let trans_id = format!(
             "{}{}{:08}",
@@ -48,18 +49,26 @@ impl ChinaMobileClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}{}?{}", API_URL, method, others.join("&")));
-        Ok(Client::new()
+        let resp: String = Client::new()
             .get(&url)
             .send()
             .map_err(|_| "超时".to_string())?
             .text()
-            .map_err(|_| "读取错误".to_string())?)
+            .map_err(|_| "读取错误".to_string())?;
+        let v: CardReply =
+            dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
+        Ok(v)
     }
 }
 
 impl CarrierClient for ChinaMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        Err("card_status".to_string())
+        let resp = self.get(
+            "onandoffrealsingle",
+            "0001000000025",
+            vec![("iccid", iccid)],
+        )?;
+        resp.to_card_status()
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
