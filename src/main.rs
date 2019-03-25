@@ -6,7 +6,8 @@ extern crate serde_derive;
 extern crate diesel;
 #[macro_use]
 extern crate failure;
-#[macro_use] extern crate hex_literal;
+#[macro_use]
+extern crate hex_literal;
 
 extern crate actix;
 extern crate actix_web;

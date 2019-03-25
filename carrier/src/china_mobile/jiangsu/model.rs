@@ -150,7 +150,7 @@ impl CardRequest {
         service: &str,
         sub_service_status: &str,
     ) -> String {
-       format!("<operation_in><process_code>{}</process_code><app_id>{}</app_id><access_token>{}</access_token><sign>{}</sign><verify_code>{}</verify_code><req_type>{}</req_type><terminal_id>{}</terminal_id><accept_seq>{}</accept_seq><req_seq>{}</req_seq><req_time>{}</req_time><content><groupid>{}</groupid><ddr_city>{}</ddr_city><iccid>{}</iccid><msisdn>{}</msisdn><telnum>{}</telnum><service_number>{}</service_number><cycle>{}</cycle><oprtype>{}</oprtype><reason>{}</reason><service>{}</service><SUB_SERVICE_STATUS>{}</SUB_SERVICE_STATUS></content></operation_in>",
+        format!("<operation_in><process_code>{}</process_code><app_id>{}</app_id><access_token>{}</access_token><sign>{}</sign><verify_code>{}</verify_code><req_type>{}</req_type><terminal_id>{}</terminal_id><accept_seq>{}</accept_seq><req_seq>{}</req_seq><req_time>{}</req_time><content><groupid>{}</groupid><ddr_city>{}</ddr_city><iccid>{}</iccid><msisdn>{}</msisdn><telnum>{}</telnum><service_number>{}</service_number><cycle>{}</cycle><oprtype>{}</oprtype><reason>{}</reason><service>{}</service><SUB_SERVICE_STATUS>{}</SUB_SERVICE_STATUS></content></operation_in>",
             process_code, app_id, access_token, sign, verify_code, req_type,
             terminal_id, accept_seq, req_seq, req_time, groupid, ddr_city,
             iccid, msisdn, telnum, service_number, cycle, oprtype, reason,

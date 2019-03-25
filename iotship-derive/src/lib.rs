@@ -13,7 +13,6 @@ use syn::DeriveInput;
 //     .count().to_string().parse().unwrap()
 // }
 
-
 #[proc_macro_derive(New)]
 pub fn new(input: TokenStream) -> TokenStream {
     let ast: DeriveInput = syn::parse(input).unwrap();

@@ -4,12 +4,11 @@ mod china_unicom;
 mod model;
 
 #[macro_use]
-extern crate generic_array;
-#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate iotship_derive;
-#[macro_use] extern crate hex_literal;
+#[macro_use]
+extern crate hex_literal;
 
 extern crate base64;
 extern crate block_modes;

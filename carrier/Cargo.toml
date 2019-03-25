@@ -19,4 +19,3 @@ sha2 = "*"
 des = "*"
 base64 = "*"
 reqwest = { version = "*", features = ["default-tls-vendored"] }
-generic-array = "*"

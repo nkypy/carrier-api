@@ -1,10 +1,9 @@
 mod model;
 
-use des::{block_cipher_trait::BlockCipher, TdesEde3};
-use generic_array::{typenum::U8, GenericArray};
-use sha1::Sha1;
-use block_modes::{BlockMode, Cbc};
 use block_modes::block_padding::Pkcs7;
+use block_modes::{BlockMode, Cbc};
+use des::{block_cipher_trait::BlockCipher, TdesEde3};
+use sha1::Sha1;
 
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
