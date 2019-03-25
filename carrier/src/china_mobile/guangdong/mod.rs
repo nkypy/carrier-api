@@ -43,24 +43,30 @@ impl GuangdongMobileClient {
         dbg!(Sha1::from(&params_str).digest().to_string().to_uppercase())
     }
     // 3DES 解密, TODO
-    pub fn decrypt(&self, plaintext: [u8; 16]) -> () {
-        // let key = dbg!(self.password[..24].to_hex());
-        let key = dbg!(hex!("000102030405060708090a0b0c0d0e0f1011121314151617"));
-        let iv = dbg!(hex!("f0f1f2f3f4f5f6f7"));
+    pub fn decrypt(&self, plaintext: [u8; 16]) -> String {
+        let pass = self.password.as_bytes();
+        let mut key = [0u8; 24];
+        let mut iv = [0u8; 8];
+        key[..24].copy_from_slice(&pass[..24]);
+        iv[..8].copy_from_slice(&pass[..8]);
         let cipher = TdesCbc::new_var(&key, &iv).unwrap();
-        // //
-        // let plaintext_in = b"Hello world!";
-        // let mut buffer = [0u8; 32];
-        // // copy message to the buffer
-        // let pos = plaintext_in.len();
-        // buffer[..pos].copy_from_slice(plaintext_in);
-        // let ciphertext = dbg!(cipher.encrypt(&mut buffer, pos).unwrap());
-        // println!("{:x?}", ciphertext);
-        //
-        let mut buf = dbg!(plaintext.to_vec());
-        let decrypted_ciphertext = dbg!(cipher.decrypt(&mut buf).unwrap());
-        // dbg!(decrypted_ciphertext);
-        dbg!(String::from_utf8(decrypted_ciphertext.to_vec()));
+        let mut buf = plaintext.to_vec();
+        let decrypted_ciphertext = cipher.decrypt(&mut buf).unwrap();
+        String::from_utf8(decrypted_ciphertext.to_vec()).unwrap()
+    }
+    pub fn encrypt(&self, text: &[u8]) -> () {
+        let pass = self.password.as_bytes();
+        let mut key = [0u8; 24];
+        let mut iv = [0u8; 8];
+        key[..24].copy_from_slice(&pass[..24]);
+        iv[..8].copy_from_slice(&pass[..8]);
+        let cipher = TdesCbc::new_var(&key, &iv).unwrap();
+        let mut buffer = [0u8; 32];
+        // copy message to the buffer
+        let pos = text.len();
+        buffer[..pos].copy_from_slice(text);
+        let text = cipher.encrypt(&mut buffer, pos).unwrap();
+        println!("{:x?}", text);
     }
     pub fn get(&self) -> String {
         "get".to_string()
