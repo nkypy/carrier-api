@@ -6,6 +6,7 @@ extern crate serde_derive;
 extern crate diesel;
 #[macro_use]
 extern crate failure;
+#[macro_use] extern crate hex_literal;
 
 extern crate actix;
 extern crate actix_web;
@@ -94,22 +95,23 @@ fn main() {
     // };
     // let carrier = ChinaTelecomClient::new("123", "456", "789");
     // carrier.get("test", "12345678901234567890", vec!["signValue"], vec![("test_name", "test_value"), ("test2.1", "test2.2")]);
-    let carrier = ChinaMobileClient::new(
-        &env::var("CHINA_MOBILE_APP_ID").unwrap(),
-        &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
-    );
-    dbg!(carrier.card_status("898602D9981700140197"));
-    let carrier = ChinaUnicomClient::new(
-        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-        "soap_license",
-        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    );
-    dbg!(carrier.card_status("89860117750006390067"));
+    // let carrier = ChinaMobileClient::new(
+    //     &env::var("CHINA_MOBILE_APP_ID").unwrap(),
+    //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
+    // );
+    // dbg!(carrier.card_status("898602D9981700140197"));
+    // let carrier = ChinaUnicomClient::new(
+    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+    //     "soap_license",
+    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    // );
+    // dbg!(carrier.card_status("89860117750006390067"));
     // dbg!(ChinaUnicomClient::new_test());
-    // let carrier = GuangdongMobileClient::new("123","8493fed21155dddd67c2aaa95aaebd11","789");
+    let carrier = GuangdongMobileClient::new("123", "8493fed21155dddd67c2aaa95aaebd11", "789");
     // carrier.sign(vec![("haha", "hoho")]);
-    // carrier.decrypt();
+    // Hello world! 的十六进制
+    carrier.decrypt(hex!("323c5fce30bd1cbbdb16b7104aaba04e"));
     // let carrier = JiangsuMobileClient::new(
     //     &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
     //     &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),

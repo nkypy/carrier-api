@@ -3,10 +3,14 @@ mod model;
 use des::{block_cipher_trait::BlockCipher, TdesEde3};
 use generic_array::{typenum::U8, GenericArray};
 use sha1::Sha1;
+use block_modes::{BlockMode, Cbc};
+use block_modes::block_padding::Pkcs7;
 
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
+
+type TdesCbc = Cbc<TdesEde3, Pkcs7>;
 
 // 广东电信帐号信息
 #[derive(Debug)]
@@ -40,14 +44,24 @@ impl GuangdongMobileClient {
         dbg!(Sha1::from(&params_str).digest().to_string().to_uppercase())
     }
     // 3DES 解密, TODO
-    pub fn decrypt(&self) -> () {
-        let a = dbg!(self.password[..24].as_bytes());
-        let x = GenericArray::from_slice(&a);
-        let t = dbg!(TdesEde3::new(&x));
-        let mut c = GenericArray::<u8, U8>::default();
-        let mut data = GenericArray::from_mut_slice(&mut c);
-        t.encrypt_block(data);
-        dbg!(data.as_slice());
+    pub fn decrypt(&self, plaintext: [u8; 16]) -> () {
+        // let key = dbg!(self.password[..24].to_hex());
+        let key = dbg!(hex!("000102030405060708090a0b0c0d0e0f1011121314151617"));
+        let iv = dbg!(hex!("f0f1f2f3f4f5f6f7"));
+        let cipher = TdesCbc::new_var(&key, &iv).unwrap();
+        // //
+        // let plaintext_in = b"Hello world!";
+        // let mut buffer = [0u8; 32];
+        // // copy message to the buffer
+        // let pos = plaintext_in.len();
+        // buffer[..pos].copy_from_slice(plaintext_in);
+        // let ciphertext = dbg!(cipher.encrypt(&mut buffer, pos).unwrap());
+        // println!("{:x?}", ciphertext);
+        //
+        let mut buf = dbg!(plaintext.to_vec());
+        let decrypted_ciphertext = dbg!(cipher.decrypt(&mut buf).unwrap());
+        // dbg!(decrypted_ciphertext);
+        dbg!(String::from_utf8(decrypted_ciphertext.to_vec()));
     }
     pub fn get(&self) -> String {
         "get".to_string()

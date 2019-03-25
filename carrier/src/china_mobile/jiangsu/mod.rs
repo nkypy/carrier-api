@@ -71,10 +71,9 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        let data = dbg!(to_string(&item).unwrap());
         dbg!(Ok(Client::new()
             .post(API_URL)
-            .body(data)
+            .body(item)
             .send()
             .map_err(|_| "超时".to_string())?
             .text()

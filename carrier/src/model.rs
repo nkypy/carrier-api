@@ -85,3 +85,11 @@ pub struct CardInfo {
     pub customer_name: String,
     pub brand: String,
 }
+
+// 标准用量查询返回
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CardUsage {
+    pub data_total: String,
+    pub data_used: String,
+    pub data_left: String,
+}

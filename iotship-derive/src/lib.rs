@@ -7,6 +7,13 @@ extern crate quote;
 use proc_macro::TokenStream;
 use syn::DeriveInput;
 
+// #[proc_macro]
+// pub fn new_china_mobile_request(ts: TokenStream) -> TokenStream {
+//     let map = ts.into_iter()
+//     .count().to_string().parse().unwrap()
+// }
+
+
 #[proc_macro_derive(New)]
 pub fn new(input: TokenStream) -> TokenStream {
     let ast: DeriveInput = syn::parse(input).unwrap();

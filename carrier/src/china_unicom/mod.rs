@@ -53,9 +53,6 @@ impl CarrierClient for ChinaUnicomClient {
         let resp = self.get(&url)?;
         let v: CardReply =
             dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
-        // let x = v.to_card_status();
-        // dbg!(x)
-        // Err("CardStatus".to_string())
         v.to_card_status()
     }
     fn card_online(&self, iccid: &str) -> String {
