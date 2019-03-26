@@ -1,7 +1,5 @@
 mod model;
 
-use std::io::Read;
-
 use reqwest::Client;
 
 use crate::{CardInfo, CardStatus, CarrierClient, Result};

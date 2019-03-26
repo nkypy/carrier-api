@@ -7,8 +7,6 @@ mod model;
 extern crate serde_derive;
 #[macro_use]
 extern crate iotship_derive;
-#[macro_use]
-extern crate hex_literal;
 
 extern crate base64;
 extern crate block_modes;

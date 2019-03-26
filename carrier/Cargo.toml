@@ -13,7 +13,6 @@ serde_json = "*"
 serde-xml-rs = "*"
 chrono = { version = "*", features = ["serde"] }
 block-modes = "*"
-hex-literal = "*"
 sha1 = "*"
 sha2 = "*"
 des = "*"

@@ -1,7 +1,5 @@
 mod model;
 
-use std::io::Read;
-
 use base64::encode;
 use reqwest::Client;
 

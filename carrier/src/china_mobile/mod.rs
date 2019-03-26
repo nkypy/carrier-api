@@ -2,8 +2,6 @@ mod guangdong;
 mod jiangsu;
 mod model;
 
-use std::io::Read;
-
 use chrono::Utc;
 use reqwest::Client;
 use sha2::{Digest, Sha256};

@@ -3,7 +3,6 @@ mod model;
 use chrono::prelude::Utc;
 use reqwest::Client;
 use serde_xml_rs::to_string;
-// use serde_json::to_string;
 
 use crate::china_mobile::jiangsu::model::CardRequest;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
