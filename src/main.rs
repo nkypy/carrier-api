@@ -114,10 +114,11 @@ fn main() {
         &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
         &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
     );
+    carrier.card_status("89860117750006390067");
     // carrier.sign(vec![("haha", "hoho")]);
     // Hello world! 的十六进制
-    carrier.encrypt(b"Hello world!");
-    dbg!(carrier.decrypt(hex!("ab6ab2fdcde44818a81abff944b1640b")));
+    // carrier.encrypt(b"Hello world!");
+    // dbg!(carrier.decrypt(hex!("ab6ab2fdcde44818a81abff944b1640b")));
     // let carrier = JiangsuMobileClient::new(
     //     &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
     //     &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),
