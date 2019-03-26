@@ -114,7 +114,7 @@ fn main() {
         &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
         &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
     );
-    carrier.card_status("89860117750006390067");
+    println!("{:?}", carrier.card_status("898602F2191880120110"));
     // carrier.sign(vec![("haha", "hoho")]);
     // Hello world! 的十六进制
     // carrier.encrypt(b"Hello world!");

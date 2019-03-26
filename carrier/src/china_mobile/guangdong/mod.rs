@@ -63,10 +63,10 @@ impl GuangdongMobileClient {
         let mut buffer = [0u8; 256];
         buffer[..pos].copy_from_slice(plaintext);
         cipher.decrypt(&mut buffer).unwrap();
-        let buf = &buffer[..pos];
-        String::from_utf8(buf.to_vec())
-            .unwrap()
-            .replace("\u{6}", "")
+        let buffer = &buffer[..pos];
+        let mut buf = buffer.to_vec();
+        buf.retain(|&x| x > 20u8);
+        String::from_utf8(buf).unwrap()
     }
     pub fn get(&self, method: &str, iccid: &str) -> Result<String> {
         let now = Utc::now();
@@ -93,7 +93,7 @@ impl GuangdongMobileClient {
 impl CarrierClient for GuangdongMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let data = dbg!(self
-            .get("triopi.member.iccid.single.query", iccid)?
+            .get("triopi.member.lifecycle.single.query", iccid)?
             .replace('\n', ""));
         let bytes = decode(&data).unwrap();
         let rsp: &[u8] = &bytes;
