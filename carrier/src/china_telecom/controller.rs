@@ -73,7 +73,7 @@ impl ChinaTelecomClient {
     fn hash_gen_keys(&self, key_in: [u8; 64]) -> [[u8; 48]; 16] {
         let mut key_tmp = [0u8; 56];
         let mut keys = [[0u8; 48]; 16];
-        let loopData: [u8; 16] = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
+        let loop_data: [u8; 16] = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
         for i in 0..7usize {
             let mut k = 8;
             for j in 0..8 {
@@ -84,7 +84,7 @@ impl ChinaTelecomClient {
         for i in 0..16 {
             let mut tmp_left = 0u8;
             let mut tmp_right = 0u8;
-            for j in 0..loopData[i] {
+            for j in 0..loop_data[i] {
                 tmp_left = key_tmp[0];
                 tmp_right = key_tmp[28];
                 for k in 0..27 {
@@ -243,15 +243,14 @@ impl ChinaTelecomClient {
             [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
             [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11],
         ];
-        let sList: [[[u8; 16]; 4]; 8] = [s1, s2, s3, s4, s5, s6, s7, s8];
-        let s_list = (s1,s2,s3,s4,s5,s6,s7,s8);
+        let s_list: [[[u8; 16]; 4]; 8] = [s1, s2, s3, s4, s5, s6, s7, s8];
         for m in 0..8usize {
             let i = (data[m * 6 + 0] * 2 + data[m * 6 + 5]) as usize;
             let j = (data[m * 6 + 1] * 2 * 2 * 2
                 + data[m * 6 + 2] * 2 * 2
                 + data[m * 6 + 3] * 2
                 + data[m * 6 + 4]) as usize;
-            let bin: u8 = sList[m][i][j];
+            let bin: u8 = s_list[m][i][j];
             let bin_str = format!("{:04b}", bin);
             let bin_vec: Vec<char> = bin_str.chars().collect();
             for n in 0..4 {

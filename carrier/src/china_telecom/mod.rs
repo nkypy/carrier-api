@@ -42,6 +42,11 @@ impl ChinaTelecomClient {
     ) -> Result<String> {
         dbg!(self.request(API_SET_URL, method, iccid, sign, params))
     }
+    fn sign(&self, sign: Vec<&str>) -> String {
+        let mut sign_mut: Vec<&str> = vec![&self.username, &self.password];
+        sign_mut.extend(sign);
+        self.hash(sign_mut)
+    }
     fn request(
         &self,
         url: &str,
@@ -55,7 +60,7 @@ impl ChinaTelecomClient {
             key = "iccid";
         };
         let password_str: String = self.hash(vec![&self.password]);
-        let sign_str: String = self.hash(sign);
+        let sign_str: String = self.sign(sign);
         let mut data: Vec<(&str, &str)> = vec![
             ("method", method),
             ("user_id", &self.username),
@@ -77,7 +82,12 @@ impl ChinaTelecomClient {
 
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        dbg!(self.get("queryCardMainStatus", iccid, vec![&self.username, &self.password, iccid, "queryCardMainStatus"], vec![]));
+        dbg!(self.get(
+            "queryCardMainStatus",
+            iccid,
+            vec![iccid, "queryCardMainStatus"],
+            vec![]
+        ));
         Err("card_status".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
