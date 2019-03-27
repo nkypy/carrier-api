@@ -1,9 +1,32 @@
 [package]
 name = "hello-world"
 version = "0.0.1"
-authors = ["Jack Shih <jac@kshih.com>"]
+authors = ["Jack Shih <i@kshih.com>"]
+
+[workspace]
+members = [
+    "carrier",
+    "iotship-derive"
+]
 
 [dependencies]
-chrono = "0.4"
-sha2 = "0.7"
-byteorder = "1.2"
+carrier = { version = "*", path = "carrier" }
+log = "*"
+env_logger = "*"
+diesel = { version = "*", features = ["postgres", "chrono", "serde_json", "r2d2"] }
+dotenv = "*"
+snowflake = { version = "*", features = ["serde_support"] }
+serde = "*"
+serde_derive = "*"
+serde_json = "*"
+actix = "*"
+actix-web = "*"
+futures = "*"
+failure = "*"
+jsonwebtoken = "*"
+base64 = "*"
+serde-xml-rs = "*"
+reqwest = "*"
+des = "0.3.0"
+chrono = { version = "*", features = ["serde"] }
+hex-literal = "*"

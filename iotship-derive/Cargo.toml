@@ -1,0 +1,14 @@
+[package]
+name = "iotship-derive"
+version = "0.1.0"
+authors = ["Jack Shih <develop@kshih.com>"]
+edition = "2018"
+
+[lib]
+name = "iotship_derive"
+proc-macro = true
+
+[dependencies]
+quote = "*"
+syn = { version = "*", features = ["full"] }
+proc-macro2 = "*"
