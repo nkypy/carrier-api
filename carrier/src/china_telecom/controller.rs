@@ -1,7 +1,7 @@
 use crate::china_telecom::ChinaTelecomClient;
 
 impl ChinaTelecomClient {
-    pub fn hash(&self, mut texts: Vec<&'static str>) -> String {
+    pub fn hash(&self, mut texts: Vec<&str>) -> String {
         texts.sort_by(|a, b| a.cmp(&b));
         let text_str = texts.join(",");
         let length = text_str.len();
@@ -244,6 +244,7 @@ impl ChinaTelecomClient {
             [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11],
         ];
         let sList: [[[u8; 16]; 4]; 8] = [s1, s2, s3, s4, s5, s6, s7, s8];
+        let s_list = (s1,s2,s3,s4,s5,s6,s7,s8);
         for m in 0..8usize {
             let i = (data[m * 6 + 0] * 2 + data[m * 6 + 5]) as usize;
             let j = (data[m * 6 + 1] * 2 * 2 * 2
