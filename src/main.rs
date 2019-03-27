@@ -36,6 +36,7 @@ use actix::prelude::*;
 use actix_web::http::Method;
 use actix_web::middleware::Logger;
 use actix_web::{pred, server, App, HttpRequest, HttpResponse, Json, Path, State};
+use chrono::Utc;
 use diesel::prelude::*;
 use dotenv::dotenv;
 use jwt::{decode, encode, Header, Validation};
@@ -96,6 +97,13 @@ fn main() {
     println!("加密结果 {}", carrier.hash(vec!["test"]));
     println!("正确结果 {}", "41894168BD86A2CC");
     println!("加密 [14914000000, test, test, queryPakage] 字符串列表");
+    // 测试循环一万次，是 Go 版本性能的 3 倍左右。
+    // let t1 = Utc::now();
+    // for i in 0..10000 {
+    //     let _x = carrier.hash(vec!["14914000000", "test", "test", "queryPakage"]);
+    // }
+    // let t2 = Utc::now();
+    // println!("时间 {:?}", t2.signed_duration_since(t1));
     println!(
         "加密结果 {}",
         carrier.hash(vec!["14914000000", "test", "test", "queryPakage"])
