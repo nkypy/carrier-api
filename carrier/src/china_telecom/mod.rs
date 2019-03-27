@@ -1,4 +1,5 @@
 mod model;
+mod controller;
 
 use reqwest::Client;
 
