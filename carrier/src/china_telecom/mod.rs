@@ -28,31 +28,26 @@ impl ChinaTelecomClient {
         &self,
         method: &str,
         iccid: &str,
-        sign: Vec<&str>,
+        signs: Vec<&str>,
         params: Vec<(&str, &str)>,
     ) -> Result<String> {
-        dbg!(self.request(API_GET_URL, method, iccid, sign, params))
+        dbg!(self.request(API_GET_URL, method, iccid, signs, params))
     }
     pub fn set(
         &self,
         method: &str,
         iccid: &str,
-        sign: Vec<&str>,
+        signs: Vec<&str>,
         params: Vec<(&str, &str)>,
     ) -> Result<String> {
-        dbg!(self.request(API_SET_URL, method, iccid, sign, params))
-    }
-    fn sign(&self, sign: Vec<&str>) -> String {
-        let mut sign_mut: Vec<&str> = vec![&self.username, &self.password];
-        sign_mut.extend(sign);
-        self.hash(sign_mut)
+        dbg!(self.request(API_SET_URL, method, iccid, signs, params))
     }
     fn request(
         &self,
         url: &str,
         method: &str,
         iccid: &str,
-        sign: Vec<&str>,
+        signs: Vec<&str>,
         params: Vec<(&str, &str)>,
     ) -> Result<String> {
         let mut key: &str = "access_number";
@@ -60,7 +55,10 @@ impl ChinaTelecomClient {
             key = "iccid";
         };
         let password_str: String = self.hash(vec![&self.password]);
-        let sign_str: String = self.sign(sign);
+        // username, password, method 为通用，其他可变
+        let mut sign: Vec<&str> = vec![&self.username, &self.password, method];
+        sign.extend(signs);
+        let sign_str: String = self.hash(sign);
         let mut data: Vec<(&str, &str)> = vec![
             ("method", method),
             ("user_id", &self.username),
@@ -82,18 +80,15 @@ impl ChinaTelecomClient {
 
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        dbg!(self.get(
-            "queryCardMainStatus",
-            iccid,
-            vec![iccid, "queryCardMainStatus"],
-            vec![]
-        ));
+        dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]));
         Err("card_status".to_string())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
+    // 接口只能通过 msisdn 查询, TODO
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
+        dbg!(self.get("prodInstQuery", iccid, vec![iccid], vec![]));
         Err("card_info".to_string())
     }
     fn card_usage(&self, iccid: &str) -> String {

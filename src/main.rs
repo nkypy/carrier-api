@@ -96,7 +96,7 @@ fn main() {
         &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
         &env::var("CHINA_TELECOM_LICENSE").unwrap(),
     );
-    carrier.card_status("8986031630200230821");
+    carrier.card_info("8986031630200230821");
     // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // println!("加密 test 字符串");
     // println!("加密结果 {}", carrier.hash(vec!["test"]));
