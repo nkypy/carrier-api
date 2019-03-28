@@ -1,5 +1,43 @@
 use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
+// SOAP 请求格式
+pub struct RequestEnvelope {}
+
+impl RequestEnvelope {
+    pub fn new(
+        username: &str,
+        password: &str,
+        license: &str,
+        method: &str,
+        iccids: Vec<&str>,
+    ) -> String {
+        let iccid_vec: Vec<String> = iccids
+            .iter()
+            .map(|x| format!("<jws:iccid>{}</jws:iccid>", x))
+            .collect();
+        let text = format!(r#"<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jws="http://api.jasperwireless.com/ws/schema" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+<env:Header>
+<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+<wsse:UsernameToken wsu:Id="UsernameToken-1" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+<wsse:Username>{}</wsse:Username>
+<wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{}</wsse:Password>
+</wsse:UsernameToken>
+</wsse:Security>
+</env:Header>
+<env:Body>
+<jws:{}Request>
+<jws:messageId></jws:messageId>
+<jws:version></jws:version>
+<jws:licenseKey>{}</jws:licenseKey>
+<jws:iccids>{}</jws:iccids>
+</jws:{}Request>
+</env:Body>
+</env:Envelope>"#, username, password,method, license, iccid_vec.join(""), method).replace('\n', "");
+        text
+    }
+}
+
 // 发送短信请求格式
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

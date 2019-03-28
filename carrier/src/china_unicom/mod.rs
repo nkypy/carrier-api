@@ -1,3 +1,4 @@
+mod controllers;
 mod model;
 
 use base64::encode;

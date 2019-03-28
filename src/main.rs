@@ -120,13 +120,17 @@ fn main() {
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
     // );
     // dbg!(carrier.card_status("898602D9981700140197"));
-    // let carrier = ChinaUnicomClient::new(
-    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-    //     "soap_license",
-    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    // );
-    // dbg!(carrier.card_status("89860117750006390067"));
+    let carrier = ChinaUnicomClient::new(
+        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+        &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
+        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    );
+    dbg!(carrier.get_terminal_details(vec![
+        "89860117750006390067",
+        "89860117750006390158",
+        "89860117750006390307"
+    ]));
     // dbg!(ChinaUnicomClient::new_test());
     // let carrier = GuangdongMobileClient::new(
     //     &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),
