@@ -296,6 +296,8 @@ impl ChinaTelecomClient {
 
 #[cfg(test)]
 mod tests {
+    use test::Bencher;
+
     use crate::china_telecom::ChinaTelecomClient;
 
     #[test]
@@ -306,5 +308,12 @@ mod tests {
             client.hash(vec!["14914000000", "test", "test", "queryPakage"]),
             "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52".to_string(),
         );
+    }
+
+    #[bench]
+    fn bench_china_telecom_client_hash(b: &mut Bencher) {
+        let client = ChinaTelecomClient::new("test", "test", "abcdefghi");
+        b.iter(|| client.hash(vec!["test"]));
+        b.iter(|| client.hash(vec!["14914000000", "test", "test", "queryPakage"]));
     }
 }

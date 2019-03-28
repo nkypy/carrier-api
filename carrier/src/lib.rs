@@ -1,3 +1,6 @@
+#![feature(test)]
+extern crate test;
+
 mod china_mobile;
 mod china_telecom;
 mod china_unicom;
