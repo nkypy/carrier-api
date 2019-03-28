@@ -96,7 +96,11 @@ fn main() {
         &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
         &env::var("CHINA_TELECOM_LICENSE").unwrap(),
     );
-    dbg!(carrier.card_status("8986031630200230821"));
+    let rsp = carrier.card_status("8986031630200230821");
+    match rsp {
+        Ok(t) =>  println!("response is {:?}", t),
+        Err(e) => println!("error is {}", e),
+    }
     // let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
     // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // println!("加密 test 字符串");

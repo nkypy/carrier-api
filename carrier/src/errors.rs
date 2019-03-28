@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::fmt;
 
 use reqwest;
 use serde_json;
@@ -7,6 +8,16 @@ use serde_json;
 pub struct Error {
     pub err_code: String,
     pub err_msg: String,
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            r#"Error {{ err_code: "{}", err_msg: "{}" }}"#,
+            self.err_code, self.err_msg
+        )
+    }
 }
 
 impl From<String> for Error {
