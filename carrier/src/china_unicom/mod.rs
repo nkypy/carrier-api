@@ -36,10 +36,8 @@ impl ChinaUnicomClient {
             .get(&url)
             .header("Authorization", format!("Basic {}", self.rest_auth))
             .header("Content-Type", "application/json")
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?))
+            .send()?
+            .text()?))
     }
     pub fn put(&self, url: &str, data: &str) -> String {
         "put".to_string()
@@ -58,7 +56,7 @@ impl CarrierClient for ChinaUnicomClient {
         "card_online".to_string()
     }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())
+        Err("card_info".to_string())?
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

@@ -4,6 +4,7 @@ extern crate test;
 mod china_mobile;
 mod china_telecom;
 mod china_unicom;
+mod errors;
 mod model;
 
 #[macro_use]
@@ -26,9 +27,10 @@ extern crate sha2;
 pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient};
 pub use crate::china_telecom::ChinaTelecomClient;
 pub use crate::china_unicom::ChinaUnicomClient;
+pub use crate::errors::Error;
 pub use crate::model::{CardInfo, CardStatus, STATUS_NAME_HASHMAP};
 
-pub type Result<T> = std::result::Result<T, String>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 pub trait CarrierClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus>;
@@ -44,16 +46,16 @@ impl CarrierClient {
         match (v[0], v.len()) {
             ("china_telecom", 4) => match v[3].len() {
                 9 => Ok(Box::new(ChinaTelecomClient::new(v[1], v[2], v[3]))),
-                _ => Err("不正确的运营商账号".to_string()),
+                _ => Err("不正确的运营商账号".to_string())?,
             },
             ("china_unicom", 5) => Ok(Box::new(ChinaUnicomClient::new(v[1], v[2], v[3], v[4]))),
             ("china_mobile", 3) => Ok(Box::new(ChinaMobileClient::new(v[1], v[2]))),
             ("guangdong_mobile", 4) => match v[2].len() {
-                0..=23 => Err("不正确的运营商账号".to_string()),
+                0..=23 => Err("不正确的运营商账号".to_string())?,
                 _ => Ok(Box::new(GuangdongMobileClient::new(v[1], v[2], v[3]))),
             },
             ("jiangsu_mobile", 5) => Ok(Box::new(JiangsuMobileClient::new(v[1], v[2], v[3], v[4]))),
-            _ => Err("不正确的运营商账号".to_string()),
+            _ => Err("不正确的运营商账号".to_string())?,
         }
     }
 }

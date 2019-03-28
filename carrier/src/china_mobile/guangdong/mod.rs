@@ -80,12 +80,7 @@ impl GuangdongMobileClient {
         let v = vec![("method", method), ("transID", &trans_id), ("iccid", iccid)];
         let (url, sign) = dbg!(self.sign(v));
         let url = dbg!(format!("{}?sign={}&{}", API_URL, sign, url));
-        let rsp = dbg!(Client::new()
-            .get(&url)
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?);
+        let rsp = dbg!(Client::new().get(&url).send()?.text()?);
         Ok(rsp)
     }
 }
@@ -98,13 +93,13 @@ impl CarrierClient for GuangdongMobileClient {
         let bytes = decode(&data).unwrap();
         let rsp: &[u8] = &bytes;
         dbg!(self.decrypt(rsp));
-        Err("card_status".to_string())
+        Err("card_status".to_string())?
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())
+        Err("card_info".to_string())?
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

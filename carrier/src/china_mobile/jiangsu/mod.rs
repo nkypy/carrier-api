@@ -70,25 +70,19 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        dbg!(Ok(Client::new()
-            .post(API_URL)
-            .body(item)
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?))
+        dbg!(Ok(Client::new().post(API_URL).body(item).send()?.text()?))
     }
 }
 
 impl CarrierClient for JiangsuMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        Err("card_status".to_string())
+        Err("card_status".to_string())?
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())
+        Err("card_info".to_string())?
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

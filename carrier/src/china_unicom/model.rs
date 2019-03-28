@@ -1,3 +1,5 @@
+use serde_json;
+
 use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
 // SOAP 请求格式
@@ -44,6 +46,36 @@ impl RequestEnvelope {
 pub struct SmsRequest {
     pub message_text: String,
     pub message_encoding: String,
+}
+
+// 返回错误格式
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ErrorReply {
+    pub error_code: Option<String>,
+}
+
+impl ErrorReply {
+    pub fn is_error(text: &str) -> Result<String> {
+        let r: ErrorReply = serde_json::from_str(text)?;
+        if let Some(code) = r.error_code {
+            return Ok(code);
+        }
+        Err("没有数据")?
+    }
+}
+
+// 返回信息格式
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CardInfoReply {
+    pub iccid: String,
+    pub imsi: String,
+    pub msisdn: String,
+    pub imei: String,
+    pub status: String,
+    pub rate_plan: String,
+    pub communication_plan: String,
 }
 
 // 返回数据格式
@@ -114,7 +146,7 @@ pub struct CardReply {
 impl CardReply {
     pub fn to_card_status(&self) -> Result<CardStatus> {
         if let (Some(_code), Some(msg)) = (&self.error_code, &self.error_message) {
-            return Err(msg.to_owned());
+            return Err(msg.to_owned())?;
         }
         if let (Some(code), Some(date)) = (&self.status, &self.date_activated) {
             let status_code: &str = &code.to_string();
@@ -132,10 +164,10 @@ impl CardReply {
                 date_activated: date.to_owned(),
             });
         }
-        Err("数据解析问题".to_owned())
+        Err("数据解析问题".to_owned())?
     }
 
     pub fn to_card_info(&self) -> Result<CardInfo> {
-        Err("to_card_info".to_string())
+        Err("to_card_info".to_string())?
     }
 }

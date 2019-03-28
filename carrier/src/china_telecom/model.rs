@@ -48,7 +48,7 @@ impl<'a> CardStatusReply<'a> {
     pub fn to_card_status(&self) -> Result<CardStatus> {
         match self.result_code {
             "0" => match self.infos.len() {
-                0 => Err("长度不对".to_owned()),
+                0 => Err("长度不对".to_owned())?,
                 1 => Ok(CardStatus {
                     status_code: self.infos[0].status_code.to_owned(),
                     status_name: self.infos[0].status_name.to_owned(),
@@ -64,10 +64,10 @@ impl<'a> CardStatusReply<'a> {
                             });
                         }
                     }
-                    Err("没有数据".to_owned())
+                    Err("没有数据".to_owned())?
                 }
             },
-            _ => Err("错误".to_owned()),
+            _ => Err("错误".to_owned())?,
         }
     }
 }
@@ -120,7 +120,7 @@ impl<'a> CardInfoReply<'a> {
                 customer_name: self.result.infos.customer_name.to_owned(),
                 brand: "".to_owned(),
             }),
-            _ => Err("错误".to_owned()),
+            _ => Err("错误".to_owned())?,
         }
     }
 }

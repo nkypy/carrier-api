@@ -71,12 +71,7 @@ impl ChinaTelecomClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url: String = dbg!(format!("{}?{}", url, others.join("&")));
-        Ok(Client::new()
-            .get(&url)
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?)
+        Ok(Client::new().get(&url).send()?.text()?)
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = self.get("getTelephone", iccid, vec![iccid], vec![])?;
@@ -100,7 +95,7 @@ impl CarrierClient for ChinaTelecomClient {
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
         let msisdn = self.iccid_to_msisdn(iccid)?;
         dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]));
-        Err("card_info".to_string())
+        Err("card_info".to_string())?
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

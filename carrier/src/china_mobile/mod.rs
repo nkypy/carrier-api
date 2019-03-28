@@ -47,14 +47,8 @@ impl ChinaMobileClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}{}?{}", API_URL, method, others.join("&")));
-        let resp: String = Client::new()
-            .get(&url)
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?;
-        let v: CardReply =
-            dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
+        let resp: String = Client::new().get(&url).send()?.text()?;
+        let v: CardReply = dbg!(serde_json::from_str(&resp)?);
         Ok(v)
     }
 }
@@ -72,7 +66,7 @@ impl CarrierClient for ChinaMobileClient {
         "card_online".to_string()
     }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())
+        Err("card_info".to_string())?
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()

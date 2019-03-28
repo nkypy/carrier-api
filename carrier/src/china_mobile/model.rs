@@ -37,7 +37,7 @@ pub struct CardReplyResult {
 impl CardReply {
     pub fn to_card_status(&self) -> Result<CardStatus> {
         if self.status.as_str() != "0" {
-            return Err(self.message.to_string());
+            return Err(self.message.to_string())?;
         };
         let status_code: &str = &self.result[0].status;
         let status_name = match STATUS_NAME_HASHMAP
