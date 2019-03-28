@@ -68,19 +68,15 @@ impl ChinaTelecomClient {
         let mut key_tmp = [0u8; 56];
         let mut keys = [[0u8; 48]; 16];
         let loop_data: [u8; 16] = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
-        for i in 0..7usize {
-            let mut k = 8;
+        for i in 0..7 {
             for j in 0..8 {
-                k = k - 1;
-                key_tmp[i * 8 + j] = key_in[8 * k + i];
+                key_tmp[8 * i + j] = key_in[8 * (7 - j) + i];
             }
         }
         for i in 0..16 {
-            let mut tmp_left = 0u8;
-            let mut tmp_right = 0u8;
             for j in 0..loop_data[i] {
-                tmp_left = key_tmp[0];
-                tmp_right = key_tmp[28];
+                let tmp_left = key_tmp[0];
+                let tmp_right = key_tmp[28];
                 for k in 0..27 {
                     key_tmp[k] = key_tmp[k + 1];
                     key_tmp[28 + k] = key_tmp[29 + k];
@@ -138,9 +134,7 @@ impl ChinaTelecomClient {
                 key_tmp[28],
                 key_tmp[31],
             ];
-            for n in 0..48 {
-                keys[i][n] = tmp_keys[n]
-            }
+            keys[i].copy_from_slice(&tmp_keys);
         }
         keys
     }
@@ -297,5 +291,20 @@ impl ChinaTelecomClient {
         final_bytes[..32].copy_from_slice(&ip_right);
         final_bytes[32..64].copy_from_slice(&ip_left[..32]);
         self.hash_final_permute(final_bytes)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::china_telecom::ChinaTelecomClient;
+
+    #[test]
+    fn test_china_telecom_client_hash() {
+        let client = ChinaTelecomClient::new("test", "test", "abcdefghi");
+        assert_eq!(client.hash(vec!["test"]), "41894168BD86A2CC".to_string());
+        assert_eq!(
+            client.hash(vec!["14914000000", "test", "test", "queryPakage"]),
+            "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52".to_string(),
+        );
     }
 }

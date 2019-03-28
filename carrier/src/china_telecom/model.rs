@@ -1,3 +1,5 @@
+use serde_json;
+
 use crate::{CardInfo, CardStatus, Result};
 
 // 卡号查询返回
@@ -7,6 +9,14 @@ pub struct CardMsisdnReply {
     pub result: String,
     #[serde(rename = "SMSG")]
     pub msisdn: String,
+}
+
+impl CardMsisdnReply {
+    pub fn parse_from_str(text: &str) -> Result<String> {
+        let r: CardMsisdnReply =
+            serde_json::from_str(text).map_err(|_| "解析失败".to_string())?;
+        Ok(r.msisdn)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -80,9 +80,7 @@ impl ChinaTelecomClient {
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = self.get("getTelephone", iccid, vec![iccid], vec![])?;
-        let v: CardMsisdnReply =
-            serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?;
-        Ok(v.msisdn)
+        CardMsisdnReply::parse_from_str(&resp)
     }
 }
 
