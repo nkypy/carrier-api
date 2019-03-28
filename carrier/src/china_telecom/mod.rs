@@ -2,7 +2,9 @@ mod controller;
 mod model;
 
 use reqwest::Client;
+use serde_json;
 
+use crate::china_telecom::model::{CardMsisdnReply, CardStatusReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 const API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
@@ -31,7 +33,7 @@ impl ChinaTelecomClient {
         signs: Vec<&str>,
         params: Vec<(&str, &str)>,
     ) -> Result<String> {
-        dbg!(self.request(API_GET_URL, method, iccid, signs, params))
+        self.request(API_GET_URL, method, iccid, signs, params)
     }
     pub fn set(
         &self,
@@ -40,7 +42,7 @@ impl ChinaTelecomClient {
         signs: Vec<&str>,
         params: Vec<(&str, &str)>,
     ) -> Result<String> {
-        dbg!(self.request(API_SET_URL, method, iccid, signs, params))
+        self.request(API_SET_URL, method, iccid, signs, params)
     }
     fn request(
         &self,
@@ -76,19 +78,30 @@ impl ChinaTelecomClient {
             .text()
             .map_err(|_| "读取错误".to_string())?)
     }
+    fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
+        let resp = self.get("getTelephone", iccid, vec![iccid], vec![])?;
+        let v: CardMsisdnReply =
+            serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?;
+        Ok(v.msisdn)
+    }
 }
 
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]));
-        Err("card_status".to_string())
+        let resp = dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]))?;
+        let v: CardStatusReply = serde_json::from_str(&resp).map_err(|e| {
+            dbg!(e);
+            "解析失败".to_string()
+        })?;
+        dbg!(v.to_card_status())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
-    // 接口只能通过 msisdn 查询, TODO
+    // 接口只能通过 msisdn 查询
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        dbg!(self.get("prodInstQuery", iccid, vec![iccid], vec![]));
+        let msisdn = self.iccid_to_msisdn(iccid)?;
+        dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]));
         Err("card_info".to_string())
     }
     fn card_usage(&self, iccid: &str) -> String {

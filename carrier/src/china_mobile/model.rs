@@ -51,7 +51,7 @@ impl CardReply {
         Ok(CardStatus {
             status_code: status_code.to_owned(),
             status_name: status_name.to_owned(),
-            date_activated: "未知".to_owned(),
+            date_activated: "未知".to_string(),
         })
     }
 }

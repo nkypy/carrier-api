@@ -91,29 +91,30 @@ fn main() {
     //     Ok(c) => println!("carrier status is {:?}", c.card_status("1234")),
     //     Err(e) => println!("error is {:?}", e)
     // };
-    let carrier = ChinaTelecomClient::new(
-        &env::var("CHINA_TELECOM_USERNAME").unwrap(),
-        &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
-        &env::var("CHINA_TELECOM_LICENSE").unwrap(),
-    );
-    carrier.card_info("8986031630200230821");
+    // let carrier = ChinaTelecomClient::new(
+    //     &env::var("CHINA_TELECOM_USERNAME").unwrap(),
+    //     &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
+    //     &env::var("CHINA_TELECOM_LICENSE").unwrap(),
+    // );
+    // dbg!(carrier.card_status("8986031630200230821"));
+    let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
     // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // println!("加密 test 字符串");
     // println!("加密结果 {}", carrier.hash(vec!["test"]));
     // println!("正确结果 {}", "41894168BD86A2CC");
-    // println!("加密 [14914000000, test, test, queryPakage] 字符串列表");
-    // // 测试循环一万次，是 Go 版本性能的 3 倍左右。
-    // let t1 = Utc::now();
-    // for i in 0..10000 {
-    //     let _x = carrier.hash(vec!["14914000000", "test", "test", "queryPakage"]);
-    // }
-    // let t2 = Utc::now();
-    // println!("时间 {:?}", t2.signed_duration_since(t1));
-    // println!(
-    //     "加密结果 {}",
-    //     carrier.hash(vec!["14914000000", "test", "test", "queryPakage"])
-    // );
-    // println!("正确结果 {}", "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52");
+    println!("加密 [14914000000, test, test, queryPakage] 字符串列表");
+    // 测试循环一万次，是 Go 版本性能的 3 倍左右。
+    let t1 = Utc::now();
+    for i in 0..10000 {
+        let _x = carrier.hash(vec!["14914000000", "test", "test", "queryPakage"]);
+    }
+    let t2 = Utc::now();
+    println!("时间 {:?}", t2.signed_duration_since(t1));
+    println!(
+        "加密结果 {}",
+        carrier.hash(vec!["14914000000", "test", "test", "queryPakage"])
+    );
+    println!("正确结果 {}", "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52");
     // let carrier = ChinaMobileClient::new(
     //     &env::var("CHINA_MOBILE_APP_ID").unwrap(),
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),

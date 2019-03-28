@@ -1,6 +1,6 @@
 mod model;
 
-use chrono::prelude::Utc;
+use chrono::Utc;
 use reqwest::Client;
 use serde_xml_rs::to_string;
 

@@ -2,40 +2,40 @@ use crate::{CardInfo, CardStatus, Result};
 
 // 卡号查询返回
 #[derive(Debug, Serialize, Deserialize)]
-struct CardMsisdnReply<'a> {
+pub struct CardMsisdnReply {
     #[serde(rename = "RESULT")]
-    result: &'a str,
+    pub result: String,
     #[serde(rename = "SMSG")]
-    msisdn: &'a str,
+    pub msisdn: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct CardStatusReplyProductInfo<'a> {
+pub struct CardStatusReplyProductInfo<'a> {
     #[serde(rename = "productMainStatusCd")]
-    status_code: &'a str,
+    pub status_code: &'a str,
     #[serde(rename = "productMainStatusName")]
-    status_name: &'a str,
+    pub status_name: &'a str,
 }
 
 // 状态查询返回
 #[derive(Debug, Serialize, Deserialize)]
-struct CardStatusReply<'a> {
+pub struct CardStatusReply<'a> {
     #[serde(rename = "resultCode")]
-    result_code: &'a str,
+    pub result_code: &'a str,
     #[serde(rename = "resultMsg")]
-    result_message: &'a str,
+    pub result_message: &'a str,
     #[serde(rename = "GROUP_TRANSACTIONID")]
-    transaction_id: &'a str,
+    pub transaction_id: &'a str,
     #[serde(rename = "number")]
-    msisdn: &'a str,
+    pub msisdn: &'a str,
     #[serde(rename = "servCreateDate")]
-    date_created: &'a str,
+    pub date_created: &'a str,
     #[serde(rename = "productInfo")]
-    infos: Vec<CardStatusReplyProductInfo<'a>>,
+    pub infos: Vec<CardStatusReplyProductInfo<'a>>,
 }
 
 impl<'a> CardStatusReply<'a> {
-    fn to_card_status(&self) -> Result<CardStatus> {
+    pub fn to_card_status(&self) -> Result<CardStatus> {
         match self.result_code {
             "0" => match self.infos.len() {
                 0 => Err("长度不对".to_owned()),
