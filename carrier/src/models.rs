@@ -1,5 +1,6 @@
-use lazy_static::lazy_static;
 use std::collections::HashMap;
+
+use lazy_static::lazy_static;
 
 lazy_static! {
     pub static ref STATUS_NAME_HASHMAP: HashMap<&'static str, HashMap<&'static str, &'static str>> = {

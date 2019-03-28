@@ -39,10 +39,22 @@ impl From<&str> for Error {
 }
 
 impl From<reqwest::Error> for Error {
-    fn from(_err: reqwest::Error) -> Self {
+    fn from(err: reqwest::Error) -> Self {
+        if err.is_timeout() {
+            return Error {
+                err_code: "20000001".to_owned(),
+                err_msg: "运营商接口请求超时。".to_owned(),
+            };
+        }
+        if err.is_server_error() {
+            return Error {
+                err_code: "20000002".to_owned(),
+                err_msg: "运营商接口发生 5xx 异常。".to_owned(),
+            };
+        }
         Error {
-            err_code: "20000003".to_owned(),
-            err_msg: "请求超时或返回结果获取失败".to_owned(),
+            err_code: "20999999".to_owned(),
+            err_msg: "运营商接口请求发生未知异常。".to_owned(),
         }
     }
 }
@@ -50,8 +62,8 @@ impl From<reqwest::Error> for Error {
 impl From<serde_json::Error> for Error {
     fn from(_err: serde_json::Error) -> Self {
         Error {
-            err_code: "20000004".to_owned(),
-            err_msg: "serde 解析失败".to_owned(),
+            err_code: "21000001".to_owned(),
+            err_msg: "返回的数据格式异常，导致解析失败。".to_owned(),
         }
     }
 }

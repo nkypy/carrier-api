@@ -1,12 +1,6 @@
 #![feature(test)]
 extern crate test;
 
-mod china_mobile;
-mod china_telecom;
-mod china_unicom;
-mod errors;
-mod model;
-
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
@@ -24,11 +18,17 @@ extern crate serde_xml_rs;
 extern crate sha1;
 extern crate sha2;
 
+mod china_mobile;
+mod china_telecom;
+mod china_unicom;
+mod errors;
+mod models;
+
 pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient};
 pub use crate::china_telecom::ChinaTelecomClient;
 pub use crate::china_unicom::ChinaUnicomClient;
 pub use crate::errors::Error;
-pub use crate::model::{CardInfo, CardStatus, STATUS_NAME_HASHMAP};
+pub use crate::models::{CardInfo, CardStatus, STATUS_NAME_HASHMAP};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

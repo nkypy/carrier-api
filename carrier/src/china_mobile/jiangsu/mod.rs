@@ -70,7 +70,7 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        dbg!(Ok(Client::new().post(API_URL).body(item).send()?.text()?))
+        Ok(Client::new().post(API_URL).body(item).send()?.text()?)
     }
 }
 
