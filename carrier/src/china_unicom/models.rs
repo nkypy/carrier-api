@@ -1,6 +1,127 @@
+use std::collections::HashMap;
+
+use lazy_static::lazy_static;
 use serde_json;
 
 use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
+
+lazy_static! {
+    pub static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
+        let m: HashMap<&'static str, (&'static str, &'static str)> = [
+            ("10000001", ("30000001", "API 凭据无效。")),
+            ("10000002", ("30000002", "账户 ID 缺失。")),
+            ("10000003", ("30000003", "日期/时间缺失。")),
+            ("10000004", ("30000004", "账户 ID 无效。")),
+            ("10000005", ("30000005", "SIM 卡状态无效。")),
+            ("10000006", ("30000006", "页面大小无效。")),
+            ("10000007", ("30000007", "页面编号无效。")),
+            (
+                "10000008",
+                (
+                    "30000008",
+                    "您的角色无权编辑运营商自定义字段。",
+                ),
+            ),
+            (
+                "10000009",
+                (
+                    "30000009",
+                    "您的角色无权编辑账户自定义字段。",
+                ),
+            ),
+            (
+                "10000010",
+                (
+                    "30000010",
+                    "您的角色无权编辑客户自定义字段。",
+                ),
+            ),
+            (
+                "10000011",
+                ("30000011", "一个或多个必填字段缺失。"),
+            ),
+            ("10000012", ("30000012", "日期格式无效。")),
+            ("10000013", ("30000013", "资费计划无效。")),
+            ("10000014", ("30000014", "通信计划无效。")),
+            ("10000015", ("30000015", "客户无效。")),
+            (
+                "10000016",
+                ("30000016", "overageLimitOverride 值无效。"),
+            ),
+            ("10000017", ("30000017", "messageEncoding 无效。")),
+            ("10000018", ("30000018", "dataCoding 无效。")),
+            ("10000019", ("30000019", "validityPeriod 无效。")),
+            ("10000020", ("30000020", "消息包含过多字符。")),
+            ("10000021", ("30000021", "ICCID 无效。")),
+            ("10000022", ("30000022", "fromDate 缺失。")),
+            (
+                "10000023",
+                (
+                    "30000023",
+                    "请求中的 JSON 格式不正确。请确保逗号、冒号、括号等格式正确。",
+                ),
+            ),
+            ("10000024", ("30000024", "API 版本编号无效。")),
+            ("10000025", ("30000025", "找不到设备 ID。")),
+            ("10000026", ("30000026", "找不到调制解调器 ID。")),
+            (
+                "10000027",
+                ("30000027", "toDate 必须在 fromDate 之后。"),
+            ),
+            (
+                "10000028",
+                (
+                    "30000028",
+                    "请求包含一个或多个无法识别的参数。",
+                ),
+            ),
+            (
+                "10000029",
+                (
+                    "30000029",
+                    "此设备无法重新变回“预激活”状态。",
+                ),
+            ),
+            (
+                "10000030",
+                ("30000030", "使用的角色无法访问此 API。"),
+            ),
+            ("10000031", ("30000031", "区域无效。")),
+            (
+                "10000032",
+                (
+                    "30000032",
+                    "cycleStartDate 必须指定最后三个计费周期(包括当前周期)之一。",
+                ),
+            ),
+            (
+                "10000049",
+                ("30000049", "daysOfHistory 必须小于等于 365。"),
+            ),
+            ("20000001", ("30000101", "找不到指定 ICCID。")),
+            ("20000002", ("30000102", "找不到指定短消息 ID。")),
+            ("30000001", ("30000201", "未知服务器错误。")),
+            (
+                "30000002",
+                (
+                    "30000202",
+                    "Control Center 无法将消息提交至 SMSC。",
+                ),
+            ),
+            (
+                "40000029",
+                (
+                    "30000329",
+                    "接口请求超过限制次数，请稍后再试。",
+                ),
+            ),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
+}
 
 // SOAP 请求格式
 pub struct RequestEnvelope {}
@@ -56,12 +177,18 @@ pub struct ErrorReply {
 }
 
 impl ErrorReply {
-    pub fn is_error(text: &str) -> Result<String> {
-        let r: ErrorReply = serde_json::from_str(text)?;
+    pub fn is_ok(text: &str) -> Result<()> {
+        let r: ErrorReply = serde_json::from_str(text).unwrap();
         if let Some(code) = r.error_code {
-            return Ok(code);
-        }
-        Err("没有数据")?
+            match ERROR_HASHMAP.get(code.as_str()) {
+                Some(t) => Err(t.to_owned())?,
+                None => {
+                    let e: (&str, &str) = ("30999999", "中国联通未知错误。");
+                    Err(e)?
+                }
+            };
+        };
+        Ok(())
     }
 }
 
@@ -144,6 +271,11 @@ pub struct CardReply {
 }
 
 impl CardReply {
+    pub fn from_str(text: &str) -> Result<Self> {
+        ErrorReply::is_ok(text)?;
+        let r: CardReply = serde_json::from_str(text)?;
+        Ok(r)
+    }
     pub fn to_card_status(&self) -> Result<CardStatus> {
         if let (Some(_code), Some(msg)) = (&self.error_code, &self.error_message) {
             return Err(msg.to_owned())?;

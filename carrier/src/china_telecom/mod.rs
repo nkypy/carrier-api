@@ -6,8 +6,8 @@ use serde_json;
 use crate::china_telecom::model::{CardMsisdnReply, CardStatusReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
-const API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
-const API_SET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.do";
+static API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
+static API_SET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/app/serviceAccept.do";
 
 // 电信帐号信息
 #[derive(Debug)]

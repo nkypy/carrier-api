@@ -9,7 +9,7 @@ use sha1::Sha1;
 
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
-const API_URL: &str = "http://120.197.89.173:8081/openapi/router";
+static API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 
 type TdesEcb = Ecb<TdesEde3, ZeroPadding>;
 

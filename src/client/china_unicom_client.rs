@@ -3,7 +3,7 @@ use actix_web::http::Method;
 use futures::Future;
 use reqwest::{ClientBuilder, Request, Url};
 
-const CHINA_UNICOM_REST_API_URL: &str = "https://api.10646.cn/rws/api/v1/";
+static CHINA_UNICOM_REST_API_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
 // 联通帐号密码信息
 #[derive(Debug)]

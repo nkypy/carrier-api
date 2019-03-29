@@ -1,10 +1,8 @@
-use reqwest::Client;
-
-use crate::china_unicom::model::RequestEnvelope;
+use crate::china_unicom::models::RequestEnvelope;
 use crate::china_unicom::ChinaUnicomClient;
 use crate::Result;
 
-const API_SOAP_URL: &'static str = "https://api.10646.cn/ws/service/terminal";
+static API_SOAP_URL: &'static str = "https://api.10646.cn/ws/service/terminal";
 
 impl ChinaUnicomClient {
     fn soap_request(&self, method: &str, iccids: Vec<&str>) -> Result<String> {

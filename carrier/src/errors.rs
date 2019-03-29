@@ -21,19 +21,28 @@ impl fmt::Display for Error {
 }
 
 impl From<String> for Error {
-    fn from(err: String) -> Self {
+    fn from(e: String) -> Self {
         Error {
             err_code: "10000001".to_owned(),
-            err_msg: err,
+            err_msg: e,
         }
     }
 }
 
 impl From<&str> for Error {
-    fn from(err: &str) -> Self {
+    fn from(e: &str) -> Self {
         Error {
             err_code: "10000002".to_owned(),
-            err_msg: err.to_owned(),
+            err_msg: e.to_owned(),
+        }
+    }
+}
+
+impl From<(&str, &str)> for Error {
+    fn from(e: (&str, &str)) -> Self {
+        Error {
+            err_code: e.0.to_owned(),
+            err_msg: e.1.to_owned(),
         }
     }
 }
@@ -72,7 +81,7 @@ impl From<reqwest::Error> for Error {
 }
 
 impl From<serde_json::Error> for Error {
-    fn from(_err: serde_json::Error) -> Self {
+    fn from(_e: serde_json::Error) -> Self {
         Error {
             err_code: "21000001".to_owned(),
             err_msg: "返回的数据格式异常，导致解析失败。".to_owned(),

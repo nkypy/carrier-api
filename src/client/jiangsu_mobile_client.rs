@@ -1,4 +1,4 @@
-const JIANGSU_MOBILE_API_URL: &str = "http://221.178.251.182:80/internet_surfing";
+static JIANGSU_MOBILE_API_URL: &str = "http://221.178.251.182:80/internet_surfing";
 
 #[derive(Debug)]
 pub struct JiangsuMobileClient {

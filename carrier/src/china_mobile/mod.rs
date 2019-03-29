@@ -10,7 +10,7 @@ pub use crate::china_mobile::jiangsu::JiangsuMobileClient;
 use crate::china_mobile::model::CardReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
-const API_URL: &str = "https://api.iot.10086.cn/v2/";
+static API_URL: &str = "https://api.iot.10086.cn/v2/";
 
 // 中国移动帐号信息
 #[derive(Debug)]

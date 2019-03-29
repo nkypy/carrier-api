@@ -1,6 +1,6 @@
 use base64::decode;
 
-const GUANGDONG_MOBILE_API_URL: &str = "http://120.197.89.173:8081/openapi/router";
+static GUANGDONG_MOBILE_API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 
 #[derive(Debug)]
 pub struct GuangdongMobileClient {
