@@ -1,11 +1,11 @@
-use std::collections::HashMap;
 use std::convert::From;
 use std::str::FromStr;
 
+use hashbrown::HashMap;
 use lazy_static::lazy_static;
 use serde_json;
 
-use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
+use crate::{CardStatus, Result, STATUS_NAME_HASHMAP};
 
 lazy_static! {
     static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
@@ -283,17 +283,16 @@ impl FromStr for CardInfoReply {
 
 impl From<CardInfoReply> for CardStatus {
     fn from(s: CardInfoReply) -> Self {
-        let status_code: &str = &s.status.to_string();
         let status_name = match STATUS_NAME_HASHMAP
             .get("china_unicom")
             .unwrap()
-            .get(status_code)
+            .get(s.status.as_str())
         {
             Some(name) => name,
             None => "未知状态",
         };
         CardStatus {
-            status_code: status_code.to_owned(),
+            status_code: s.status,
             status_name: status_name.to_owned(),
             date_activated: s.date_activated,
         }

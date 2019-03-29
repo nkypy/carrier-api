@@ -10,7 +10,7 @@ use crate::{CardInfo, CardStatus, CarrierClient, Result};
 static API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
 
 // 联通帐号密码信息
-#[derive(Debug, New)]
+#[derive(Debug)]
 pub struct ChinaUnicomClient {
     pub username: String,
     pub password: String,
@@ -46,10 +46,8 @@ impl ChinaUnicomClient {
 
 impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        let url = format!("devices/{}", iccid);
-        let resp = self.get(&url)?;
-        let r = CardInfoReply::from_str(&resp)?;
-        Ok(r.into())
+        let resp = self.get(format!("devices/{}", iccid).as_str())?;
+        Ok(CardInfoReply::from_str(&resp)?.into())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()

@@ -3,13 +3,12 @@ extern crate test;
 
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate iotship_derive;
 
 extern crate base64;
 extern crate block_modes;
 extern crate chrono;
 extern crate des;
+extern crate hashbrown;
 extern crate lazy_static;
 extern crate reqwest;
 extern crate serde;
