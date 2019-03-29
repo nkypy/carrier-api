@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use std::convert::From;
+use std::str::FromStr;
 
 use lazy_static::lazy_static;
 use serde_json;
@@ -6,7 +8,7 @@ use serde_json;
 use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
 lazy_static! {
-    pub static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
+    static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
         let m: HashMap<&'static str, (&'static str, &'static str)> = [
             ("10000001", ("30000001", "API 凭据无效。")),
             ("10000002", ("30000002", "账户 ID 缺失。")),
@@ -203,6 +205,7 @@ pub struct CardInfoReply {
     pub status: String,
     pub rate_plan: String,
     pub communication_plan: String,
+    pub date_activated: String,
 }
 
 // 返回数据格式
@@ -270,36 +273,29 @@ pub struct CardReply {
     pub sms_message_id: Option<i64>,
 }
 
-impl CardReply {
-    pub fn from_str(text: &str) -> Result<Self> {
-        ErrorReply::is_ok(text)?;
-        let r: CardReply = serde_json::from_str(text)?;
-        Ok(r)
+impl FromStr for CardInfoReply {
+    type Err = crate::errors::Error;
+    fn from_str(s: &str) -> Result<Self> {
+        ErrorReply::is_ok(s)?;
+        Ok(serde_json::from_str(s)?)
     }
-    pub fn to_card_status(&self) -> Result<CardStatus> {
-        if let (Some(_code), Some(msg)) = (&self.error_code, &self.error_message) {
-            return Err(msg.to_owned())?;
-        }
-        if let (Some(code), Some(date)) = (&self.status, &self.date_activated) {
-            let status_code: &str = &code.to_string();
-            let status_name = match STATUS_NAME_HASHMAP
-                .get("china_unicom")
-                .unwrap()
-                .get(status_code)
-            {
-                Some(name) => name,
-                None => "未知状态",
-            };
-            return Ok(CardStatus {
-                status_code: code.to_owned(),
-                status_name: status_name.to_owned(),
-                date_activated: date.to_owned(),
-            });
-        }
-        Err("数据解析问题".to_owned())?
-    }
+}
 
-    pub fn to_card_info(&self) -> Result<CardInfo> {
-        Err("to_card_info".to_string())?
+impl From<CardInfoReply> for CardStatus {
+    fn from(s: CardInfoReply) -> Self {
+        let status_code: &str = &s.status.to_string();
+        let status_name = match STATUS_NAME_HASHMAP
+            .get("china_unicom")
+            .unwrap()
+            .get(status_code)
+        {
+            Some(name) => name,
+            None => "未知状态",
+        };
+        CardStatus {
+            status_code: status_code.to_owned(),
+            status_name: status_name.to_owned(),
+            date_activated: s.date_activated,
+        }
     }
 }

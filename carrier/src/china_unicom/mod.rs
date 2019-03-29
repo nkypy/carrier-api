@@ -2,8 +2,9 @@ mod controllers;
 mod models;
 
 use base64::encode;
+use std::str::FromStr;
 
-use crate::china_unicom::models::CardReply;
+use crate::china_unicom::models::CardInfoReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 static API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
@@ -45,9 +46,10 @@ impl ChinaUnicomClient {
 
 impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        let url = dbg!(format!("devices/{}", iccid));
+        let url = format!("devices/{}", iccid);
         let resp = self.get(&url)?;
-        CardReply::from_str(&resp)?.to_card_status()
+        let r = CardInfoReply::from_str(&resp)?;
+        Ok(r.into())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
