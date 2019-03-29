@@ -3,7 +3,6 @@ mod jiangsu;
 mod model;
 
 use chrono::Utc;
-use reqwest::Client;
 use sha2::{Digest, Sha256};
 
 pub use crate::china_mobile::guangdong::GuangdongMobileClient;
@@ -47,7 +46,7 @@ impl ChinaMobileClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}{}?{}", API_URL, method, others.join("&")));
-        let resp: String = Client::new().get(&url).send()?.text()?;
+        let resp: String = crate::http_client()?.get(&url).send()?.text()?;
         let v: CardReply = dbg!(serde_json::from_str(&resp)?);
         Ok(v)
     }

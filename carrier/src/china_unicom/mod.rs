@@ -2,7 +2,6 @@ mod controllers;
 mod model;
 
 use base64::encode;
-use reqwest::Client;
 
 use crate::china_unicom::model::CardReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
@@ -32,7 +31,7 @@ impl ChinaUnicomClient {
     }
     pub fn get(&self, url: &str) -> Result<String> {
         let url = dbg!(format!("{}{}", API_REST_URL, url));
-        dbg!(Ok(Client::new()
+        dbg!(Ok(crate::http_client()?
             .get(&url)
             .header("Authorization", format!("Basic {}", self.rest_auth))
             .header("Content-Type", "application/json")
@@ -48,8 +47,7 @@ impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let url = dbg!(format!("devices/{}", iccid));
         let resp = self.get(&url)?;
-        let v: CardReply =
-            dbg!(serde_json::from_str(&resp).map_err(|_| "解析失败".to_string())?);
+        let v: CardReply = dbg!(serde_json::from_str(&resp)?);
         v.to_card_status()
     }
     fn card_online(&self, iccid: &str) -> String {

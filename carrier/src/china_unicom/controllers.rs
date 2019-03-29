@@ -15,7 +15,7 @@ impl ChinaUnicomClient {
             method,
             iccids
         ));
-        Ok(Client::new()
+        Ok(crate::http_client()?
             .post(API_SOAP_URL)
             .header("Content-Type", "text/xml")
             .header(

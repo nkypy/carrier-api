@@ -18,6 +18,9 @@ extern crate serde_xml_rs;
 extern crate sha1;
 extern crate sha2;
 
+use reqwest::Client;
+use std::time::Duration;
+
 mod china_mobile;
 mod china_telecom;
 mod china_unicom;
@@ -58,4 +61,12 @@ impl CarrierClient {
             _ => Err("不正确的运营商账号".to_string())?,
         }
     }
+}
+
+// 创建请求运营商的 HTTP 客户端，设置 3 秒超时。
+fn http_client() -> Result<Client> {
+    Ok(Client::builder()
+        .gzip(true)
+        .timeout(Duration::from_secs(3))
+        .build()?)
 }

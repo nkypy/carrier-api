@@ -70,7 +70,11 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        Ok(Client::new().post(API_URL).body(item).send()?.text()?)
+        Ok(crate::http_client()?
+            .post(API_URL)
+            .body(item)
+            .send()?
+            .text()?)
     }
 }
 

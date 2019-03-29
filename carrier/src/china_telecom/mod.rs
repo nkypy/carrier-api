@@ -1,7 +1,6 @@
 mod controllers;
 mod model;
 
-use reqwest::Client;
 use serde_json;
 
 use crate::china_telecom::model::{CardMsisdnReply, CardStatusReply};
@@ -71,7 +70,7 @@ impl ChinaTelecomClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url: String = dbg!(format!("{}?{}", url, others.join("&")));
-        Ok(Client::new().get(&url).send()?.text()?)
+        Ok(crate::http_client()?.get(&url).send()?.text()?)
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = self.get("getTelephone", iccid, vec![iccid], vec![])?;
@@ -82,10 +81,7 @@ impl ChinaTelecomClient {
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let resp = dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]))?;
-        let v: CardStatusReply = serde_json::from_str(&resp).map_err(|e| {
-            dbg!(e);
-            "解析失败".to_string()
-        })?;
+        let v: CardStatusReply = serde_json::from_str(&resp)?;
         dbg!(v.to_card_status())
     }
     fn card_online(&self, iccid: &str) -> String {

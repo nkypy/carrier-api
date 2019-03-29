@@ -39,17 +39,29 @@ impl From<&str> for Error {
 }
 
 impl From<reqwest::Error> for Error {
-    fn from(err: reqwest::Error) -> Self {
-        if err.is_timeout() {
+    fn from(e: reqwest::Error) -> Self {
+        if e.is_timeout() {
             return Error {
                 err_code: "20000001".to_owned(),
                 err_msg: "运营商接口请求超时。".to_owned(),
             };
         }
-        if err.is_server_error() {
+        if e.is_serialization() {
             return Error {
                 err_code: "20000002".to_owned(),
-                err_msg: "运营商接口发生 5xx 异常。".to_owned(),
+                err_msg: "运营商接口返回解析失败。".to_owned(),
+            };
+        }
+        if e.is_client_error() {
+            return Error {
+                err_code: "20000004".to_owned(),
+                err_msg: "运营商接口返回 4xx 异常。".to_owned(),
+            };
+        }
+        if e.is_server_error() {
+            return Error {
+                err_code: "20000005".to_owned(),
+                err_msg: "运营商接口返回 5xx 异常。".to_owned(),
             };
         }
         Error {
