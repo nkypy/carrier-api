@@ -39,16 +39,14 @@ impl ChinaTelecomClient {
     fn hash_bt64_to_hex(&self, data: [u8; 64]) -> String {
         let mut out: Vec<String> = vec![];
         for i in 0..16 {
-            let mut bt: Vec<String> = vec![];
+            let mut bin_int = 0u32;
             for j in 0..4 {
-                let d = format!("{}", data[i * 4 + j]);
-                bt.push(d);
+                let a = data[i * 4 + j] as u32;
+                bin_int = bin_int + a * 2u32.pow((3 - j) as u32);
             }
-            let bin_idx = bt.join("");
-            let bin_int = isize::from_str_radix(&bin_idx, 2).unwrap();
             out.push(format!("{:X}", bin_int));
         }
-        out.join("").to_uppercase()
+        out.join("")
     }
     fn hash_str_to_bytes(&self, text: &str) -> [u8; 64] {
         let length = text.len();
@@ -232,15 +230,10 @@ impl ChinaTelecomClient {
                 + data[m * 6 + 2] * 2 * 2
                 + data[m * 6 + 3] * 2
                 + data[m * 6 + 4]) as usize;
-            let bin: u8 = s_list[m][i][j];
-            let bin_str = format!("{:04b}", bin);
-            let bin_vec: Vec<char> = bin_str.chars().collect();
+            let mut bin: u8 = s_list[m][i][j];
             for n in 0..4 {
-                if bin_vec[n] == '1' {
-                    sbox_bytes[m * 4 + n] = 1;
-                } else {
-                    sbox_bytes[m * 4 + n] = 0;
-                }
+                sbox_bytes[m * 4 + 3 - n] = bin % 2;
+                bin = bin / 2;
             }
         }
         sbox_bytes

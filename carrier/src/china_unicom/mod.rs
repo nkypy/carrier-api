@@ -1,8 +1,10 @@
 mod controllers;
 mod models;
 
-use base64::encode;
 use std::str::FromStr;
+
+use base64::encode;
+use futures::Future;
 
 use crate::china_unicom::models::CardInfoReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
@@ -39,6 +41,15 @@ impl ChinaUnicomClient {
             .send()?
             .text()?))
     }
+    // pub fn aync_get(&self, url: &str) -> Future<Output = std::result::Result<&'static str, &'static str>> {
+    //     let url = dbg!(format!("{}{}", API_REST_URL, url));
+    //     dbg!(Ok(crate::async_http_client()?
+    //         .get(&url)
+    //         .header("Authorization", format!("Basic {}", self.rest_auth))
+    //         .header("Content-Type", "application/json")
+    //         .send()?
+    //         .text()?))
+    // }
     pub fn put(&self, url: &str, data: &str) -> String {
         "put".to_string()
     }
