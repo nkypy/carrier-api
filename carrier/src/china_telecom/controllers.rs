@@ -42,7 +42,7 @@ impl ChinaTelecomClient {
             let mut bin_int = 0u32;
             for j in 0..4 {
                 let a = data[i * 4 + j] as u32;
-                bin_int = bin_int + a*2u32.pow((3-j) as u32);
+                bin_int = bin_int + a * 2u32.pow((3 - j) as u32);
             }
             out.push(format!("{:X}", bin_int));
         }
@@ -230,15 +230,10 @@ impl ChinaTelecomClient {
                 + data[m * 6 + 2] * 2 * 2
                 + data[m * 6 + 3] * 2
                 + data[m * 6 + 4]) as usize;
-            let bin: u8 = s_list[m][i][j];
-            let bin_str = format!("{:04b}", bin);
-            let bin_vec: Vec<char> = bin_str.chars().collect();
+            let mut bin: u8 = s_list[m][i][j];
             for n in 0..4 {
-                if bin_vec[n] == '1' {
-                    sbox_bytes[m * 4 + n] = 1;
-                } else {
-                    sbox_bytes[m * 4 + n] = 0;
-                }
+                sbox_bytes[m * 4 + 3 - n] = bin % 2;
+                bin = bin / 2;
             }
         }
         sbox_bytes
