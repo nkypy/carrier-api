@@ -11,12 +11,11 @@ impl ChinaTelecomClient {
             self.hash_str_to_bytes(&self.license[3..6]),
             self.hash_str_to_bytes(&self.license[6..9]),
         );
-        let mut iterator = 1usize;
-        let mut remainder = 0usize;
-        if length >= 4 {
-            iterator = length / 4;
-            remainder = length % 4;
-        }
+        let (iterator, remainder) = if length >= 4 {
+            (length / 4, length % 4)
+        } else {
+            (1usize, 0usize)
+        };
         let mut enc_data: Vec<String> = vec![];
         for i in 0..iterator {
             let tmp_bytes = self.hash_str_to_bytes(&text_str[i * 4..i * 4 + 4]);
