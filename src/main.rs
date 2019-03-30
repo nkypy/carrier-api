@@ -101,36 +101,37 @@ fn main() {
     //     Ok(t) => println!("response is {:?}", t),
     //     Err(e) => println!("error is {}", e),
     // }
-    // let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
+    let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
     // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // println!("加密 test 字符串");
     // println!("加密结果 {}", carrier.hash(vec!["test"]));
     // println!("正确结果 {}", "41894168BD86A2CC");
-    // println!("加密 [14914000000, test, test, queryPakage] 字符串列表");
+    println!("加密 [14914000000, test, test, queryPakage] 字符串列表");
     // 测试循环一万次，是 Go 版本性能的 3 倍左右。
-    // let t1 = Utc::now();
-    // for i in 0..10000 {
-    //     let _x = carrier.hash(vec!["14914000000", "test", "test", "queryPakage"]);
-    // }
-    // let t2 = Utc::now();
-    // println!("时间 {:?}", t2.signed_duration_since(t1));
-    // println!(
-    //     "加密结果 {}",
-    //     carrier.hash(vec!["14914000000", "test", "test", "queryPakage"])
-    // );
-    // println!("正确结果 {}", "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52");
+    // 优化代码后，性能是 Go 版本的 20 倍左右。
+    let t1 = Utc::now();
+    for i in 0..10000 {
+        let _x = carrier.hash(vec!["14914000000", "test", "test", "queryPakage"]);
+    }
+    let t2 = Utc::now();
+    println!("时间 {:?}", t2.signed_duration_since(t1));
+    println!(
+        "加密结果 {}",
+        carrier.hash(vec!["14914000000", "test", "test", "queryPakage"])
+    );
+    println!("正确结果 {}", "45E8B9924DE397A8F7E5764767810CF774CC7E1685BA702C9C4C367EFDAE5D932B37C0C8F0F8EB0CAD6372289F407CA941894168BD86A2CC32E5804EA05BAA5099649468B9418E52");
     // let carrier = ChinaMobileClient::new(
     //     &env::var("CHINA_MOBILE_APP_ID").unwrap(),
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
     // );
     // dbg!(carrier.card_status("898602D9981700140197"));
-    let carrier = ChinaUnicomClient::new(
-        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-        &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
-        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    );
-    dbg!(carrier.card_status("89860117750006390067"));
+    // let carrier = ChinaUnicomClient::new(
+    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+    //     &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
+    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    // );
+    // dbg!(carrier.card_status("89860117750006390067"));
     // dbg!(carrier.get_terminal_details(vec![
     //     "89860117750006390067",
     //     "89860117750006390158",
