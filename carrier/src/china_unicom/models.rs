@@ -5,7 +5,7 @@ use hashbrown::HashMap;
 use lazy_static::lazy_static;
 use serde_json;
 
-use crate::{CardStatus, Result, STATUS_NAME_HASHMAP};
+use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
 
 lazy_static! {
     static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
@@ -171,33 +171,15 @@ pub struct SmsRequest {
     pub message_encoding: String,
 }
 
-// 返回错误格式
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ErrorReply {
-    pub error_code: Option<String>,
-}
-
-impl ErrorReply {
-    pub fn is_ok(text: &str) -> Result<()> {
-        let r: ErrorReply = serde_json::from_str(text).unwrap();
-        if let Some(code) = r.error_code {
-            match ERROR_HASHMAP.get(code.as_str()) {
-                Some(t) => Err(t.to_owned())?,
-                None => {
-                    let e: (&str, &str) = ("30999999", "中国联通未知错误。");
-                    Err(e)?
-                }
-            };
-        };
-        Ok(())
-    }
-}
-
 // 返回信息格式
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CardInfoReply {
+#[serde(default)]
+pub struct CardReply {
+    // 错误
+    pub error_code: String,
+    // pub error_message: String, // 错误详情，无需解析
+    // 基本信息
     pub iccid: String,
     pub imsi: String,
     pub msisdn: String,
@@ -205,57 +187,40 @@ pub struct CardInfoReply {
     pub status: String,
     pub rate_plan: String,
     pub communication_plan: String,
-    pub date_activated: String,
-}
-
-// 返回数据格式
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CardReply {
-    // 错误
-    pub error_code: Option<String>,
-    pub error_message: Option<String>,
-    // 基本信息
-    pub iccid: Option<String>,
-    pub imsi: Option<String>,
-    pub msisdn: Option<String>,
-    pub imei: Option<String>,
-    pub status: Option<String>,
-    pub rate_plan: Option<String>,
-    pub communication_plan: Option<String>,
-    // info 接口
-    pub effective_date: Option<String>,
+    // Info 接口
+    pub effective_date: String,
     pub customer: Option<String>,
     pub end_cusumer_id: Option<String>,
-    pub date_activated: Option<String>,
-    pub date_updated: Option<String>,
-    pub date_shipped: Option<String>,
-    pub account_id: Option<String>,
+    pub date_activated: String,
+    pub date_updated: String,
+    pub date_shipped: String,
+    pub account_id: String,
     #[serde(rename = "fixedIPAddress")]
     pub fixed_ip_address: Option<String>,
-    pub sim_notes: Option<String>,
+    pub sim_notes: String,
+    pub euiccid: Option<String>,
     #[serde(rename = "deviceID")]
     pub device_id: Option<String>,
     #[serde(rename = "modemID")]
     pub modem_id: Option<String>,
     #[serde(rename = "globalSIMType")]
-    pub global_sim_type: Option<String>,
+    pub global_sim_type: String,
     // flow 接口
-    pub timestamp: Option<String>,
-    pub cycle_start_date: Option<String>,
-    pub cycle_end_date: Option<String>,
-    pub device_cycle_usage_in_zones: Option<String>,
-    pub data_usage_unit: Option<String>,
+    pub timestamp: String,
+    pub cycle_start_date: String,
+    pub cycle_end_date: String,
+    pub device_cycle_usage_in_zones: String,
+    pub data_usage_unit: String,
     pub ctd_data_usage: Option<f64>,
     #[serde(rename = "ctdSMSUsage")]
     pub ctd_sms_usage: Option<f64>,
     pub ctd_voice_usage: Option<f64>,
     pub ctd_session_count: Option<f64>,
     pub overage_limit_reached: Option<bool>,
-    pub overage_limit_override: Option<String>,
+    pub overage_limit_override: String,
     // flowUsage 接口
-    pub zone: Option<String>,
-    pub rate_plan_version: Option<String>,
+    pub zone: String,
+    pub rate_plan_version: String,
     pub data_usage: Option<f64>,
     #[serde(rename = "smsmousage")]
     pub sms_mo_usage: Option<f64>,
@@ -264,25 +229,37 @@ pub struct CardReply {
     #[serde(rename = "voiceMOUsage")]
     pub voice_mo_usage: Option<f64>,
     #[serde(rename = "voiceMOUsageUnit")]
-    pub voice_mo_usage_unit: Option<String>,
+    pub voice_mo_usage_unit: String,
     #[serde(rename = "voiceMTUsage")]
     pub voice_mt_usage: Option<f64>,
     #[serde(rename = "voiceMTUsageUnit")]
-    pub voice_mt_usage_unit: Option<String>,
+    pub voice_mt_usage_unit: String,
     // 短信
     pub sms_message_id: Option<i64>,
 }
 
-impl FromStr for CardInfoReply {
-    type Err = crate::errors::Error;
-    fn from_str(s: &str) -> Result<Self> {
-        ErrorReply::is_ok(s)?;
-        Ok(serde_json::from_str(s)?)
+impl CardReply {
+    pub fn is_err(self) -> Result<Self> {
+        if self.error_code.as_str() != "" {
+            match ERROR_HASHMAP.get(self.error_code.as_str()) {
+                Some(t) => Err(t.to_owned())?,
+                None => Err(("30999999", "中国联通未知错误。"))?,
+            };
+        };
+        Ok(self)
     }
 }
 
-impl From<CardInfoReply> for CardStatus {
-    fn from(s: CardInfoReply) -> Self {
+impl FromStr for CardReply {
+    type Err = crate::errors::Error;
+    fn from_str(s: &str) -> Result<Self> {
+        let r: Self = serde_json::from_str(s)?;
+        Ok(r.is_err()?)
+    }
+}
+
+impl From<CardReply> for CardStatus {
+    fn from(s: CardReply) -> Self {
         let status_name = match STATUS_NAME_HASHMAP
             .get("china_unicom")
             .unwrap()
@@ -295,6 +272,20 @@ impl From<CardInfoReply> for CardStatus {
             status_code: s.status,
             status_name: status_name.to_owned(),
             date_activated: s.date_activated,
+        }
+    }
+}
+
+impl From<CardReply> for CardInfo {
+    fn from(s: CardReply) -> Self {
+        CardInfo {
+            iccid: s.iccid,
+            imsi: s.imsi,
+            msisdn: s.msisdn,
+            imei: s.imei,
+            region_name: "".to_owned(),
+            customer_name: s.account_id,
+            brand: "".to_owned(),
         }
     }
 }

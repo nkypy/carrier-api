@@ -6,7 +6,7 @@ use std::str::FromStr;
 use base64::encode;
 use futures::Future;
 
-use crate::china_unicom::models::CardInfoReply;
+use crate::china_unicom::models::CardReply;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 static API_REST_URL: &str = "https://api.10646.cn/rws/api/v1/";
@@ -58,13 +58,14 @@ impl ChinaUnicomClient {
 impl CarrierClient for ChinaUnicomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let resp = self.get(format!("devices/{}", iccid).as_str())?;
-        Ok(CardInfoReply::from_str(&resp)?.into())
+        Ok(CardReply::from_str(&resp)?.into())
     }
     fn card_online(&self, iccid: &str) -> String {
         "card_online".to_string()
     }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())?
+        let resp = self.get(format!("devices/{}", iccid).as_str())?;
+        Ok(CardReply::from_str(&resp)?.into())
     }
     fn card_usage(&self, iccid: &str) -> String {
         "card_usage".to_string()
