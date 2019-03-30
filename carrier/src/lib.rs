@@ -1,8 +1,10 @@
-#![feature(test)]
+#![feature(test, async_await, await_macro, futures_api)]
 extern crate test;
 
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate futures;
 
 extern crate base64;
 extern crate block_modes;
@@ -17,7 +19,6 @@ extern crate serde_xml_rs;
 extern crate sha1;
 extern crate sha2;
 
-use reqwest::Client;
 use std::time::Duration;
 
 mod china_mobile;
@@ -63,8 +64,16 @@ impl CarrierClient {
 }
 
 // 创建请求运营商的 HTTP 客户端，设置 3 秒超时。
-fn http_client() -> Result<Client> {
-    Ok(Client::builder()
+fn http_client() -> Result<reqwest::Client> {
+    Ok(reqwest::Client::builder()
+        .gzip(true)
+        .timeout(Duration::from_secs(3))
+        .build()?)
+}
+
+// 创建异步请求运营商的 HTTP 客户端，设置 3 秒超时。
+fn async_http_client() -> Result<reqwest::r#async::Client> {
+    Ok(reqwest::r#async::Client::builder()
         .gzip(true)
         .timeout(Duration::from_secs(3))
         .build()?)
