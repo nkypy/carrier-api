@@ -4,7 +4,7 @@ mod models;
 use std::str::FromStr;
 
 use base64::encode;
-use chrono::{TimeZone, Utc};
+use chrono::{Duration, TimeZone, Utc};
 
 use crate::china_unicom::models::CardReply;
 use crate::{CardInfo, CardStatus, CardUsage, CarrierClient, Result};
@@ -66,12 +66,12 @@ impl CarrierClient for ChinaUnicomClient {
     }
     fn card_usage(&self, iccid: &str, month: &str) -> Result<CardUsage> {
         let dt =
-            Utc.datetime_from_str(format!("{}01 08:00:00", month).as_str(), "%Y%m%d %H:%M:%S")?;
+            Utc.datetime_from_str(format!("{}01 09:00:00", month).as_str(), "%Y%m%d %H:%M:%S")?;
         let resp = self.get(
             format!(
                 "devices/{}/usageInZone?cycleStartDate={}-27Z",
                 iccid,
-                dt.format("%Y-%m")
+                (dt - Duration::days(7)).format("%Y-%m")
             )
             .as_str(),
         )?;

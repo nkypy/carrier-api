@@ -95,7 +95,7 @@ impl From<chrono::ParseError> for Error {
         dbg!(e);
         Error {
             err_code: "22000001".to_owned(),
-            err_msg: "请求日期格式不符合要求，请按照 200601 格式输入日期"
+            err_msg: "请求日期格式不符合要求，请按照 200601 格式输入日期。"
                 .to_owned(),
         }
     }
