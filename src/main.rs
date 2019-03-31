@@ -125,25 +125,25 @@ fn main() {
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
     // );
     // dbg!(carrier.card_status("898602D9981700140197"));
-    let carrier = ChinaUnicomClient::new(
-        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-        &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
-        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    );
-    dbg!(carrier.card_usage("89860918700319648926", "201902"));
+    // let carrier = ChinaUnicomClient::new(
+    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+    //     &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
+    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    // );
+    // dbg!(carrier.card_usage("89860918700319648926", "201902"));
     // dbg!(carrier.get_terminal_details(vec![
     //     "89860117750006390067",
     //     "89860117750006390158",
     //     "89860117750006390307"
     // ]));
     // dbg!(ChinaUnicomClient::new_test());
-    // let carrier = GuangdongMobileClient::new(
-    //     &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),
-    //     &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
-    //     &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
-    // );
-    // println!("{:?}", carrier.card_status("898602F2191880120110"));
+    let carrier = GuangdongMobileClient::new(
+        &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),
+        &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
+        &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
+    );
+    println!("{:?}", carrier.card_status("898602F2191880120110"));
     // let carrier = JiangsuMobileClient::new(
     //     &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
     //     &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),

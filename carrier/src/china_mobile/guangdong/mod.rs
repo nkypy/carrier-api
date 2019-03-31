@@ -50,22 +50,22 @@ impl GuangdongMobileClient {
         (params_url.join("&"), sign)
     }
     // 3DES 解密, TdesEde3/ECB/ZeroPadding
-    pub fn decrypt(&self, plaintext: &[u8]) -> String {
+    pub fn decrypt(&self, plaintext: &[u8]) -> Result<String> {
         let pass = self.password.as_bytes();
         let mut key = [0u8; 24];
         // ECB iv 为默认, CBC 需要提供8位的 iv
         let iv = Default::default();
         key[..24].copy_from_slice(&pass[..24]);
         // iv[..8].copy_from_slice(&pass[..8]);
-        let cipher = TdesEcb::new_var(&key, iv).unwrap();
+        let cipher = TdesEcb::new_var(&key, iv)?;
         let pos = plaintext.len();
         let mut buffer = [0u8; 256];
         buffer[..pos].copy_from_slice(plaintext);
-        cipher.decrypt(&mut buffer).unwrap();
+        cipher.decrypt(&mut buffer)?;
         let buffer = &buffer[..pos];
         let mut buf = buffer.to_vec();
         buf.retain(|&x| x > 20u8);
-        String::from_utf8(buf).unwrap()
+        Ok(String::from_utf8(buf)?)
     }
     pub fn get(&self, method: &str, iccid: &str) -> Result<String> {
         let now = Utc::now();
@@ -79,19 +79,19 @@ impl GuangdongMobileClient {
         let v = vec![("method", method), ("transID", &trans_id), ("iccid", iccid)];
         let (url, sign) = dbg!(self.sign(v));
         let url = dbg!(format!("{}?sign={}&{}", API_URL, sign, url));
-        let rsp = dbg!(crate::http_client()?.get(&url).send()?.text()?);
-        Ok(rsp)
+        let rsp = dbg!(crate::http_client()?
+            .get(&url)
+            .send()?
+            .text()?
+            .replace('\n', ""));
+        let bytes: &[u8] = &decode(&rsp)?;
+        dbg!(Ok(self.decrypt(bytes)?))
     }
 }
 
 impl CarrierClient for GuangdongMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        let data = dbg!(self
-            .get("triopi.member.lifecycle.single.query", iccid)?
-            .replace('\n', ""));
-        let bytes = decode(&data).unwrap();
-        let rsp: &[u8] = &bytes;
-        dbg!(self.decrypt(rsp));
+        let rsp = self.get("triopi.member.lifecycle.single.query", iccid)?;
         Err("card_status")?
     }
 }

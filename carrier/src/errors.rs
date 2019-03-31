@@ -94,9 +94,49 @@ impl From<chrono::ParseError> for Error {
     fn from(e: chrono::ParseError) -> Self {
         dbg!(e);
         Error {
-            err_code: "22000001".to_owned(),
+            err_code: "21000002".to_owned(),
             err_msg: "请求日期格式不符合要求，请按照 200601 格式输入日期。"
                 .to_owned(),
+        }
+    }
+}
+
+impl From<base64::DecodeError> for Error {
+    fn from(e: base64::DecodeError) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "21000003".to_owned(),
+            err_msg: "base64 解码错误。".to_owned(),
+        }
+    }
+}
+
+impl From<std::string::FromUtf8Error> for Error {
+    fn from(e: std::string::FromUtf8Error) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "21000004".to_owned(),
+            err_msg: "字节转字符串异常。".to_owned(),
+        }
+    }
+}
+
+impl From<block_modes::BlockModeError> for Error {
+    fn from(e: block_modes::BlockModeError) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "21000005".to_owned(),
+            err_msg: "解码模式错误。".to_owned(),
+        }
+    }
+}
+
+impl From<block_modes::InvalidKeyIvLength> for Error {
+    fn from(e: block_modes::InvalidKeyIvLength) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "21000006".to_owned(),
+            err_msg: "解码密钥错误。".to_owned(),
         }
     }
 }
