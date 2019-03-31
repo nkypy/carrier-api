@@ -1,5 +1,24 @@
+use hashbrown::HashMap;
+use lazy_static::lazy_static;
+
 use crate::{CardInfo, CardStatus, Result};
 
+lazy_static! {
+    static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
+        let m: HashMap<&'static str, &'static str> = [
+            ("1", "正常"),
+            ("2", "待激活"),
+            ("3", "停机"),
+            ("4", "销户"),
+            ("8", "全停"),
+            ("9", "全停"),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
+}
 // 江苏移动请求格式
 pub struct CardRequest {}
 

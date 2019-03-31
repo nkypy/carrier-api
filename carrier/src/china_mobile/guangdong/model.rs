@@ -1,4 +1,26 @@
+use hashbrown::HashMap;
+use lazy_static::lazy_static;
+
 use crate::{CardInfo, CardStatus, Result};
+
+lazy_static! {
+    static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
+        let m: HashMap<&'static str, &'static str> = [
+            ("test", "测试期"),
+            ("silent", "沉默期"),
+            ("inventory", "库存期"),
+            ("normal", "正使用"),
+            ("stop", "停机"),
+            ("preclose", "销户"),
+            ("bespeakClose", "预约销户"),
+            ("others", "其他"),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
+}
 
 // 广东移动返回
 #[derive(Debug, Serialize, Deserialize)]

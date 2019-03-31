@@ -81,10 +81,22 @@ impl From<reqwest::Error> for Error {
 }
 
 impl From<serde_json::Error> for Error {
-    fn from(_e: serde_json::Error) -> Self {
+    fn from(e: serde_json::Error) -> Self {
+        dbg!(e);
         Error {
             err_code: "21000001".to_owned(),
             err_msg: "返回的数据格式异常，导致解析失败。".to_owned(),
+        }
+    }
+}
+
+impl From<chrono::ParseError> for Error {
+    fn from(e: chrono::ParseError) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "22000001".to_owned(),
+            err_msg: "请求日期格式不符合要求，请按照 200601 格式输入日期"
+                .to_owned(),
         }
     }
 }

@@ -1,4 +1,24 @@
-use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
+use hashbrown::HashMap;
+use lazy_static::lazy_static;
+
+use crate::{CardInfo, CardStatus, Result};
+
+lazy_static! {
+    static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
+        let m: HashMap<&'static str, &'static str> = [
+            ("1", "正常"),
+            ("2", "待激活"),
+            ("3", "停机"),
+            ("4", "销户"),
+            ("8", "全停"),
+            ("9", "全停"),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CardReply {
@@ -40,11 +60,7 @@ impl CardReply {
             return Err(self.message.to_string())?;
         };
         let status_code: &str = &self.result[0].status;
-        let status_name = match STATUS_NAME_HASHMAP
-            .get("china_mobile")
-            .unwrap()
-            .get(status_code)
-        {
+        let status_name = match STATUS_NAME_HASHMAP.get(status_code) {
             Some(name) => name,
             None => "未知状态",
         };

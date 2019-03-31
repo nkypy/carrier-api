@@ -21,7 +21,7 @@ impl ChinaTelecomClient {
             enc_data.push(self.hash_bt64_to_hex(enc_bytes));
         }
         if length % 4 > 0 {
-            let tmp_bytes = self.hash_str_to_bytes(&text_str[(length - length % 4)..length]);
+            let tmp_bytes = self.hash_str_to_bytes(&text_str[length - length % 4..]);
             let enc_bytes = self.hash_enc(
                 self.hash_enc(self.hash_enc(tmp_bytes, keys.0), keys.1),
                 keys.2,

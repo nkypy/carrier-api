@@ -1,11 +1,11 @@
+use std::collections::HashMap;
 use std::convert::From;
 use std::str::FromStr;
 
-use hashbrown::HashMap;
 use lazy_static::lazy_static;
 use serde_json;
 
-use crate::{CardInfo, CardStatus, Result, STATUS_NAME_HASHMAP};
+use crate::{CardInfo, CardStatus, CardUsage, Result};
 
 lazy_static! {
     static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
@@ -123,6 +123,19 @@ lazy_static! {
         .collect();
         m
     };
+    static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
+        let m: HashMap<&'static str, &'static str> = [
+            ("INVENTORY", "库存"),
+            ("ACTIVATION_READY", "可激活"),
+            ("ACTIVATED", "已激活"),
+            ("DEACTIVATED", "已停用"),
+            ("RETIRED", "已失效"),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
 }
 
 // SOAP 请求格式
@@ -164,7 +177,7 @@ impl RequestEnvelope {
 }
 
 // 发送短信请求格式
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SmsRequest {
     pub message_text: String,
@@ -172,7 +185,7 @@ pub struct SmsRequest {
 }
 
 // 返回信息格式
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(default)]
 pub struct CardReply {
@@ -209,7 +222,8 @@ pub struct CardReply {
     pub timestamp: String,
     pub cycle_start_date: String,
     pub cycle_end_date: String,
-    pub device_cycle_usage_in_zones: String,
+    pub device_cycle_usage_in_zones: HashMap<String, Vec<CardUsageReply>>,
+    // 其余
     pub data_usage_unit: String,
     pub ctd_data_usage: Option<f64>,
     #[serde(rename = "ctdSMSUsage")]
@@ -238,6 +252,28 @@ pub struct CardReply {
     pub sms_message_id: Option<i64>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CardUsageReply {
+    pub rate_plan: String,
+    pub rate_plan_version: String,
+    pub zone: String,
+    pub data_usage: Option<u64>,
+    pub data_usage_unit: Option<String>,
+    #[serde(rename = "voiceMTUsage")]
+    pub voice_mt_usage: Option<u32>,
+    #[serde(rename = "voiceMTUsageUnit")]
+    pub voice_mt_usage_unit: Option<String>,
+    #[serde(rename = "voiceMOUsage")]
+    pub voice_mo_usage: Option<u32>,
+    #[serde(rename = "voiceMOUsageUnit")]
+    pub voice_mo_usage_unit: Option<String>,
+    #[serde(rename = "smsmtusage")]
+    pub sms_mt_usage: Option<u32>,
+    #[serde(rename = "smsmousage")]
+    pub sms_mo_usage: Option<u32>,
+}
+
 impl CardReply {
     pub fn is_err(self) -> Result<Self> {
         if self.error_code.as_str() != "" {
@@ -260,11 +296,7 @@ impl FromStr for CardReply {
 
 impl From<CardReply> for CardStatus {
     fn from(s: CardReply) -> Self {
-        let status_name = match STATUS_NAME_HASHMAP
-            .get("china_unicom")
-            .unwrap()
-            .get(s.status.as_str())
-        {
+        let status_name = match STATUS_NAME_HASHMAP.get(s.status.as_str()) {
             Some(name) => name,
             None => "未知状态",
         };
@@ -286,6 +318,24 @@ impl From<CardReply> for CardInfo {
             region_name: "".to_owned(),
             customer_name: s.account_id,
             brand: "".to_owned(),
+        }
+    }
+}
+
+impl From<CardReply> for CardUsage {
+    fn from(s: CardReply) -> Self {
+        let mut used = 0u64;
+        for (_, m) in s.device_cycle_usage_in_zones.iter() {
+            for n in m.iter() {
+                if let Some(du) = n.data_usage {
+                    used += du;
+                };
+            }
+        }
+        CardUsage {
+            data_used: used, // 单位：字节
+            sms_used: 0u32,
+            voice_used: 0u32, // 单位：秒
         }
     }
 }

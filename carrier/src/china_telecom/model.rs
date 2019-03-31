@@ -1,6 +1,32 @@
+use hashbrown::HashMap;
+use lazy_static::lazy_static;
 use serde_json;
 
 use crate::{CardInfo, CardStatus, Result};
+
+lazy_static! {
+    static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
+        let m: HashMap<&'static str, &'static str> = [
+            ("1", "在用"),
+            ("2", "用户报停"),
+            ("3", "用户拆机"),
+            ("5", "欠停(双向)"),
+            ("6", "欠停(单向)"),
+            ("7", "违章停机"),
+            ("8", "挂失"),
+            ("19", "活卡待激活"),
+            ("120000", "停机"),
+            ("100001", "已激活"),
+            ("140003", "未激活"),
+            ("150001", "未实名制违规停机"),
+            ("99999", "销户"),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
+}
 
 // 卡号查询返回
 #[derive(Debug, Serialize, Deserialize)]
