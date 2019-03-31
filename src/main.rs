@@ -131,7 +131,7 @@ fn main() {
         &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
         &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
     );
-    dbg!(carrier.card_info("89860117750006390067"));
+    dbg!(carrier.card_net_status("89860117750006390067"));
     // dbg!(carrier.get_terminal_details(vec![
     //     "89860117750006390067",
     //     "89860117750006390158",

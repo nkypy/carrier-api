@@ -60,17 +60,8 @@ impl CarrierClient for ChinaUnicomClient {
         let resp = self.get(format!("devices/{}", iccid).as_str())?;
         Ok(CardReply::from_str(&resp)?.into())
     }
-    fn card_online(&self, iccid: &str) -> String {
-        "card_online".to_string()
-    }
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
         let resp = self.get(format!("devices/{}", iccid).as_str())?;
         Ok(CardReply::from_str(&resp)?.into())
-    }
-    fn card_usage(&self, iccid: &str) -> String {
-        "card_usage".to_string()
-    }
-    fn card_plan(&self, iccid: &str) -> String {
-        "card_plan".to_string()
     }
 }

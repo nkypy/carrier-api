@@ -11,22 +11,17 @@ impl ChinaTelecomClient {
             self.hash_str_to_bytes(&self.license[3..6]),
             self.hash_str_to_bytes(&self.license[6..9]),
         );
-        let (iterator, remainder) = if length >= 4 {
-            (length / 4, length % 4)
-        } else {
-            (1usize, 0usize)
-        };
         let mut enc_data: Vec<String> = vec![];
-        for i in 0..iterator {
-            let tmp_bytes = self.hash_str_to_bytes(&text_str[i * 4..i * 4 + 4]);
+        for i in (0..length - 3).step_by(4) {
+            let tmp_bytes = self.hash_str_to_bytes(&text_str[i..i + 4]);
             let enc_bytes = self.hash_enc(
                 self.hash_enc(self.hash_enc(tmp_bytes, keys.0), keys.1),
                 keys.2,
             );
             enc_data.push(self.hash_bt64_to_hex(enc_bytes));
         }
-        if remainder > 0 {
-            let tmp_bytes = self.hash_str_to_bytes(&text_str[iterator * 4..length]);
+        if length % 4 > 0 {
+            let tmp_bytes = self.hash_str_to_bytes(&text_str[(length - length % 4)..length]);
             let enc_bytes = self.hash_enc(
                 self.hash_enc(self.hash_enc(tmp_bytes, keys.0), keys.1),
                 keys.2,

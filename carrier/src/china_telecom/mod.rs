@@ -74,7 +74,7 @@ impl ChinaTelecomClient {
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = self.get("getTelephone", iccid, vec![iccid], vec![])?;
-        CardMsisdnReply::parse_from_str(&resp)
+        CardMsisdnReply::from_str(&resp)
     }
 }
 
@@ -84,19 +84,10 @@ impl CarrierClient for ChinaTelecomClient {
         let v: CardStatusReply = serde_json::from_str(&resp)?;
         dbg!(v.to_card_status())
     }
-    fn card_online(&self, iccid: &str) -> String {
-        "card_online".to_string()
-    }
     // 接口只能通过 msisdn 查询
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
         let msisdn = self.iccid_to_msisdn(iccid)?;
         dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]));
         Err("card_info".to_string())?
-    }
-    fn card_usage(&self, iccid: &str) -> String {
-        "card_usage".to_string()
-    }
-    fn card_plan(&self, iccid: &str) -> String {
-        "card_plan".to_string()
     }
 }

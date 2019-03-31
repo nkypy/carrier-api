@@ -31,16 +31,26 @@ pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuM
 pub use crate::china_telecom::ChinaTelecomClient;
 pub use crate::china_unicom::ChinaUnicomClient;
 pub use crate::errors::Error;
-pub use crate::models::{CardInfo, CardStatus, STATUS_NAME_HASHMAP};
+pub use crate::models::{CardInfo, CardNetStatus, CardStatus, CardUsage, STATUS_NAME_HASHMAP};
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 pub trait CarrierClient {
-    fn card_status(&self, iccid: &str) -> Result<CardStatus>;
-    fn card_online(&self, iccid: &str) -> String;
-    fn card_info(&self, iccid: &str) -> Result<CardInfo>;
-    fn card_usage(&self, iccid: &str) -> String;
-    fn card_plan(&self, iccid: &str) -> String;
+    fn card_status(&self, iccid: &str) -> Result<CardStatus> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
+    fn card_net_status(&self, iccid: &str) -> Result<CardNetStatus> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
+    fn card_info(&self, iccid: &str) -> Result<CardInfo> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
+    fn card_rate_plan(&self, iccid: &str) -> Result<CardInfo> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
+    fn card_usage(&self, iccid: &str) -> Result<CardUsage> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
 }
 
 impl CarrierClient {

@@ -94,16 +94,4 @@ impl CarrierClient for GuangdongMobileClient {
         dbg!(self.decrypt(rsp));
         Err("card_status")?
     }
-    fn card_online(&self, iccid: &str) -> String {
-        "card_online".to_string()
-    }
-    fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        Err("card_info".to_string())?
-    }
-    fn card_usage(&self, iccid: &str) -> String {
-        "card_usage".to_string()
-    }
-    fn card_plan(&self, iccid: &str) -> String {
-        "card_plan".to_string()
-    }
 }

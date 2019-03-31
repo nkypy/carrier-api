@@ -12,9 +12,11 @@ pub struct CardMsisdnReply {
 }
 
 impl CardMsisdnReply {
-    pub fn parse_from_str(text: &str) -> Result<String> {
-        let r: CardMsisdnReply =
-            serde_json::from_str(text).map_err(|_| "解析失败".to_string())?;
+    pub fn from_str(s: &str) -> Result<String> {
+        let r: Self = serde_json::from_str(s)?;
+        if r.result != "0" {
+            Err(r.result)?
+        }
         Ok(r.msisdn)
     }
 }
