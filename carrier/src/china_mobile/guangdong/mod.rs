@@ -1,3 +1,4 @@
+mod controllers;
 mod models;
 
 use std::str::FromStr;

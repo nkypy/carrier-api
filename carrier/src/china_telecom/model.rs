@@ -5,6 +5,39 @@ use serde_json;
 use crate::{CardInfo, CardStatus, Result};
 
 lazy_static! {
+    static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
+        let m: HashMap<&'static str, (&'static str, &'static str)> = [
+            (
+                "-1",
+                ("20000001", "用户名或者密码错误，无权限。"),
+            ),
+            ("-2", ("20000002", "必传参数缺失。")),
+            ("-3", ("20000003", "sign参数值错误。")),
+            ("-4", ("20000004", "iccid号码错误或不存在。")),
+            (
+                "-5",
+                (
+                    "20000005",
+                    "已经订购该产品，请不要重复订购。",
+                ),
+            ),
+            (
+                "-7",
+                (
+                    "20000007",
+                    "该号码已有业务正在处理，请稍后下发。",
+                ),
+            ),
+            (
+                "101004",
+                ("20000014", "请求过于频繁，请稍后再试。"),
+            ),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        m
+    };
     static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
         let m: HashMap<&'static str, &'static str> = [
             ("1", "在用"),

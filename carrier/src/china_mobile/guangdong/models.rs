@@ -465,7 +465,7 @@ impl FromStr for CardReply {
         if r.code != "0".to_owned() {
             match ERROR_HASHMAP.get(r.code.as_str()) {
                 Some(e) => Err(e.to_owned())?,
-                None => Err(("44499999", "未知错误"))?,
+                None => Err(("44499999", "广东移动未知错误"))?,
             };
         };
         Ok(r)
@@ -479,7 +479,7 @@ impl FromStr for CardContent {
         if r.code != "0".to_owned() {
             match ERROR_HASHMAP.get(r.code.as_str()) {
                 Some(e) => Err(e.to_owned())?,
-                None => Err(("44499999", "未知错误"))?,
+                None => Err(("44499999", "广东移动未知错误"))?,
             };
         };
         Ok(r)

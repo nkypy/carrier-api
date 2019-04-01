@@ -4,6 +4,10 @@ use lazy_static::lazy_static;
 use crate::{CardInfo, CardStatus, Result};
 
 lazy_static! {
+    static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
+        let m: HashMap<&'static str, (&'static str, &'static str)> = [].iter().cloned().collect();
+        m
+    };
     static ref STATUS_NAME_HASHMAP: HashMap<&'static str, &'static str> = {
         let m: HashMap<&'static str, &'static str> = [
             ("1", "正常"),
