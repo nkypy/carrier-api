@@ -1,5 +1,7 @@
 mod model;
 
+use std::str::FromStr;
+
 use base64::decode;
 use block_modes::block_padding::ZeroPadding;
 use block_modes::{BlockMode, Ecb};
@@ -7,6 +9,7 @@ use chrono::Utc;
 use des::TdesEde3;
 use sha1::Sha1;
 
+use crate::china_mobile::guangdong::model::{CardContent, CardReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 static API_URL: &str = "http://120.197.89.173:8081/openapi/router";
@@ -92,6 +95,7 @@ impl GuangdongMobileClient {
 impl CarrierClient for GuangdongMobileClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let rsp = self.get("triopi.member.lifecycle.single.query", iccid)?;
-        Err("card_status")?
+        let content = CardContent::from_str(CardReply::from_str(rsp.as_str())?.data.as_str())?;
+        Ok(content.into())
     }
 }
