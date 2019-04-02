@@ -3,6 +3,8 @@ use std::str::FromStr;
 
 use hashbrown::HashMap;
 use lazy_static::lazy_static;
+use quick_xml::events::Event;
+use quick_xml::Reader;
 
 use crate::{CardInfo, CardStatus, Result};
 
@@ -117,7 +119,10 @@ pub struct CardStatusReply {
 impl FromStr for CardStatusReply {
     type Err = crate::errors::Error;
     fn from_str(s: &str) -> Result<Self> {
-        let r: Self = serde_json::from_str(s).map_err(|_| str_to_error_tuple(s))?;
+        let r: Self = serde_json::from_str(s).map_err(|e| {
+            dbg!(e);
+            str_to_error_tuple(s)
+        })?;
         if r.result_code.as_str() != "0" {
             match ERROR_HASHMAP.get(r.result_code.as_str()) {
                 Some(e) => Err(e.to_owned())?,
@@ -147,55 +152,111 @@ impl From<CardStatusReply> for CardStatus {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct CardInfoReplyInfo<'a> {
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(default, rename = "prodInfos")]
+pub struct CardInfoReplyResult {
     #[serde(rename = "commonRegionName")]
-    region_name: &'a str,
+    pub region_name: String,
     #[serde(rename = "custName")]
-    customer_name: &'a str,
+    pub customer_name: String,
     #[serde(rename = "phoneNum")]
-    msisdn: &'a str,
+    pub msisdn: String,
     #[serde(rename = "productName")]
-    product_name: &'a str,
+    pub product_name: String,
     #[serde(rename = "prodStatusName")]
-    product_status_name: &'a str,
+    pub product_status_name: String,
     #[serde(rename = "stopFlag")]
-    stop_flag: &'a str,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct CardInfoReplyResult<'a> {
-    #[serde(borrow, rename = "prodInfos")]
-    infos: CardInfoReplyInfo<'a>,
+    pub stop_flag: String,
 }
 
 // 信息查询返回
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename = "SvcCont")]
-struct CardInfoReply<'a> {
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(default, rename = "SvcCont")]
+pub struct CardInfoReply {
     #[serde(rename = "resultCode")]
-    result_code: &'a str,
+    pub result_code: String,
     #[serde(rename = "resultMsg")]
-    result_message: &'a str,
+    pub result_message: String,
     #[serde(rename = "GROUP_TRANSACTIONID")]
-    transaction_id: &'a str,
-    #[serde(rename = "result")]
-    result: CardInfoReplyResult<'a>,
+    pub transaction_id: String,
+    pub result: CardInfoReplyResult,
 }
 
-impl<'a> CardInfoReply<'a> {
-    fn to_card_info(&self) -> Result<CardInfo> {
-        match self.result_code {
-            "0" => Ok(CardInfo {
-                iccid: "".to_owned(),
-                imsi: "".to_owned(),
-                msisdn: self.result.infos.msisdn.to_owned(),
-                imei: "".to_owned(),
-                region_name: self.result.infos.region_name.to_owned(),
-                customer_name: self.result.infos.customer_name.to_owned(),
-                brand: "".to_owned(),
-            }),
-            _ => Err("错误".to_owned())?,
+impl FromStr for CardInfoReply {
+    type Err = crate::errors::Error;
+    fn from_str(s: &str) -> Result<Self> {
+        // xml 手动读取
+        let mut r: Self = Default::default();
+        r.result_code = "0".to_owned();
+        let mut reader = Reader::from_str(s);
+        reader.trim_text(true);
+        // 循环
+        let mut buf = Vec::new();
+        let mut m: HashMap<String, String> = HashMap::new();
+        loop {
+            match reader.read_event(&mut buf) {
+                Ok(Event::Start(ref e)) => {
+                    let n = e.unescape_and_decode(&reader).expect("Error!");
+                    let v = match reader.read_text(e.name(), &mut Vec::new()) {
+                        Ok(t) => t,
+                        Err(_) => "".to_owned(),
+                    };
+                    m.insert(n, v);
+                }
+                Ok(Event::Eof) => break, // exits the loop when reaching end of file
+                Err(e) => panic!("Error at position {}: {:?}", reader.buffer_position(), e),
+                _ => (), // There are several other `Event`s we do not consider here
+            }
+            // if we don't keep a borrow elsewhere, we can clear the buffer to keep memory usage low
+            buf.clear();
+        }
+        dbg!(&m);
+        // 写入数据
+        r.result_code = match m.get("resultCode") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        r.result_message = match m.get("resultMsg") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        r.transaction_id = match m.get("GROUP_TRANSACTIONID") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        r.result.msisdn = match m.get("phoneNum") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        r.result.region_name = match m.get("commonRegionName") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        r.result.customer_name = match m.get("custName") {
+            Some(t) => t.to_owned(),
+            None => "未知".to_owned(),
+        };
+        //写入结束
+        if r.result_code.as_str() != "0" {
+            match ERROR_HASHMAP.get(r.result_code.as_str()) {
+                Some(e) => Err(e.to_owned())?,
+                None => Err(("20999999", s))?,
+            };
+        };
+        Ok(r)
+    }
+}
+
+impl From<CardInfoReply> for CardInfo {
+    fn from(s: CardInfoReply) -> Self {
+        CardInfo {
+            iccid: "".to_owned(),
+            imsi: "".to_owned(),
+            msisdn: s.result.msisdn,
+            imei: "".to_owned(),
+            region_name: s.result.region_name,
+            customer_name: s.result.customer_name,
+            brand: "".to_owned(),
         }
     }
 }

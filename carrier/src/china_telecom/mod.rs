@@ -3,7 +3,7 @@ mod models;
 
 use std::str::FromStr;
 
-use crate::china_telecom::models::{CardMsisdnReply, CardStatusReply};
+use crate::china_telecom::models::{CardInfoReply, CardMsisdnReply, CardStatusReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
 static API_GET_URL: &str = "http://api.ct10649.com:9001/m2m_ec/query.do";
@@ -81,14 +81,12 @@ impl ChinaTelecomClient {
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
         let resp = dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]))?;
-        // let v: CardStatusReply = serde_json::from_str(&resp)?;
-        // dbg!(v.to_card_status())
         Ok(CardStatusReply::from_str(&resp)?.into())
     }
     // 接口只能通过 msisdn 查询
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
         let msisdn = self.iccid_to_msisdn(iccid)?;
-        dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]));
-        Err("card_info".to_string())?
+        let resp = dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]))?;
+        Ok(CardInfoReply::from_str(&resp)?.into())
     }
 }

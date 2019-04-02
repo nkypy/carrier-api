@@ -96,7 +96,7 @@ fn main() {
         &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
         &env::var("CHINA_TELECOM_LICENSE").unwrap(),
     );
-    let rsp = carrier.card_info("89860316302002308211");
+    let rsp = carrier.card_info("8986031630200230821");
     match rsp {
         Ok(t) => println!("response is {:?}", t),
         Err(e) => println!("error is {}", e),

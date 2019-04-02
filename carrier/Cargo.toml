@@ -16,6 +16,7 @@ des = "*"
 sha1 = "*"
 sha2 = "*"
 base64 = "*"
+quick-xml = "*"
 chrono = { version = "*", features = ["serde"] }
 reqwest = { version = "*", features = ["default-tls-vendored"] }
 futures-preview = "0.3.0-alpha.13"

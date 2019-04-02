@@ -12,6 +12,7 @@ extern crate chrono;
 extern crate des;
 extern crate hashbrown;
 extern crate lazy_static;
+extern crate quick_xml;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
