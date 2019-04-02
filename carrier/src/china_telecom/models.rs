@@ -1,6 +1,8 @@
+use std::convert::From;
+use std::str::FromStr;
+
 use hashbrown::HashMap;
 use lazy_static::lazy_static;
-use serde_json;
 
 use crate::{CardInfo, CardStatus, Result};
 
@@ -70,65 +72,77 @@ pub struct CardMsisdnReply {
     pub msisdn: String,
 }
 
-impl CardMsisdnReply {
-    pub fn from_str(s: &str) -> Result<String> {
-        let r: Self = serde_json::from_str(s)?;
-        if r.result != "0" {
-            Err(r.result)?
-        }
-        Ok(r.msisdn)
+fn str_to_error_tuple(s: &str) -> (&str, &str) {
+    let v: Vec<&str> = s.split('：').collect();
+    match ERROR_HASHMAP.get(v[0]) {
+        Some(e) => e.to_owned(),
+        None => ("20999999", s),
+    }
+}
+
+impl FromStr for CardMsisdnReply {
+    type Err = crate::errors::Error;
+    fn from_str(s: &str) -> Result<Self> {
+        let r: Self = serde_json::from_str(s).map_err(|_| str_to_error_tuple(s))?;
+        Ok(r)
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CardStatusReplyProductInfo<'a> {
+pub struct CardStatusReplyProductInfo {
     #[serde(rename = "productMainStatusCd")]
-    pub status_code: &'a str,
+    pub status_code: String,
     #[serde(rename = "productMainStatusName")]
-    pub status_name: &'a str,
+    pub status_name: String,
 }
 
 // 状态查询返回
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CardStatusReply<'a> {
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct CardStatusReply {
     #[serde(rename = "resultCode")]
-    pub result_code: &'a str,
+    pub result_code: String,
     #[serde(rename = "resultMsg")]
-    pub result_message: &'a str,
+    pub result_message: String,
     #[serde(rename = "GROUP_TRANSACTIONID")]
-    pub transaction_id: &'a str,
+    pub transaction_id: String,
     #[serde(rename = "number")]
-    pub msisdn: &'a str,
+    pub msisdn: String,
     #[serde(rename = "servCreateDate")]
-    pub date_created: &'a str,
+    pub date_created: String,
     #[serde(rename = "productInfo")]
-    pub infos: Vec<CardStatusReplyProductInfo<'a>>,
+    pub infos: Vec<CardStatusReplyProductInfo>,
 }
 
-impl<'a> CardStatusReply<'a> {
-    pub fn to_card_status(&self) -> Result<CardStatus> {
-        match self.result_code {
-            "0" => match self.infos.len() {
-                0 => Err("长度不对".to_owned())?,
-                1 => Ok(CardStatus {
-                    status_code: self.infos[0].status_code.to_owned(),
-                    status_name: self.infos[0].status_name.to_owned(),
-                    date_activated: self.date_created.to_owned(),
-                }),
-                _ => {
-                    for v in self.infos.iter() {
-                        if v.status_code != "6" {
-                            return Ok(CardStatus {
-                                status_code: v.status_code.to_owned(),
-                                status_name: v.status_name.to_owned(),
-                                date_activated: self.date_created.to_owned(),
-                            });
-                        }
-                    }
-                    Err("没有数据".to_owned())?
-                }
-            },
-            _ => Err("错误".to_owned())?,
+impl FromStr for CardStatusReply {
+    type Err = crate::errors::Error;
+    fn from_str(s: &str) -> Result<Self> {
+        let r: Self = serde_json::from_str(s).map_err(|_| str_to_error_tuple(s))?;
+        if r.result_code.as_str() != "0" {
+            match ERROR_HASHMAP.get(r.result_code.as_str()) {
+                Some(e) => Err(e.to_owned())?,
+                None => Err(("20999999", s))?,
+            };
+        };
+        Ok(r)
+    }
+}
+
+impl From<CardStatusReply> for CardStatus {
+    fn from(s: CardStatusReply) -> Self {
+        for v in s.infos.iter() {
+            if v.status_code != "6" {
+                return CardStatus {
+                    status_code: v.status_code.to_owned(),
+                    status_name: v.status_name.to_owned(),
+                    date_activated: s.date_created.to_owned(),
+                };
+            };
+        }
+        CardStatus {
+            status_code: "未知".to_owned(),
+            status_name: "未知".to_owned(),
+            date_activated: "未知".to_owned(),
         }
     }
 }

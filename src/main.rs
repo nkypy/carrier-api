@@ -91,16 +91,16 @@ fn main() {
     //     Ok(c) => println!("carrier status is {:?}", c.card_status("1234")),
     //     Err(e) => println!("error is {:?}", e)
     // };
-    // let carrier = ChinaTelecomClient::new(
-    //     &env::var("CHINA_TELECOM_USERNAME").unwrap(),
-    //     &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
-    //     &env::var("CHINA_TELECOM_LICENSE").unwrap(),
-    // );
-    // let rsp = carrier.card_status("8986031630200230821");
-    // match rsp {
-    //     Ok(t) => println!("response is {:?}", t),
-    //     Err(e) => println!("error is {}", e),
-    // }
+    let carrier = ChinaTelecomClient::new(
+        &env::var("CHINA_TELECOM_USERNAME").unwrap(),
+        &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
+        &env::var("CHINA_TELECOM_LICENSE").unwrap(),
+    );
+    let rsp = carrier.card_info("89860316302002308211");
+    match rsp {
+        Ok(t) => println!("response is {:?}", t),
+        Err(e) => println!("error is {}", e),
+    }
     // let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
     // // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // // println!("加密 test 字符串");
@@ -138,12 +138,12 @@ fn main() {
     //     "89860117750006390307"
     // ]));
     // dbg!(ChinaUnicomClient::new_test());
-    let carrier = GuangdongMobileClient::new(
-        &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),
-        &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
-        &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
-    );
-    println!("{:?}", carrier.card_status("898602F2191880120110"));
+    // let carrier = GuangdongMobileClient::new(
+    //     &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),
+    //     &env::var("GUANGDONG_MOBILE_PASSWORD").unwrap(),
+    //     &env::var("GUANGDONG_MOBILE_GROUP_ID").unwrap(),
+    // );
+    // println!("{:?}", carrier.card_status("898602F2191880120110"));
     // let carrier = JiangsuMobileClient::new(
     //     &env::var("JIANGSU_MOBILE_APP_ID").unwrap(),
     //     &env::var("JIANGSU_MOBILE_PASSWORD").unwrap(),
