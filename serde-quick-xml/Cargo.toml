@@ -1,0 +1,9 @@
+[package]
+name = "serde_quick_xml"
+version = "0.0.1"
+authors = ["Jack Shih <i@kshih.com>"]
+edition = "2018"
+
+[dependencies]
+serde = "*"
+quick_xml = "*"
