@@ -5,30 +5,27 @@ impl ChinaTelecomClient {
     pub fn hash(&self, mut texts: Vec<&str>) -> String {
         texts.sort_by(|a, b| a.cmp(&b));
         let text_str = texts.join(",");
-        let length = text_str.len();
         let keys = (
             self.hash_str_to_bytes(&self.license[..3]),
             self.hash_str_to_bytes(&self.license[3..6]),
             self.hash_str_to_bytes(&self.license[6..9]),
         );
-        let mut enc_data: Vec<String> = vec![];
-        for i in (0..length - 3).step_by(4) {
-            let tmp_bytes = self.hash_str_to_bytes(&text_str[i..i + 4]);
-            let enc_bytes = self.hash_enc(
-                self.hash_enc(self.hash_enc(tmp_bytes, keys.0), keys.1),
-                keys.2,
-            );
-            enc_data.push(self.hash_bt64_to_hex(enc_bytes));
-        }
-        if length % 4 > 0 {
-            let tmp_bytes = self.hash_str_to_bytes(&text_str[length - length % 4..]);
-            let enc_bytes = self.hash_enc(
-                self.hash_enc(self.hash_enc(tmp_bytes, keys.0), keys.1),
-                keys.2,
-            );
-            enc_data.push(self.hash_bt64_to_hex(enc_bytes));
-        }
-        enc_data.join("")
+        let subs = text_str
+            .as_bytes()
+            .chunks(4)
+            .map(std::str::from_utf8)
+            .collect::<Result<Vec<&str>, _>>()
+            .unwrap();
+        let last: Vec<String> = subs
+            .iter()
+            .map(|x| {
+                self.hash_bt64_to_hex(self.hash_enc(
+                    self.hash_enc(self.hash_enc(self.hash_str_to_bytes(x), keys.0), keys.1),
+                    keys.2,
+                ))
+            })
+            .collect();
+        last.join("")
     }
     fn hash_bt64_to_hex(&self, data: [u8; 64]) -> String {
         let mut out: Vec<String> = vec![];

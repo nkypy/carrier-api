@@ -1,10 +1,8 @@
-#![feature(test, async_await, await_macro, futures_api)]
+#![feature(test, async_await, await_macro)]
 extern crate test;
 
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate futures;
 
 extern crate base64;
 extern crate block_modes;
@@ -28,11 +26,13 @@ mod china_unicom;
 mod errors;
 mod models;
 
-pub use crate::china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient};
-pub use crate::china_telecom::ChinaTelecomClient;
-pub use crate::china_unicom::ChinaUnicomClient;
-pub use crate::errors::Error;
-pub use crate::models::{CardInfo, CardNetStatus, CardRatePlan, CardStatus, CardUsage};
+pub use crate::{
+    china_mobile::{ChinaMobileClient, GuangdongMobileClient, JiangsuMobileClient},
+    china_telecom::ChinaTelecomClient,
+    china_unicom::ChinaUnicomClient,
+    errors::Error,
+    models::{CardInfo, CardNetStatus, CardRatePlan, CardStatus, CardUsage},
+};
 
 pub type Result<T> = std::result::Result<T, Error>;
 
