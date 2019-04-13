@@ -16,39 +16,36 @@ impl ChinaTelecomClient {
             .map(std::str::from_utf8)
             .collect::<Result<Vec<&str>, _>>()
             .unwrap();
-        let last: Vec<String> = subs
-            .iter()
+        subs.iter()
             .map(|x| {
-                self.hash_bt64_to_hex(self.hash_enc(
+                self.hash_bytes_to_hex(self.hash_enc(
                     self.hash_enc(self.hash_enc(self.hash_str_to_bytes(x), keys.0), keys.1),
                     keys.2,
                 ))
             })
-            .collect();
-        last.join("")
+            .collect::<Vec<String>>()
+            .join("")
     }
-    fn hash_bt64_to_hex(&self, data: [u8; 64]) -> String {
-        let mut out: Vec<String> = vec![];
-        for i in 0..16 {
-            let mut bin_int = 0u32;
-            for j in 0..4 {
-                let a = data[i * 4 + j] as u32;
-                bin_int = bin_int + a * 2u32.pow((3 - j) as u32);
-            }
-            out.push(format!("{:X}", bin_int));
-        }
-        out.join("")
+    fn hash_bytes_to_hex(&self, data: [u8; 64]) -> String {
+        data.chunks(4)
+            .map(|x| {
+                format!(
+                    "{:X}",
+                    (x[0] as u32) * 2u32.pow(3)
+                        + (x[1] as u32) * 2u32.pow(2)
+                        + (x[2] as u32) * 2u32.pow(1)
+                        + (x[3] as u32) * 2u32.pow(0)
+                )
+            })
+            .collect::<Vec<String>>()
+            .join("")
     }
     fn hash_str_to_bytes(&self, text: &str) -> [u8; 64] {
-        let length = text.len();
         let mut bt = [0u8; 64];
-        for i in 0..length {
-            let k = text.as_bytes()[i] as u32;
-            for j in 0..16usize {
+        for (k, v) in text.as_bytes().iter().enumerate() {
+            for i in 0..16usize {
                 // 求幂
-                let m = (15usize - j) as u32;
-                let pow = 2u32.pow(m);
-                bt[16 * i + j] = ((k / pow) % 2) as u8;
+                bt[16 * k + i] = ((*v as u32 / 2u32.pow((15usize - i) as u32)) % 2) as u8;
             }
         }
         bt
