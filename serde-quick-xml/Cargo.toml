@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 serde = "*"
-quick_xml = "*"
+quick-xml = "*"
 
 [lib]
 name = "serde_quick_xml"

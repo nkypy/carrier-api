@@ -6,7 +6,7 @@ authors = ["Jack Shih <i@kshih.com>"]
 [workspace]
 members = [
     "carrier",
-    "iotship-derive"
+    "serde-quick-xml"
 ]
 
 [dependencies]
