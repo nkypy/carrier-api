@@ -60,7 +60,7 @@ impl ChinaTelecomClient {
             }
         }
         for i in 0..16 {
-            for j in 0..loop_data[i] {
+            for _j in 0..loop_data[i] {
                 let tmp_left = key_tmp[0];
                 let tmp_right = key_tmp[28];
                 for k in 0..27 {
@@ -235,7 +235,7 @@ impl ChinaTelecomClient {
             0, 0, 0,
         ]
     }
-    fn hash_final_permute(&self, data: [u8; 64]) -> [u8; 64] {
+    fn _hash_final_permute(&self, data: [u8; 64]) -> [u8; 64] {
         [
             data[39], data[7], data[47], data[15], data[55], data[23], data[63], data[31],
             data[38], data[6], data[46], data[14], data[54], data[22], data[62], data[30],
@@ -271,7 +271,7 @@ impl ChinaTelecomClient {
         let mut final_bytes = [0u8; 64];
         final_bytes[..32].copy_from_slice(&ip_right);
         final_bytes[32..64].copy_from_slice(&ip_left[..32]);
-        self.hash_final_permute(final_bytes)
+        self._hash_final_permute(final_bytes)
     }
 }
 
