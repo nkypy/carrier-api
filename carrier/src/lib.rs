@@ -1,4 +1,5 @@
 #![feature(test, async_await, await_macro)]
+#![deny(unsafe_code)]
 extern crate test;
 
 #[macro_use]
@@ -17,6 +18,7 @@ extern crate serde_json;
 extern crate serde_xml_rs;
 extern crate sha1;
 extern crate sha2;
+extern crate xmlparser;
 
 use std::time::Duration;
 

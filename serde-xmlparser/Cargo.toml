@@ -1,13 +1,13 @@
 [package]
-name = "serde-quick-xml"
+name = "serde-xmlparser"
 version = "0.0.1"
 authors = ["Jack Shih <i@kshih.com>"]
 edition = "2018"
 
 [dependencies]
 serde = "*"
-quick-xml = "*"
+xmlparser = "*"
 
 [lib]
-name = "serde_quick_xml"
+name = "serde_xmlparser"
 path = "src/lib.rs"

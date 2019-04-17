@@ -1,8 +1,8 @@
-use diesel::prelude::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool};
+
+
 use error::Error;
-use std::env;
-use std::time::SystemTime;
+
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {

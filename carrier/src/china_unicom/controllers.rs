@@ -30,6 +30,10 @@ impl ChinaUnicomClient {
             .map_err(|_| "读取错误".to_string())?)
     }
     pub fn get_terminal_details(&self, iccids: Vec<&str>) -> Result<String> {
-        self.soap_request("GetTerminalDetails", iccids)
+        let s = self.soap_request("GetTerminalDetails", iccids)?;
+        for token in xmlparser::Tokenizer::from(s.as_ref()) {
+            println!("{:?}", token);
+        };
+        Ok("123".to_string())
     }
 }

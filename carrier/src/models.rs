@@ -14,7 +14,7 @@ pub struct CardNetStatus {
 }
 
 // 标准信息查询返回
-#[derive(Debug, Serialize)]
+#[derive(Debug, Default, Serialize)]
 pub struct CardInfo {
     pub iccid: String,
     pub imsi: String,
@@ -23,6 +23,13 @@ pub struct CardInfo {
     pub region_name: String,
     pub customer_name: String,
     pub brand: String,
+    pub attrs: Vec<CardInfoAttr>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CardInfoAttr {
+    pub attr_name: String,
+    pub attr_value: String,
 }
 
 // 标准套餐查询返回

@@ -3,7 +3,7 @@ use actix_web::{
     middleware::{Middleware, Response, Started},
     HttpRequest, HttpResponse, Result,
 };
-use jwt::{decode, encode, Header, Validation};
+use jwt::{decode, Validation};
 
 use error::ERR_TOKEN_IS_NOT_VALID;
 use models::Claims;
@@ -30,7 +30,7 @@ impl<S> Middleware<S> for TokenValidator {
         ));
     }
     //
-    fn response(&self, req: &HttpRequest<S>, mut resp: HttpResponse) -> Result<Response> {
+    fn response(&self, _req: &HttpRequest<S>, mut resp: HttpResponse) -> Result<Response> {
         resp.headers_mut().insert(
             header::HeaderName::try_from("X-VERSION").unwrap(),
             header::HeaderValue::from_static("0.2"),

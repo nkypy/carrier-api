@@ -2,15 +2,15 @@ use actix_web::{
     AsyncResponder, FromRequest, FutureResponse, HttpMessage, HttpRequest, HttpResponse, Json,
     Path, State,
 };
-use diesel::prelude::*;
-use futures::future::Future;
 
-use error::{Error, ErrorReply, ERR_UNKNOWN_ERROR};
-use models::{AppReply, AuthReply, AuthRequest, InfoReply, Store, User};
-use schema::users;
 
-pub fn signin(state: State<Store>, json: Json<AuthRequest>) -> Result<Json<AuthReply>, Error> {
-    if let Json(h) = json {
+
+use error::{Error};
+use models::{AppReply, AuthReply, AuthRequest, InfoReply, Store};
+
+
+pub fn signin(_state: State<Store>, json: Json<AuthRequest>) -> Result<Json<AuthReply>, Error> {
+    if let Json(_h) = json {
         return Ok(Json(AuthReply {
             error_code: None,
             error_message: None,
@@ -31,7 +31,7 @@ pub fn signup(_state: State<Store>, json: Json<AuthRequest>) -> Result<Json<Auth
 //     Ok(Json(u))
 // }
 
-pub fn get_users(req: &HttpRequest<Store>) -> Result<Json<AppReply>, Error> {
+pub fn get_users(_req: &HttpRequest<Store>) -> Result<Json<AppReply>, Error> {
     // let conn = &req.state().db.get().expect("数据库连接失败");
     // let u: Vec<User> = users::table.load(conn).expect("Error loading users");
     let reply = AppReply {

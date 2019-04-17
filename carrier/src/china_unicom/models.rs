@@ -318,6 +318,7 @@ impl From<CardReply> for CardInfo {
             region_name: "".to_owned(),
             customer_name: s.account_id,
             brand: "".to_owned(),
+            ..Default::default()
         }
     }
 }

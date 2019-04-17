@@ -5,8 +5,9 @@ authors = ["Jack Shih <i@kshih.com>"]
 
 [workspace]
 members = [
+    ".",
     "carrier",
-    "serde-quick-xml"
+    "serde-xmlparser"
 ]
 
 [dependencies]

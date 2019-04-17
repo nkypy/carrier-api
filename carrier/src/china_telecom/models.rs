@@ -3,8 +3,8 @@ use std::str::FromStr;
 
 use hashbrown::HashMap;
 use lazy_static::lazy_static;
-use quick_xml::events::Event;
-use quick_xml::Reader;
+// use quick_xml::events::Event;
+// use quick_xml::Reader;
 
 use crate::{CardInfo, CardStatus, Result};
 
@@ -185,67 +185,78 @@ pub struct CardInfoReply {
 impl FromStr for CardInfoReply {
     type Err = crate::errors::Error;
     fn from_str(s: &str) -> Result<Self> {
-        // xml 手动读取
-        let mut r: Self = Default::default();
-        r.result_code = "0".to_owned();
-        let mut reader = Reader::from_str(s);
-        reader.trim_text(true);
-        // 循环
-        let mut buf = Vec::new();
-        let mut m: HashMap<String, String> = HashMap::new();
-        loop {
-            match reader.read_event(&mut buf) {
-                Ok(Event::Start(ref e)) => {
-                    let n = e.unescape_and_decode(&reader).expect("Error!");
-                    let v = match reader.read_text(e.name(), &mut Vec::new()) {
-                        Ok(t) => t,
-                        Err(_) => "".to_owned(),
-                    };
-                    m.insert(n, v);
-                }
-                Ok(Event::Eof) => break, // exits the loop when reaching end of file
-                Err(e) => panic!("Error at position {}: {:?}", reader.buffer_position(), e),
-                _ => (), // There are several other `Event`s we do not consider here
-            }
-            // if we don't keep a borrow elsewhere, we can clear the buffer to keep memory usage low
-            buf.clear();
-        }
-        dbg!(&m);
-        // 写入数据
-        r.result_code = match m.get("resultCode") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
+        for token in xmlparser::Tokenizer::from(s) {
+            println!("{:?}", token);
         };
-        r.result_message = match m.get("resultMsg") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
-        };
-        r.transaction_id = match m.get("GROUP_TRANSACTIONID") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
-        };
-        r.result.msisdn = match m.get("phoneNum") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
-        };
-        r.result.region_name = match m.get("commonRegionName") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
-        };
-        r.result.customer_name = match m.get("custName") {
-            Some(t) => t.to_owned(),
-            None => "未知".to_owned(),
-        };
-        //写入结束
-        if r.result_code.as_str() != "0" {
-            match ERROR_HASHMAP.get(r.result_code.as_str()) {
-                Some(e) => Err(e.to_owned())?,
-                None => Err(("20999999", s))?,
-            };
-        };
+        let r: Self = Default::default();
         Ok(r)
     }
 }
+
+// impl FromStr for CardInfoReply {
+//     type Err = crate::errors::Error;
+//     fn from_str(s: &str) -> Result<Self> {
+//         // xml 手动读取
+//         let mut r: Self = Default::default();
+//         r.result_code = "0".to_owned();
+//         let mut reader = Reader::from_str(s);
+//         reader.trim_text(true);
+//         // 循环
+//         let mut buf = Vec::new();
+//         let mut m: HashMap<String, String> = HashMap::new();
+//         loop {
+//             match reader.read_event(&mut buf) {
+//                 Ok(Event::Start(ref e)) => {
+//                     let n = e.unescape_and_decode(&reader).expect("Error!");
+//                     let v = match reader.read_text(e.name(), &mut Vec::new()) {
+//                         Ok(t) => t,
+//                         Err(_) => "".to_owned(),
+//                     };
+//                     m.insert(n, v);
+//                 }
+//                 Ok(Event::Eof) => break, // exits the loop when reaching end of file
+//                 Err(e) => panic!("Error at position {}: {:?}", reader.buffer_position(), e),
+//                 _ => (), // There are several other `Event`s we do not consider here
+//             }
+//             // if we don't keep a borrow elsewhere, we can clear the buffer to keep memory usage low
+//             buf.clear();
+//         }
+//         dbg!(&m);
+//         // 写入数据
+//         r.result_code = match m.get("resultCode") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         r.result_message = match m.get("resultMsg") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         r.transaction_id = match m.get("GROUP_TRANSACTIONID") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         r.result.msisdn = match m.get("phoneNum") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         r.result.region_name = match m.get("commonRegionName") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         r.result.customer_name = match m.get("custName") {
+//             Some(t) => t.to_owned(),
+//             None => "未知".to_owned(),
+//         };
+//         //写入结束
+//         if r.result_code.as_str() != "0" {
+//             match ERROR_HASHMAP.get(r.result_code.as_str()) {
+//                 Some(e) => Err(e.to_owned())?,
+//                 None => Err(("20999999", s))?,
+//             };
+//         };
+//         Ok(r)
+//     }
+// }
 
 impl From<CardInfoReply> for CardInfo {
     fn from(s: CardInfoReply) -> Self {
@@ -257,6 +268,7 @@ impl From<CardInfoReply> for CardInfo {
             region_name: s.result.region_name,
             customer_name: s.result.customer_name,
             brand: "".to_owned(),
+            ..Default::default()
         }
     }
 }

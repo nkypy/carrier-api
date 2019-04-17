@@ -1,6 +1,8 @@
+#![deny(unsafe_code)]
+
 #[macro_use]
 extern crate serde;
-extern crate quick_xml;
+extern crate xmlparser;
 
 mod de;
 mod ser;
