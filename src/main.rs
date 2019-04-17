@@ -91,16 +91,16 @@ fn main() {
     //     Ok(c) => println!("carrier status is {:?}", c.card_status("1234")),
     //     Err(e) => println!("error is {:?}", e)
     // };
-    // let carrier = ChinaTelecomClient::new(
-    //     &env::var("CHINA_TELECOM_USERNAME").unwrap(),
-    //     &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
-    //     &env::var("CHINA_TELECOM_LICENSE").unwrap(),
-    // );
-    // let rsp = carrier.card_info("8986031630200230821");
-    // match rsp {
-    //     Ok(t) => println!("response is {:?}", t),
-    //     Err(e) => println!("error is {}", e),
-    // }
+    let carrier = ChinaTelecomClient::new(
+        &env::var("CHINA_TELECOM_USERNAME").unwrap(),
+        &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
+        &env::var("CHINA_TELECOM_LICENSE").unwrap(),
+    );
+    let rsp = carrier.card_info("8986031630200230821");
+    match rsp {
+        Ok(t) => println!("response is {:?}", t),
+        Err(e) => println!("error is {}", e),
+    }
     // let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");
     // // println!("中国电信 user_id 为 test, password 为 test, key 为 abcdefghi");
     // // println!("加密 test 字符串");
@@ -125,18 +125,18 @@ fn main() {
     //     &env::var("CHINA_MOBILE_PASSWORD").unwrap(),
     // );
     // dbg!(carrier.card_status("898602D9981700140197"));
-    let carrier = ChinaUnicomClient::new(
-        &env::var("CHINA_UNICOM_USERNAME").unwrap(),
-        &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
-        &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
-        &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
-    );
-    // dbg!(carrier.card_usage("89860918700319648926", "201902"));
-    dbg!(carrier.get_terminal_details(vec![
-        "89860117750006390067",
-        "89860117750006390158",
-        "89860117750006390307"
-    ]));
+    // let carrier = ChinaUnicomClient::new(
+    //     &env::var("CHINA_UNICOM_USERNAME").unwrap(),
+    //     &env::var("CHINA_UNICOM_PASSWORD").unwrap(),
+    //     &env::var("CHINA_UNICOM_SOAP_LICENSE").unwrap(),
+    //     &env::var("CHINA_UNICOM_REST_LICENSE").unwrap(),
+    // );
+    // // dbg!(carrier.card_usage("89860918700319648926", "201902"));
+    // dbg!(carrier.get_terminal_details(vec![
+    //     "89860117750006390067",
+    //     "89860117750006390158",
+    //     "89860117750006390307"
+    // ]));
     // dbg!(ChinaUnicomClient::new_test());
     // let carrier = GuangdongMobileClient::new(
     //     &env::var("GUANGDONG_MOBILE_APP_ID").unwrap(),

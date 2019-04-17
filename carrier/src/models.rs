@@ -23,13 +23,13 @@ pub struct CardInfo {
     pub region_name: String,
     pub customer_name: String,
     pub brand: String,
-    pub attrs: Vec<CardInfoAttr>,
+    pub attributes: Vec<CardInfoAttribute>,
 }
 
 #[derive(Debug, Serialize)]
-pub struct CardInfoAttr {
-    pub attr_name: String,
-    pub attr_value: String,
+pub struct CardInfoAttribute {
+    pub attribute_name: String,
+    pub attribute_value: String,
 }
 
 // 标准套餐查询返回

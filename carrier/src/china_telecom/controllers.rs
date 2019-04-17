@@ -2,7 +2,7 @@ use crate::china_telecom::ChinaTelecomClient;
 
 impl ChinaTelecomClient {
     // hash 部分
-    pub fn hash(&self, mut texts: Vec<&str>) -> String {
+    pub(super) fn hash(&self, mut texts: Vec<&str>) -> String {
         texts.sort_by(|a, b| a.cmp(&b));
         let text_str = texts.join(",");
         let keys = (

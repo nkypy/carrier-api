@@ -70,11 +70,15 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        Ok(crate::http_client()?
+        let s = crate::http_client()?
             .post(API_URL)
             .body(item)
             .send()?
-            .text()?)
+            .text()?;
+        for token in xmlparser::Tokenizer::from(s.as_ref()) {
+            println!("{:?}", token);
+        };
+        Ok("123".to_string())
     }
 }
 
