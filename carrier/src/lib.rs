@@ -40,23 +40,23 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub trait CarrierClient {
     // 查询相关
-    fn card_status(&self, _: &str) -> Result<CardStatus> {
+    fn card_status(&self, _iccid: &str) -> Result<CardStatus> {
         Err(("10999901", "暂未支持此接口"))?
     }
-    fn card_net_status(&self, _: &str) -> Result<CardNetStatus> {
+    fn card_net_status(&self, _iccid: &str) -> Result<CardNetStatus> {
         Err(("10999901", "暂未支持此接口"))?
     }
-    fn card_info(&self, _: &str) -> Result<CardInfo> {
+    fn card_info(&self, _iccid: &str) -> Result<CardInfo> {
         Err(("10999901", "暂未支持此接口"))?
     }
-    fn card_rate_plan(&self, _: &str) -> Result<CardRatePlan> {
+    fn card_rate_plan(&self, _iccid: &str) -> Result<CardRatePlan> {
         Err(("10999901", "暂未支持此接口"))?
     }
-    fn card_usage(&self, _: &str, _: &str) -> Result<CardUsage> {
+    fn card_usage(&self, _iccid: &str, _month: &str) -> Result<CardUsage> {
         Err(("10999901", "暂未支持此接口"))?
     }
     // 设置相关
-    fn edit_card_status(&self, _: &str, _: &str) -> Result<String> {
+    fn edit_card_status(&self, _iccid: &str, _status: &str) -> Result<String> {
         Err(("10999901", "暂未支持此接口"))?
     }
 }

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 #[macro_use]
 extern crate log;
 #[macro_use]
@@ -6,8 +8,6 @@ extern crate serde_derive;
 extern crate diesel;
 #[macro_use]
 extern crate failure;
-#[macro_use]
-extern crate hex_literal;
 
 extern crate actix;
 extern crate actix_web;
@@ -96,9 +96,13 @@ fn main() {
         &env::var("CHINA_TELECOM_PASSWORD").unwrap(),
         &env::var("CHINA_TELECOM_LICENSE").unwrap(),
     );
-    let rsp = carrier.card_info("8986031630200230821");
+    let rsp = carrier.card_status("8986031630200230821");
     match rsp {
-        Ok(t) => println!("response is {:?}", t),
+        Ok(t) => {
+            println!("response is {:#?}", t);
+            let j = serde_json::to_string(&t).unwrap();
+            println!("to json {}.", j);
+        }
         Err(e) => println!("error is {}", e),
     }
     // let carrier = ChinaTelecomClient::new("test", "test", "abcdefghi");

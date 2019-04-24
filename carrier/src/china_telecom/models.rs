@@ -187,7 +187,7 @@ impl FromStr for CardInfoReply {
     fn from_str(s: &str) -> Result<Self> {
         for token in xmlparser::Tokenizer::from(s) {
             println!("{:?}", token);
-        };
+        }
         let r: Self = Default::default();
         Ok(r)
     }

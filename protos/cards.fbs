@@ -1,0 +1,42 @@
+// Example IDL file for our monster's schema.
+namespace cards;
+
+table CardStatusReply {
+  status_code:string;
+  status_name:string;
+  date_activated:string;
+}
+
+table CardErrorReply {
+  id:string;
+  error_code:string;
+  error_message:string;
+}
+
+table CardRatePlan {
+  plan_code:string;
+  plan_name:string;
+}
+
+table CardPlanReply {
+  plans:[CardRatePlan];
+}
+
+table CardUsageReply {
+  data_used:ulong;
+  sms_used:ulong;
+  voice_used:ulong;
+}
+
+// union CardReply {
+//   CardErrorReply,
+//   CardStatusReply,
+//   CardPlanReply,
+//   CardUsageReply,
+// }
+
+// table CardResult {
+//   reply:CardReply;
+// }
+
+root_type CardErrorReply;

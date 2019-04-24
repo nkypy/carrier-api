@@ -1,3 +1,50 @@
+// 标准查询返回
+// 使用 emum 后续返回多张卡时可以显示单张的异常信息。
+#[derive(Debug, Serialize)]
+#[serde(untagged)]
+pub enum CardReply {
+    // 错误信息
+    Error {
+        id: String,
+        error_code: String,
+        error_message: String,
+    },
+    // 状态
+    Status {
+        status_code: String,
+        status_name: String,
+        date_activated: String,
+    },
+    // 在线状态
+    NetStatus {
+        net_status_code: String,
+        net_status_name: String,
+    },
+    // 详细信息
+    Info {
+        // 基本信息
+        iccid: String,
+        imsi: String,
+        msisdn: String,
+        imei: String,
+        // 其他信息
+        region_name: String,
+        customer_name: String,
+        brand: String,
+    },
+    // 套餐
+    Plan {
+        plans: Vec<CardRatePlan>,
+    },
+    // 使用量
+    Usage {
+        data_used: u64,
+        sms_used: u32,
+        voice_used: u32,
+    },
+}
+
+
 // 标准状态查询返回
 #[derive(Debug, Serialize)]
 pub struct CardStatus {

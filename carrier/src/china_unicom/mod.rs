@@ -3,7 +3,6 @@ mod models;
 
 use std::str::FromStr;
 
-use base64::encode;
 use chrono::{Duration, TimeZone, Utc};
 
 use crate::china_unicom::models::CardReply;
@@ -23,7 +22,9 @@ pub struct ChinaUnicomClient {
 
 impl ChinaUnicomClient {
     pub fn new(username: &str, password: &str, soap_license: &str, rest_license: &str) -> Self {
-        let rest_auth: String = dbg!(encode(format!("{}:{}", username, rest_license).as_bytes()));
+        let rest_auth: String = dbg!(base64::encode(
+            format!("{}:{}", username, rest_license).as_bytes()
+        ));
         ChinaUnicomClient {
             username: username.to_owned(),
             password: password.to_owned(),
