@@ -1,7 +1,7 @@
 use std::convert::From;
 use std::str::FromStr;
 
-use hashbrown::HashMap;
+use std::collections::HashMap;
 use lazy_static::lazy_static;
 // use quick_xml::events::Event;
 // use quick_xml::Reader;

@@ -1,4 +1,4 @@
-#![feature(test, async_await, await_macro)]
+#![feature(test, async_await)]
 #![deny(unsafe_code)]
 extern crate test;
 
@@ -9,9 +9,9 @@ extern crate base64;
 extern crate block_modes;
 extern crate chrono;
 extern crate des;
-extern crate hashbrown;
 extern crate lazy_static;
 extern crate quick_xml;
+extern crate isahc;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
@@ -79,6 +79,13 @@ impl CarrierClient {
             _ => Err("不正确的运营商账号".to_string())?,
         }
     }
+}
+
+fn isahc_client() -> Result<isahc::HttpClient> {
+    Ok(isahc::HttpClient::builder()
+        // .gzip(true)
+        .timeout(Duration::from_secs(3))
+        .build()?)
 }
 
 // 创建请求运营商的 HTTP 客户端，设置 3 秒超时。

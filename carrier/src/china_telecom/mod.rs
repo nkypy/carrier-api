@@ -2,6 +2,7 @@ mod controllers;
 mod models;
 
 use std::str::FromStr;
+use isahc::ResponseExt;
 
 use crate::china_telecom::models::{CardInfoReply, CardMsisdnReply, CardStatusReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
@@ -70,7 +71,7 @@ impl ChinaTelecomClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url: String = dbg!(format!("{}?{}", url, others.join("&")));
-        Ok(crate::http_client()?.get(&url).send()?.text()?)
+        Ok(crate::isahc_client()?.get(&url)?.text()?)
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = dbg!(self.get("getTelephone", iccid, vec![iccid], vec![])?);

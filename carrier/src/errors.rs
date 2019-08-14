@@ -47,6 +47,42 @@ impl From<(&str, &str)> for Error {
     }
 }
 
+impl From<isahc::Error> for Error {
+    fn from(e: isahc::Error) -> Self {
+        dbg!(&e);
+        match e {
+            isahc::Error::BadClientCertificate(_) | isahc::Error::BadServerCertificate(_) => {
+                return Error {
+                    err_code: "22000001".to_owned(),
+                    err_msg: "证书认证失败。".to_owned(),
+                }
+            },
+            isahc::Error::ConnectFailed | isahc::Error::CouldntResolveHost | isahc::Error::CouldntResolveProxy => {
+                return Error {
+                    err_code: "22000002".to_owned(),
+                    err_msg: "服务器连接失败。".to_owned(),
+                }
+            },
+            isahc::Error::Timeout => {
+                return Error {
+                    err_code: "22000003".to_owned(),
+                    err_msg: "服务器连接超时。".to_owned(),
+                }
+            },
+            _ => {
+                return Error {
+                    err_code: "22000004".to_owned(),
+                    err_msg: "isahc 请求失败。".to_owned(),
+                }
+            }
+        }
+        // Error {
+        //     err_code: "21000001".to_owned(),
+        //     err_msg: "isahc 请求失败。".to_owned(),
+        // }
+    }
+}
+
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Self {
         if e.is_timeout() {

@@ -24,16 +24,16 @@ impl ChinaUnicomClient {
                 ),
             )
             .body(text)
-            .send()
-            .map_err(|_| "超时".to_string())?
-            .text()
-            .map_err(|_| "读取错误".to_string())?)
+            .send()?
+            .text()?
+        )
     }
     pub fn get_terminal_details(&self, iccids: Vec<&str>) -> Result<String> {
         let s = self.soap_request("GetTerminalDetails", iccids)?;
-        for token in xmlparser::Tokenizer::from(s.as_ref()) {
-            println!("{:?}", token);
-        };
-        Ok("123".to_string())
+        // for token in xmlparser::Tokenizer::from(s.as_ref()) {
+        //     println!("{:?}", token);
+        // };
+        // Ok("123".to_string())
+        Ok(s)
     }
 }
