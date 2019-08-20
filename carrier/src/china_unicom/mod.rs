@@ -4,6 +4,7 @@ mod models;
 use std::str::FromStr;
 
 use chrono::{Duration, TimeZone, Utc};
+use isahc::ResponseExt;
 
 use crate::china_unicom::models::CardReply;
 use crate::{CardInfo, CardStatus, CardUsage, CarrierClient, Result};

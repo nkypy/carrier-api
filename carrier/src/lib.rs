@@ -5,20 +5,20 @@ extern crate test;
 #[macro_use]
 extern crate serde_derive;
 
-extern crate base64;
-extern crate block_modes;
-extern crate chrono;
-extern crate des;
-extern crate lazy_static;
-extern crate quick_xml;
-extern crate isahc;
-extern crate reqwest;
-extern crate serde;
-extern crate serde_json;
-extern crate serde_xml_rs;
-extern crate sha1;
-extern crate sha2;
-extern crate xmlparser;
+// extern crate base64;
+// extern crate block_modes;
+// extern crate chrono;
+// extern crate des;
+// extern crate lazy_static;
+// extern crate quick_xml;
+// extern crate isahc;
+// extern crate reqwest;
+// extern crate serde;
+// extern crate serde_json;
+// extern crate serde_xml_rs;
+// extern crate sha1;
+// extern crate sha2;
+// extern crate xmlparser;
 
 use std::time::Duration;
 
@@ -59,10 +59,13 @@ pub trait CarrierClient {
     fn edit_card_status(&self, _iccid: &str, _status: &str) -> Result<String> {
         Err(("10999901", "暂未支持此接口"))?
     }
+    fn edit_card_net_status(&self, _iccid: &str, _status: &str) -> Result<String> {
+        Err(("10999901", "暂未支持此接口"))?
+    }
 }
 
-impl CarrierClient {
-    pub fn new(account: &str) -> Result<Box<CarrierClient>> {
+impl dyn CarrierClient {
+    pub fn new(account: &str) -> Result<Box<dyn CarrierClient>> {
         let v: Vec<&str> = account.split(",").collect();
         match (v[0], v.len()) {
             ("china_telecom", 4) => match v[3].len() {
@@ -91,14 +94,6 @@ fn isahc_client() -> Result<isahc::HttpClient> {
 // 创建请求运营商的 HTTP 客户端，设置 3 秒超时。
 fn http_client() -> Result<reqwest::Client> {
     Ok(reqwest::Client::builder()
-        .gzip(true)
-        .timeout(Duration::from_secs(3))
-        .build()?)
-}
-
-// 创建异步请求运营商的 HTTP 客户端，设置 3 秒超时。
-fn async_http_client() -> Result<reqwest::r#async::Client> {
-    Ok(reqwest::r#async::Client::builder()
         .gzip(true)
         .timeout(Duration::from_secs(3))
         .build()?)

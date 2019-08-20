@@ -4,6 +4,7 @@ mod model;
 
 use chrono::Utc;
 use sha2::{Digest, Sha256};
+use isahc::ResponseExt;
 
 pub use crate::china_mobile::guangdong::GuangdongMobileClient;
 pub use crate::china_mobile::jiangsu::JiangsuMobileClient;
@@ -46,7 +47,7 @@ impl ChinaMobileClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url = dbg!(format!("{}{}?{}", API_URL, method, others.join("&")));
-        let resp: String = crate::http_client()?.get(&url).send()?.text()?;
+        let resp: String = crate::isahc_client()?.get(&url)?.text()?;
         let v: CardReply = dbg!(serde_json::from_str(&resp)?);
         Ok(v)
     }

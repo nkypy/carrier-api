@@ -4,6 +4,8 @@ mod models;
 use std::str::FromStr;
 use isahc::ResponseExt;
 
+use async_std::task;
+
 use crate::china_telecom::models::{CardInfoReply, CardMsisdnReply, CardStatusReply};
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
 
@@ -71,7 +73,11 @@ impl ChinaTelecomClient {
         data.extend(params);
         let others: Vec<String> = dbg!(data.iter().map(|x| format!("{}={}", x.0, x.1)).collect());
         let url: String = dbg!(format!("{}?{}", url, others.join("&")));
-        Ok(crate::isahc_client()?.get(&url)?.text()?)
+        task::block_on(async {
+            let client = crate::isahc_client()?;
+            let mut resp = client.get_async(&url).await?;
+            Ok(resp.text_async().await?)
+        })
     }
     fn iccid_to_msisdn(&self, iccid: &str) -> Result<String> {
         let resp = dbg!(self.get("getTelephone", iccid, vec![iccid], vec![])?);
@@ -81,13 +87,13 @@ impl ChinaTelecomClient {
 
 impl CarrierClient for ChinaTelecomClient {
     fn card_status(&self, iccid: &str) -> Result<CardStatus> {
-        let resp = dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![]))?;
+        let resp = dbg!(self.get("queryCardMainStatus", iccid, vec![iccid], vec![])?);
         Ok(CardStatusReply::from_str(&resp)?.into())
     }
     // 接口只能通过 msisdn 查询
     fn card_info(&self, iccid: &str) -> Result<CardInfo> {
-        let msisdn = self.iccid_to_msisdn(iccid)?;
-        let resp = dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![]))?;
+        let msisdn: String = self.iccid_to_msisdn(iccid)?;
+        let resp = dbg!(self.get("prodInstQuery", &msisdn, vec![&msisdn], vec![])?);
         Ok(CardInfoReply::from_str(&resp)?.into())
     }
 }

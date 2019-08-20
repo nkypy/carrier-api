@@ -1,10 +1,18 @@
 use std::convert::From;
 use std::str::FromStr;
-
 use std::collections::HashMap;
+
 use lazy_static::lazy_static;
 
 use crate::{CardInfo, CardStatus, Result};
+
+// 广东移动帐号信息
+#[derive(Debug)]
+pub struct GuangdongMobileClient {
+    pub app_id: String,
+    pub password: String,
+    pub group_id: String,
+}
 
 lazy_static! {
     static ref ERROR_HASHMAP: HashMap<&'static str, (&'static str, &'static str)> = {
@@ -489,9 +497,15 @@ impl FromStr for CardContent {
 impl From<CardContent> for CardStatus {
     fn from(s: CardContent) -> Self {
         CardStatus {
+            status_name: STATUS_NAME_HASHMAP.get(s.status.as_str()).unwrap_or(&"未知状态").to_string(),
             status_code: s.status,
-            status_name: "".to_owned(),
             date_activated: s.status_time,
         }
+    }
+}
+
+impl From<CardContent> for CardInfo {
+    fn from(_s: CardContent) -> Self {
+        CardInfo {..Default::default()}
     }
 }

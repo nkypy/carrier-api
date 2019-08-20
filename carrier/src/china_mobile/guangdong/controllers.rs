@@ -1,9 +1,13 @@
+use std::str::FromStr;
+
 use block_modes::{block_padding::ZeroPadding, BlockMode, Ecb};
 use des::TdesEde3;
 use sha1::Sha1;
+use chrono::Utc;
+use isahc::ResponseExt;
 
-use super::GuangdongMobileClient;
-use crate::Result;
+use crate::{CardInfo, CardStatus, CarrierClient, Result};
+use super::models::{GuangdongMobileClient, CardContent, CardReply};
 
 static API_URL: &str = "http://120.197.89.173:8081/openapi/router";
 
@@ -50,5 +54,36 @@ impl GuangdongMobileClient {
         // 签名
         let sign = Sha1::from(&sign_str).digest().to_string().to_uppercase();
         dbg!(format!("{}?sign={}&{}", API_URL, sign, url))
+    }
+}
+
+impl GuangdongMobileClient {
+    pub fn new(app_id: &str, password: &str, group_id: &str) -> Self {
+        GuangdongMobileClient {
+            app_id: app_id.to_owned(),
+            password: password.to_owned(),
+            group_id: group_id.to_owned(),
+        }
+    }
+    pub fn get(&self, method: &str, iccid: &str) -> Result<String> {
+        let now = Utc::now();
+        let nano = format!("{:08}", now.timestamp_subsec_nanos());
+        let trans_id = format!(
+            "{}{}{}",
+            self.group_id,
+            now.format("%Y%m%d%H%M%S").to_string(),
+            &nano[..7]
+        );
+        let v = vec![("method", method), ("transID", &trans_id), ("iccid", iccid)];
+        let rsp = dbg!(crate::isahc_client()?.get(&self.url(v))?.text()?);
+        dbg!(Ok(self.decrypt(rsp)?))
+    }
+}
+
+impl CarrierClient for GuangdongMobileClient {
+    fn card_status(&self, iccid: &str) -> Result<CardStatus> {
+        let rsp = self.get("triopi.member.lifecycle.single.query", iccid)?;
+        let content = CardContent::from_str(CardReply::from_str(rsp.as_str())?.data.as_str())?;
+        Ok(content.into())
     }
 }

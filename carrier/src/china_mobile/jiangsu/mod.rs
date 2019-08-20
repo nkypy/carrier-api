@@ -3,6 +3,7 @@ mod model;
 use chrono::Utc;
 use reqwest::Client;
 use serde_xml_rs::to_string;
+use isahc::ResponseExt;
 
 use crate::china_mobile::jiangsu::model::CardRequest;
 use crate::{CardInfo, CardStatus, CarrierClient, Result};
@@ -70,10 +71,10 @@ impl JiangsuMobileClient {
             service,
             sub_service_status,
         ));
-        let s = crate::http_client()?
-            .post(API_URL)
-            .body(item)
-            .send()?
+        let s = crate::isahc_client()?
+            .post(API_URL, item)?
+            // .body(item)
+            // .send()?
             .text()?;
         for token in xmlparser::Tokenizer::from(s.as_ref()) {
             println!("{:?}", token);

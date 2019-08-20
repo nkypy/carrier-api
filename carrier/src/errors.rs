@@ -157,6 +157,16 @@ impl From<std::string::FromUtf8Error> for Error {
     }
 }
 
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        dbg!(e);
+        Error {
+            err_code: "21000004".to_owned(),
+            err_msg: "异步返回异常。".to_owned(),
+        }
+    }
+}
+
 impl From<block_modes::BlockModeError> for Error {
     fn from(e: block_modes::BlockModeError) -> Self {
         dbg!(e);

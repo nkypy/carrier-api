@@ -43,7 +43,7 @@ impl ResponseError for Error {
             Error::HttpNotFound => HttpResponse::Ok().json(ERR_HTTP_NOT_FOUND),
             Error::HttpMethodNotAllowed => HttpResponse::Ok().json(ERR_HTTP_METHOD_NOT_ALLOWED),
             Error::TokenIsNotValid => HttpResponse::Ok().json(ERR_TOKEN_IS_NOT_VALID),
-            _ => HttpResponse::Ok().json(ERR_UNKNOWN_ERROR),
+            // _ => HttpResponse::Ok().json(ERR_UNKNOWN_ERROR),
         }
     }
 }

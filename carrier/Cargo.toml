@@ -20,6 +20,7 @@ chrono = { version = "*", features = ["serde"] }
 isahc = { version = "*", features = ["json"] }
 reqwest = { version = "*", features = ["default-tls-vendored"] }
 xmlparser = "*"
+async-std = "*"
 
 [dev-dependencies]
 criterion = "*"
