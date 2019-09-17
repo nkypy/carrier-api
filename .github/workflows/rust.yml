@@ -9,6 +9,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - id: component
+        uses: actions-rs/components-nightly@v1.0.0
+        with:
+          target: x86_64-unknown-linux-gnu
+    - uses: actions-rs/toolchain@v1
+        with:
+            toolchain: ${{ steps.component.outputs.toolchain }}
+            override: true
     - name: Config env
       run: mv .env.example .env
     - name: Build
