@@ -1,4 +1,4 @@
-#![feature(test, async_await)]
+#![feature(test)]
 #![deny(unsafe_code)]
 extern crate test;
 

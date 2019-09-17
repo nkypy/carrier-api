@@ -2,32 +2,16 @@
 name = "hello-world"
 version = "0.0.1"
 authors = ["Jack Shih <i@kshih.com>"]
+edition = "2018"
 
 [workspace]
 members = [
     ".",
     "carrier",
-    "serde-xmlparser"
 ]
 
 [dependencies]
 carrier = { version = "*", path = "carrier" }
 log = "*"
 env_logger = "*"
-diesel = { version = "*", features = ["postgres", "chrono", "serde_json", "r2d2"] }
 dotenv = "*"
-snowflake = { version = "*", features = ["serde_support"] }
-serde = "*"
-serde_derive = "*"
-serde_json = "*"
-actix = "*"
-actix-web = "*"
-futures = "*"
-failure = "*"
-jsonwebtoken = "*"
-base64 = "*"
-serde-xml-rs = "*"
-reqwest = "*"
-des = "0.3.0"
-chrono = { version = "*", features = ["serde"] }
-async-std = "*"
